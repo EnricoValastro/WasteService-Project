@@ -1,0 +1,28 @@
+body {
+    background-color: rgb(255,255,255);
+  }
+  .blue {
+    color: blue; 
+    font-style: italic;
+    font-weight: 0;
+  }
+
+  .red {
+    color:red;
+  }
+  .remark{
+    background-color: #E3F2FD;
+      border: 2px solid green;
+      padding: 3px;
+      margin: 0px;
+      line-height: 1.4;
+    border-radius: 25px;
+  }
+
+  .worktodo{
+    background-color: #ffb3d9;
+    padding: 3px;
+    margin: 10px;
+    line-height: 1.4;
+    border-radius: 20px;
+  }
