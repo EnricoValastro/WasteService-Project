@@ -299,8 +299,16 @@ div.imagedesc{
 		<tr>
 			<td style="width:60%">
 				<h4 style="padding-left:10px"><ks><i>moveToIndoor</i></ks> Task</h4>
+                <ul>
+					<li><b>Relative User Stories</b>: <i></i></li>
+					<li><b>Legend:</b><br><br>
+						<ul>
+							<li><div style="width:20px;height:20px;background-color:#e98190;display:inline-block;border:1px solid #82B366"></div> : location where you can find the robot at the task call;</li>
+							<li><div style="width:20px;height:20px;background-color:#1861cd;display:inline-block;border:1px solid #B85450"></div> : indoor-area.</li>
+						</ul>
+					</li>
 					<li><b>Description</b>:
-					This task is used by the system for moving the trasport trolley towards the indoor area in order to pick up a waste-load from a Waste truck located on the INDOOR.
+					This task is used by the system for moving the trasport trolley from the home to the indoor area in order to pick up a waste-load from a Waste truck located on the INDOOR. The image shows the basic movement that takes the robot from Home to Indoor. However, the path taken by the robot may be different because the starting point could be any of the cells in red.
 					</li>
 				</ul>
 			</td>
@@ -311,6 +319,14 @@ div.imagedesc{
 		<tr>
 			<td style="width:60%">
 				<h4 style="padding-left:10px"><ks><i>moveToPlasticBox</i></ks> Task</h4>
+                <ul>
+					<li><b>Relative User Stories</b>: <i></i></li>
+					<li><b>Legend:</b><br><br>
+						<ul>
+							<li><div style="width:20px;height:20px;background-color:#131eeb;display:inline-block;border:1px solid #82B366"></div> : location where you can find the robot at the task call;</li>
+							<li><div style="width:20px;height:20px;background-color:#e5db16;display:inline-block;border:1px solid #141212"></div> : PlasticBox.</li>
+						</ul>
+					</li>
 					<li><b>Description</b>:
 					This task is used by the system for moving the transport trolley from the INDOOR to the proper waste container(PlasticBox).
 					</li>
@@ -322,31 +338,33 @@ div.imagedesc{
 		</tr>
 		<tr>
 			<td style="width:60%">
-				<h4 style="padding-left:10px"><ks><i>backToHome</i></ks> Task</h4>
+				<h4 style="padding-left:10px"><ks><i>moveToGlassBox</i></ks> Task</h4>
 				<ul>
-					<li><b>Relative Use Case</b>: <i>Car Enter</i></li>
+					<li><b>Relative User Stories</b>: <i></i></li>
 					<li><b>Legend:</b><br><br>
 						<ul>
-							<li>Colored Square: location where you can find the robot at the task call.</li>
+							<li><div style="width:20px;height:20px;background-color:#1d0af1;display:inline-block;border:1px solid #82B366"></div> : location where you can find the robot at the task call;</li>
+							<li><div style="width:20px;height:20px;background-color:#29c10b;display:inline-block;border:1px solid #141212"></div> : GlassBox.</li>
 						</ul>
 					</li>
 					<li><b>Description</b>:
-					This task is used by the system for returning the transport trolley to the home after it has parked a car and there are not pending requests.
+                        This task is used by the system for moving the transport trolley from the INDOOR to the proper waste container(GlassBox).
 					</li>
 				</ul>
 			</td>
 			<td>
-				<center><img src="img/backToHome_map.png" alt="backToHome Graph" style="max-width:100%"></center>
+				<center><img src="./resouces/images/MoveToGlassBox.drawio.png" alt="backToHome Graph" style="width:65%"></center>
 			</td>
 		</tr>
 		<tr>
 			<td style="width:60%">
 				<h4 style="padding-left:10px"><ks><i>moveToHome</i></ks> Task</h4>
 				<ul>
-					<li><b>Relative Use Case</b>: <i>Submit Token</i></li>
+					<li><b>Relative User Stories</b>: <i></i></li>
 					<li><b>Legend:</b><br><br>
 						<ul>
-							<li><div style="width:20px;height:20px;background-color:#D5E8D4;display:inline-block;border:1px solid #82B366"></div> : location where you can find the robot at the task call.</li>
+							<li><div style="width:20px;height:20px;background-color:#ecf010;display:inline-block;border:1px solid #82B366"></div> : location where you can find the robot at the task call;</li>
+							<li><div style="width:20px;height:20px;background-color:#29c10b;display:inline-block;border:1px solid #141212"></div> : location where you can find the robot at the task call;</li>
 						</ul>
 					</li>
 					<li><b>Description</b>:
@@ -355,7 +373,7 @@ div.imagedesc{
 				</ul>
 			</td>
 			<td>
-				<center><img src="img/moveToHome_map.png" alt="moveToHome Graph" style="max-width:100%"></center>
+				<center><img src="./resouces/images/MoveToHome.drawio.png" alt="moveToHome Graph" style="width:65%"></center>
 			</td>
 		</tr>
 		<tr>
