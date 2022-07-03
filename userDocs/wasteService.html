@@ -245,7 +245,7 @@ div.imagedesc{
         <li><ks>TruckLoad kg</ks>: weight of waste transported by the waste truck.</li>
         <li><ks>Smart devices</ks>: a device that allows the driver of the waste truck to communicate with the Waste Service.</li>
         <li><ks>Loadaccept</ks>: the answer sent by the waste service if the waste load can be accepted.</li>
-        <li><ks>Loadrejecetd</ks>: the answer sent by the waste service if the waste load cannot be accepted.</li>
+        <li><ks>Loadrejected</ks>: the answer sent by the waste service if the waste load cannot be accepted.</li>
     </ul>
     <br>
     <kc>VERBS:</kc>
@@ -257,6 +257,87 @@ div.imagedesc{
         <li><ks>Must be stopped</ks>: the transport trolley must be stopped at its current location, regardless of the action it is taking. This operation is up to the WasteService system.</li>
         <li><ks>Be resumed</ks>: the transport trolley must be reactivated in the same position in which it was stopped and resume the action it was performing before stopping. This operation is up to the WasteService system.</li>
     </ul>
+</div>
+
+<div class="remark">
+    <h3>Definition of a formal model of the Service area</h3>
+    Since our software must move the robot inside the service-area, we must find a way to automatically test all tasks concerning movements. At this stage, we need to introduce a proper representation of the service-area.</br>
+	
+	<table>
+		<tbody>
+	        <pre style="max-width:100%">
+	
+	
+|H,  0,  0,  0,  0,  X, X, X
+|0,  0,  0,  0,  0,  0,  0,  0
+|0,  R,  0,  0,  0,  0,  0,  0
+|0,  0,  0,  0,  0,  0,  0,  X
+|0,  0,  0,  0,  0,  0,  0,  X
+|<k>X</k>, <k>X</k>, <k>X</k>,  0,  0,  0,  0,  X
+
+	        </pre>
+		</tbody>
+	</table>
+    </br>
+    In the above representation we specify that: <br><br>
+	<ul>
+		<li><b>H</b> : starting cell of the robot.</li>
+        <li><b>R</b>: cell occupied by the robot</li>
+		<li><b>0</b> : cell not occupied (robot can pass over it).</li>
+		<li><b><k>X</k></b> : cell representing Indoor.</li>
+		<li><b>X</b> : cell occupied by GlassBox and PlasticBox.</li>
+	</ul>
+    The robot moves in steps of length RD. The RD length can be defined as: RD = diameter of the circle of minimum radius surrounding the robot.
+    <br>
+    In practice, the robot (i.e., RD) becomes the unit of measurement for distances. 
+    The room itself can be thought of as divided into square cells of side equal to RD. 
+    <br><br>
+	<img src="./resouces/images/RoomGridRD.png" alt="Requirements overview" style="width:40%"/>
+			
+    <h3>The reference system of the Service area</h3>
+    <img src="./resouces/images/ElementPositionRoom.drawio.png" alt="Requirements overview" style="width:38%"/> <br>
+
+    We have introduced a <i>cartesian plan</i> over the room in order to define a <i>reference system</i>. 
+    Then, as indicated in the image above, the reserved areas are: <br><br>
+	<ul>
+		<li><div style="width:20px;height:20px;background-color:#2dde33;display:inline-block;border:1px solid #0c0a0a"></div><b> HOME</b> in the cell <tt>(0, 0)</tt></li>
+		<li><div style="width:20px;height:20px;background-color:#324db9;display:inline-block;border:1px solid #0c0a0a"></div><b> Indoor-area</b> in the cell <tt>(5, 0), (5, 1), (5, 2)</tt></li>
+		<li><div style="width:20px;height:20px;background-color:#07510d;display:inline-block;border:1px solid #0c0a0a"></div><b> GlassBox</b> in the cell <tt>(0, 5), (0, 6), (0, 7)</tt></li>
+		<li><div style="width:20px;height:20px;background-color:#b9b932;display:inline-block;border:1px solid #0c0a0a"></div><b> PlasticBox</b> in the cells <tt>(3, 7), (4, 7), (5, 7)</tt></li>
+	</ul>
+
+    <h3>About entities</h3>
+    <ul>
+        <li><b>Transport trolley</b>: customer specifies that it is a <i>DDR Robot</i> and also give us the needed software to build it at <a href="https://github.com/anatali/issLab2022/tree/main/unibo.basicrobot22"><kc>unibo.basicrobot22</kc></a></li>
+        <li><b>Sonar:</b> the customer has clarified that it is an <b>HC-SR04</b> sonar, and provides us the code <a href="https://github.com/anatali/issLab2022/blob/main/it.unibo.raspIntro2022/code/c/SonarAlone.c"><kc>SonarAlone.c</kc></a>: this C program continuously reads the distance from a phisical sonar connected to a Raspberry and print it to the standard output.</li>
+        <li><b>Led</b>: the customer provides us the code 
+            <a href="https://github.com/anatali/issLab2022/blob/main/it.unibo.raspIntro2022/code/bash/led25GpioTurnOn.sh"><kc>led25GpioTurnOn.sh</kc></a> and <a href="https://github.com/anatali/issLab2022/blob/main/it.unibo.raspIntro2022/code/bash/led25GpioTurnOff.sh"><kc>led25GpioTurnOff.sh</kc></a>: these bash program turn on and turn off a phisical led connected to a Raspberry.</li>
+    </ul>
+    
+
+
+</div>
+
+<div class="remark">
+    <h3>User Stories</h3>
+    <h4>Arrival at the Indoor phase</h4>
+    <p>
+        As a waste truck driver:
+        <ul>
+            <li>
+                When I arrive in the <kc>Indoor</kc> area, I intend to notify my interest in depositing a waste load through a smart device.
+                I expect the <kc>WasteService</kc> to provide some tools to specify the type of load (Plastic or Glass) and the weight of the load. 
+                I expect to receive a positive (<kc>loadaccept</kc>) or negative (<kc>loadrejected</kc>) response.
+            </li>
+            <li>
+                If the received answer is negative (<kc>loadrejected</kc>) I will free the <kc>Indoor</kc> area and go away. 
+            </li>
+            <li>
+                If the response is positive (<kc>loadaccept</kc>) I expect the <kc>transport trolley</kc> to pick up the waste load and move it from the <kc>Indoor</kc> area to the appropriate container. In any case as soon as the <kc>transport trolley</kc> takes the waste load, I free the <kc>Indoor</kc> area and leave.
+            </li>
+        </ul>
+        
+    </p>
 </div>
 
 <h2>Problem analysis</h2>
