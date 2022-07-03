@@ -208,10 +208,12 @@ div.imagedesc{
 <h2>Requirement analysis</h2>
 <div class="remark">
     <h3>The interaction with the client has clarified the meaning of the following terms:</h3>
+    <br>
     <kc>NOUNS:</kc>
-    <br><br>
+    <br>
     <ul>
-        <li><ks>Service area</ks>: A conventional rectangular room, free of internal obstacles and bordered by solid walls. The room must include an Indoor, a PlasticBox and a GlassBox.</li>
+        <li><ks>WasteService</ks>: a software system named "<b>WasteService</b>", that implements the required automation functions.</li>
+        <li><ks>Service area</ks>: a conventional rectangular room, free of internal obstacles and bordered by solid walls. The room must include an Indoor, a PlasticBox and a GlassBox.</li>
         <li><ks>Indoor</ks>: a port used to enter waste material into the service-area.</li>
         <li><ks>PlasticBox</ks>: container, devoted to store objects made of plastic, upto MAXPB kg of material.</li>
         <li><ks>GlassBox</ks>: container, devoted to store objects made of glass, upto MAXGB kg of material.</li>
@@ -219,6 +221,15 @@ div.imagedesc{
         <li><ks>MAXGB</ks>: pre-set value representing the maximum capacity of the GlassBox.</li>
         <li><ks>DDR robot</ks>: Differential Drive Robot, a robot that works as a transport trolley. It is capable of moving in the environment by executing simple move commands. The transport trolley has the form of a square of side length RD.</li>
         <li><ks>Home location</ks>: fixed starting position inside the service-area where the robot will be located before the software starts and where it will return if no jobs are pending.</li>
+        <li><ks>Deposit action</ks>: represents the task of the robot, this activity can be divided into elementary steps:
+            <ul>
+                <li>the robot must move from its current position (Home or other) and reach the indoor</li>
+                <li>the robot must pick up the waste load</li>
+                <li>the robot must move from the indoor to the appropriate container (PlasticBox or GlassBox)</li>
+                <li>the robot must deposit the waste in the container.</li>
+            </ul>
+        </li>
+        <li><ks>Service-manager</ks>: a human which supervises the state of the service-area using the <b>WasteServiceStatusGUI</b> </li>
         <li><ks>WasteServiceStatusGUI</ks>: a user interacting component that allow the service-manager to observe the state of the service-area including: 
             <ul>
                 <li>the current state of the transport trolley and it position in the room</li>
@@ -226,30 +237,25 @@ div.imagedesc{
                 <li>the current state of the Led.</li>
             </ul>
         </li>
-        <li><ks>Current state of the transport trolley</ks>: indicates the status of the trolley, if it is stopped, in motion, or in the HOME position.</li>
+        <li><ks>Current state of the transport trolley</ks>: indicates the status of the trolley, if it is stopped, in motion, or in the HOME position (Idle).</li>
         <li><ks>Current state of the Led</ks>: indicates the status of the led, if it is off, on, or it is blinking.</li>
-        <li><ks>Warning devices</ks>: a physical led that represents the state of the transport trolley.</li>
-        <li><ks>Alarm devices</ks>: a physical sonar that operates as a distance detector, if the measured distance is less than DLIMIT the robot must be stopped, it will be reactivated only when the distance will return to be greater than DLIMIT.</li>
+        <li><ks>Warning devices</ks>: a physical <b>Led</b> that represents the state of the transport trolley.</li>
+        <li><ks>Alarm devices</ks>: a physical <b>Sonar</b> that operates as a distance detector, if the measured distance is less than DLIMIT the robot must be stopped, it will be reactivated only when the distance will return to be greater than DLIMIT.</li>
         <li><ks>DLIMIT</ks>: maximum fixed distance below which the robot must be stopped.</li>
         <li><ks>TruckLoad kg</ks>: weight of waste transported by the waste truck.</li>
-        <li></li>
-        <li></li>
-        <li></li>
-
+        <li><ks>Smart devices</ks>: a device that allows the driver of the waste truck to communicate with the Waste Service.</li>
+        <li><ks>Loadaccept</ks>: the answer sent by the waste service if the waste load can be accepted.</li>
+        <li><ks>Loadrejecetd</ks>: the answer sent by the waste service if the waste load cannot be accepted.</li>
     </ul>
-    <br><br>
+    <br>
     <kc>VERBS:</kc>
-    <br><br>
+    <br>
     <ul>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
+        <li><ks>Measures a distance</ks>: sonar calculates the distance from the objects in front of it.</li>
+        <li><ks>Pick up a waste-load</ks>: the robot takes the load from the waste-truck that goes away and leaves the <b>Indoor</b> free.</li>
+        <li><ks>Deposit the waste-load</ks>: the robot unloads the waste in the appropriate container.</li>
+        <li><ks>Must be stopped</ks>: the transport trolley must be stopped at its current location, regardless of the action it is taking. This operation is up to the WasteService system.</li>
+        <li><ks>Be resumed</ks>: the transport trolley must be reactivated in the same position in which it was stopped and resume the action it was performing before stopping. This operation is up to the WasteService system.</li>
     </ul>
 </div>
 
