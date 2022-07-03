@@ -1,0 +1,446 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!--
+    <link rel="stylesheet" type="text/css" href="../css/issStyle1.css">
+    <script type="text/javascript" src="../css/issStyle.js"></script>
+-->
+<style type="text/css">
+body
+{
+    margin-left:  30px;
+    margin-right: 30px;
+};
+
+P
+{
+    font-family: Tahoma;
+    font-size: 10pt;
+};
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+	font-size: 93%;
+}
+
+a:hover {
+    background-color: #cccccc;
+}
+
+
+hr {
+    clear: both;
+    height: 1px;
+    color: #242424;
+    background-color: transparent;
+}
+
+h1, h2, h3 {
+    color: #242424;
+    clear: left;
+    font: 100% Tahoma, Helvetica, Arial, sans-serif;
+    margin-bottom: 0.5em;
+    padding-top: 0.5em;
+	border-radius: 10px;
+	padding: 5px;
+}
+
+top {
+	width: 100%;
+}
+
+
+#i {
+    color: #ff1010;
+}
+tt{
+	font-family: "Arial";
+    font-size: 90%;
+	color: #006600;
+}
+em{
+	font-family: "Arial";
+    font-size: 80%;
+	font-weight: bold;
+	border-style:solid;
+	border-color: #abe876;
+    color: #1632cc;
+}
+bc{
+	font-family: "Arial";
+	font-size: 90%;
+	font-weight: bold;
+    color: #990000;
+	background-color: #fcf8c7;
+}
+ks{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	font-size: 90%;
+}
+kc{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #008000	;
+	font-size: 90%;
+}
+pre{
+	font-family: "Consolas";
+	font-size: 85%;
+	background-color: #f5f5f5;
+	border: 1.5px solid silver;
+	padding: 5px;
+}
+m{
+	font-family: "Helvetica";
+	line-height: 100%;
+ 	font-size: 75%;
+}
+div.body{
+	 
+    font-size: 18px;
+}
+k{
+    color: #990000;
+	font-weight: bold;
+	font-size: 90%;
+}
+h1 {
+    font-size: 150%;
+    background-color: #b2c0ff;
+	padding: 10px;
+}
+
+h2 {
+    background-color: #9ed8ff;
+    font-size: 130%;
+}
+
+h3 {
+	background-color: #e6ccff;
+    font-size: 100%;
+}
+h4 {
+    background-color: #ccffcc;
+    font-size: 100%;
+	width: 95%;
+	border-radius: 5px;
+	padding: 2px;
+}
+h5 {
+    background-color: #d5ffb0;
+    font-size: 100%;
+
+}
+div.req{
+	background-color: #d9ffb3;
+    font-size: 18px;
+	width: 700px;
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}
+div.remark{
+	background-color: #E3F2FD;
+    border: 1.5px solid #d5f2ed;
+    padding: 15px;
+    margin: 10px;
+	border-radius: 25px;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+ol, ul, li {
+  margin: 0;
+  margin-left: 10px;
+  padding: 0;
+  padding-bottom: 5px;
+}
+
+table, th, td {
+	border: 1px solid black;
+}
+
+img {
+	border: 1.5px solid #d5f2ed
+
+}
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+}
+
+div.wrapdesc{
+	width: 90%;
+	margin: auto;
+}
+
+div.imagedesc{
+	width: 85%;
+	margin: auto;
+}
+</style>
+    
+<head>
+   
+<title>WasteService</title></head>
+    
+<body>
+<div id="top">
+<h1>LABORATORIO DI INGEGNERIA DEI SISTEMI SOFTWARE <font size="5"></font> </h1>
+</div>  
+
+<div class="body"> 
+<h2>Introduction</h2>
+ 
+ 
+<h2>Requirements</h2>
+<div class="remark">
+    <a href="./resouces/TemaFinale22.html">TemaFinale22</a>
+</div>
+
+<h2>Requirement analysis</h2>
+<div class="remark">
+    <h3>The interaction with the client has clarified the meaning of the following terms:</h3>
+    <kc>NOUNS:</kc>
+    <br><br>
+    <ul>
+        <li><ks>Service area</ks>: A conventional rectangular room, free of internal obstacles and bordered by solid walls. The room must include an Indoor, a PlasticBox and a GlassBox.</li>
+        <li><ks>Indoor</ks>: a port used to enter waste material into the service-area.</li>
+        <li><ks>PlasticBox</ks>: container, devoted to store objects made of plastic, upto MAXPB kg of material.</li>
+        <li><ks>GlassBox</ks>: container, devoted to store objects made of glass, upto MAXGB kg of material.</li>
+        <li><ks>MAXPB</ks>: pre-set value representing the maximum capacity of the PlasticBox.</li>
+        <li><ks>MAXGB</ks>: pre-set value representing the maximum capacity of the GlassBox.</li>
+        <li><ks>DDR robot</ks>: Differential Drive Robot, a robot that works as a transport trolley. It is capable of moving in the environment by executing simple move commands. The transport trolley has the form of a square of side length RD.</li>
+        <li><ks>Home location</ks>: fixed starting position inside the service-area where the robot will be located before the software starts and where it will return if no jobs are pending.</li>
+        <li><ks>WasteServiceStatusGUI</ks>: a user interacting component that allow the service-manager to observe the state of the service-area including: 
+            <ul>
+                <li>the current state of the transport trolley and it position in the room</li>
+                <li>the current weight of the material stored in the two waste-containers</li>
+                <li>the current state of the Led.</li>
+            </ul>
+        </li>
+        <li><ks>Current state of the transport trolley</ks>: indicates the status of the trolley, if it is stopped, in motion, or in the HOME position.</li>
+        <li><ks>Current state of the Led</ks>: indicates the status of the led, if it is off, on, or it is blinking.</li>
+        <li><ks>Warning devices</ks>: a physical led that represents the state of the transport trolley.</li>
+        <li><ks>Alarm devices</ks>: a physical sonar that operates as a distance detector, if the measured distance is less than DLIMIT the robot must be stopped, it will be reactivated only when the distance will return to be greater than DLIMIT.</li>
+        <li><ks>DLIMIT</ks>: maximum fixed distance below which the robot must be stopped.</li>
+        <li><ks>TruckLoad kg</ks>: weight of waste transported by the waste truck.</li>
+        <li></li>
+        <li></li>
+        <li></li>
+
+    </ul>
+    <br><br>
+    <kc>VERBS:</kc>
+    <br><br>
+    <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <h3>Definition of a formal model of the requirements</h3>
+    Since our software must move the robot inside the service-area, we must find a way to automatically test all tasks concerning movements. At this stage, we need to introduce a proper representation of the service-area.</br>
+	
+	<table>
+		<tbody>
+	<pre style="max-width:100%">
+	
+	
+|h, 0, 0, 0, 0, X, X, X
+|0, 0, 0, 0, 0, 0, 0, 0
+|0, 0, 0, 0, 0, 0, 0, 0
+|0, 0, 0, 0, 0, 0, 0, X
+|0, 0, 0, 0, 0, 0, 0, X
+|<k>X</k>, <k>X</k>, <k>X</k>, 0, 0, 0, 0, X
+
+	</pre>
+		</tbody>
+	</table></br>
+    In the above representation we specify that:
+	<ul>
+		<li><b>h</b> : starting cell of the robot</li>
+		<li><b>0</b> : cell not occupied (robot can pass over it)</li>
+		<li><b><k>X</k></b> : cell representing indoor</li>
+		<li><b>X</b> : cell occupied by GlassBox and PlasticBox</li>
+	</ul>
+    The robot moves in steps of length RD.The RD length can be defined as: <br>
+        <ul><li>RD = diameter of the circle of minimum radius surrounding the robot.</li></ul>
+    In practice, the robot (i.e., RD) becomes the unit of measurement for distances. The room itself can be thought of as divided into square cells on the RD side. <br> <br>
+		<img src="./resouces/images/RoomGridRD.png" alt="Requirements overview" style="width:40%"/>
+			
+    <h3>Overview of the requirements</h3>
+        <img src="./resouces/images/ElementPositionRoom.drawio.png" alt="Requirements overview" style="width:38%"/> <br>
+		
+
+    We have introduced a <i>cartesian plan</i> over the room in order to define a <i>reference system</i>. Then, as indicated in the image above, the reserved areas are:
+	<ul>
+		<li><b>HOME</b> in the cell <tt>(0, 0)</tt></li>
+		<li><b>Indoor-area</b> in the cell <tt>(5, 0), (5, 1), (5, 2)</tt></li>
+		<li><b>GlassBox</b> in the cell <tt>(0, 5), (0, 6), (0, 7)</tt></li>
+		<li><b>PlasticBox</b> in the cells <tt>(7, 3), (7, 4), (7, 5)</tt></li>
+	</ul>
+    <h3>User Stories</h3>
+    Through the user stories we can see the expected behavior of the system.
+    <table>
+		<tbody>
+		<tr>
+			<td style="width:60%">
+				<h4 style="padding-left:10px"><ks><i>moveToIndoor</i></ks> Task</h4>
+					<li><b>Description</b>:
+					This task is used by the system for moving the trasport trolley towards the indoor area in order to pick up a waste-load from a Waste truck located on the INDOOR.
+					</li>
+				</ul>
+			</td>
+			<td>
+				<center><img src="./resouces/images/MoveToIndoor.drawio.png" alt="moveToIn Graph" style="width:65%"></center>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:60%">
+				<h4 style="padding-left:10px"><ks><i>moveToPlasticBox</i></ks> Task</h4>
+					<li><b>Description</b>:
+					This task is used by the system for moving the transport trolley from the INDOOR to the proper waste container(PlasticBox).
+					</li>
+				</ul>
+			</td>
+			<td>
+				<center><img src="./resouces/images/MoveToPlasticBox.drawio.png" alt="moveToSlotIn Graph" style="width:65%"></center>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:60%">
+				<h4 style="padding-left:10px"><ks><i>backToHome</i></ks> Task</h4>
+				<ul>
+					<li><b>Relative Use Case</b>: <i>Car Enter</i></li>
+					<li><b>Legend:</b><br><br>
+						<ul>
+							<li>Colored Square: location where you can find the robot at the task call.</li>
+						</ul>
+					</li>
+					<li><b>Description</b>:
+					This task is used by the system for returning the transport trolley to the home after it has parked a car and there are not pending requests.
+					</li>
+				</ul>
+			</td>
+			<td>
+				<center><img src="img/backToHome_map.png" alt="backToHome Graph" style="max-width:100%"></center>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:60%">
+				<h4 style="padding-left:10px"><ks><i>moveToHome</i></ks> Task</h4>
+				<ul>
+					<li><b>Relative Use Case</b>: <i>Submit Token</i></li>
+					<li><b>Legend:</b><br><br>
+						<ul>
+							<li><div style="width:20px;height:20px;background-color:#D5E8D4;display:inline-block;border:1px solid #82B366"></div> : location where you can find the robot at the task call.</li>
+						</ul>
+					</li>
+					<li><b>Description</b>:
+					This task is used by the system for moving the trasport trolley to the home.
+					</li>
+				</ul>
+			</td>
+			<td>
+				<center><img src="img/moveToHome_map.png" alt="moveToHome Graph" style="max-width:100%"></center>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:60%">
+				<h4 style="padding-left:10px"><ks><i>moveToSlotOut</i></ks> Task</h4>
+				<ul>
+					<li><b>Relative Use Case</b>: <i>Submit Token</i></li>
+					<li><b>Legend:</b><br><br>
+						<ul>
+							<li><div style="width:20px;height:20px;background-color:#D5E8D4;display:inline-block;border:1px solid #82B366"></div> : location where you can find the robot at the task call;</li>
+							<li>Colored Square: cell used by the transport trolley to pick up the car from the adiacent parking-slot.</li>
+						</ul>
+					</li>
+					<li><b>Description</b>:
+					This task is used by the system for picking up a car in order to transport it to the outdoor-area.
+					</li>
+				</ul>
+			</td>
+			<td>
+				<center><img src="img/moveToSlotOut_map.png" alt="moveToSlotOut Graph" style="max-width:100%"></center>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:60%">
+				<h4 style="padding-left:10px"><ks><i>moveToOut</i></ks> Task</h4>
+				<ul>
+					<li><b>Relative Use Case</b>: <i>Car Enter</i></li>
+					<li><b>Legend:</b><br><br>
+						<ul>
+							<li><div style="width:20px;height:20px;background-color:#F8CECC;display:inline-block;border:1px solid #B85450"></div> : outdoor-area;</li>
+							<li>Colored Square: location where you can find the robot at the task call.</li>
+						</ul>
+					</li>
+					<li><b>Description</b>:
+					This task is used by the system for transporting a car to the outdoor-area.
+					</li>
+				</ul>
+			</td>
+			<td>
+				<center><img src="img/moveToOut_map.png" alt="moveToOut Graph" style="max-width:100%"></center>
+			</td>
+		</tr>
+	</tbody></table>
+
+</div>
+ 
+
+</div>
+  
+</div>
+
+<h2>Problem analysis</h2>
+ 
+<h2>Test plans</h2> 
+
+<h2>Project</h2> 
+
+<h2>Testing</h2> 
+
+<h2>Deployment</h2> 
+
+<h2>Maintenance</h2> 
+ 
+<!-- USEFUL
+<table style="width:100%" border="1">
+<tr>
+<td style="width:50%">
+</td>
+<td></td>
+</tr>
+</table>
+-->
+	      	
+<br/><br/> 	
+
+<div style="background-color:rgba(60, 131, 186, 0.9); width:50%;text-align:center;color:white; margin-left: 25%; border-radius: 25px;" >
+    <br>
+    By students: <br>
+    Name: Annamaria Simonitto, Enrico Valastro, Alessio Reitano   
+    <br>
+    Email: annamaria.simonitto@studio.unibo.it, enrico.valastro@studio.unibo.it, alessio.reitano@studio.unibo.it
+    <br><br>
+    <img src="./resouces/images/AnnamariaSimonitto.jpg" alt="" width="8%" height="8%">
+    <img src="./resouces/images/EnricoValastro.jpeg" alt="" width="8.5%" height="8.5%">
+    <img src="./resouces/images/AlessioReitano.jpeg" alt="" width="10%" height="10%">
+</div> 
+</body>
+</html>
