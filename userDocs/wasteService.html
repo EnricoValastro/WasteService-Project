@@ -372,7 +372,9 @@ div.imagedesc{
                 <td style="width:60%">
                     <h4 style="padding-left:10px"><ks><i>moveToIndoor</i></ks> Task</h4>
                     <ul>
-                        <li><b>Relative User Stories</b>: <i></i></li>
+                        <li>
+                            <b>Relative User Stories</b>: <i>Store Waste</i>
+                        </li>
                         <li><b>Legend:</b><br><br>
                             <ul>
                                 <li><div style="width:20px;height:20px;background-color:#e98190;display:inline-block;border:1px solid #82B366"></div> : Location where you can find the robot at the task call;</li>
@@ -392,7 +394,9 @@ div.imagedesc{
                 <td style="width:60%">
                     <h4 style="padding-left:10px"><ks><i>moveToPlasticBox</i></ks> Task</h4>
                     <ul>
-                        <li><b>Relative User Stories</b>: <i></i></li>
+                        <li>
+                            <b>Relative User Stories</b>: <i>Store Waste</i>
+                        </li>
                         <li><b>Legend:</b><br><br>
                             <ul>
                                 <li><div style="width:20px;height:20px;background-color:#131eeb;display:inline-block;border:1px solid #82B366"></div> : Location where you can find the robot at the task call;</li>
@@ -412,7 +416,9 @@ div.imagedesc{
                 <td style="width:60%">
                     <h4 style="padding-left:10px"><ks><i>moveToGlassBox</i></ks> Task</h4>
                     <ul>
-                        <li><b>Relative User Stories</b>: <i></i></li>
+                        <li>
+                            <b>Relative User Stories</b>: <i>Store Waste</i>
+                        </li>
                         <li><b>Legend:</b><br><br>
                             <ul>
                                 <li><div style="width:20px;height:20px;background-color:#1d0af1;display:inline-block;border:1px solid #82B366"></div> : Location where you can find the robot at the task call;</li>
@@ -432,7 +438,9 @@ div.imagedesc{
                 <td style="width:60%">
                     <h4 style="padding-left:10px"><ks><i>moveToHome</i></ks> Task</h4>
                     <ul>
-                        <li><b>Relative User Stories</b>: <i></i></li>
+                        <li>
+                            <b>Relative User Stories</b>: <i>Store Waste</i>
+                        </li>
                         <li><b>Legend:</b><br><br>
                             <ul>
                                 <li><div style="width:20px;height:20px;background-color:#ecf010;display:inline-block;border:1px solid #141212"></div> : Location where you can find the robot at the task call;</li>
@@ -466,7 +474,7 @@ div.imagedesc{
                 </td>
             </tr>
             <tr>
-                <td style="width:50%">
+                <td style="width:50%; padding: 0%;">
                     <h5 style="padding-left:10px"><a name="StoreRequest" style="text-decoration:none;"><ks>Store Request</ks></a></h5>
                     <ul>
                         <li>
@@ -500,7 +508,9 @@ div.imagedesc{
                         </li>    
                     </ul>
                 </td>
-                <td style="width:50%">
+            </tr>
+            <tr>
+                <td style="width:50%; padding: 0%;">
                     <h5 style="padding-left:10px"><a name="StoreWaste" style="text-decoration:none;"><ks>Store waste</ks></a></h5>
                     <ul>
                         <li>
@@ -535,6 +545,43 @@ div.imagedesc{
                                 </li>
                             </ol>
                         </li>    
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table>
+        <tbody>
+            <tr>
+                <td colspan="2">
+                    <center><h4>Actor: Service Manager</h4></center>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:50%; padding: 0%;">
+                    <h5 style="padding-left:10px"><a name="ObserveState" style="text-decoration:none;"><ks>Observe State</ks></a></h5>
+                    <ul>
+                        <li>
+                            <b>Dependencies:</b><br>
+                            <i>-None.</i>
+                        </li>
+                        <li>
+                            <b>Pre Condition:</b><br>
+                            <i>-None.</i>
+                        </li>
+                        <li>
+                            <b>Post Condition:</b><br> 
+                            <i>-The <kc>Service manager</kc> checks the status of the <kc>transport trolley</kc>>, the status of the <kc>led</kc>, the current weigth of the material stored in the two waste-containers.</i>
+                        </li>
+                        <li>
+                            <b>Main Scenario:	</b> 
+                            <ol>
+                                <li>The <kc>WasteService</kc> creates a <kc>WasteServiceStatusGUI</kc>;</li>
+                                <li>The <kc>WasteServiceStatusGUI</kc> shows the <kc>service manager</kc>, the status (working, stopped or idle) of <kc>transport trolley</kc> and its position;</li>
+                                <li>The <kc>WasteServiceStatusGUI</kc> shows the <kc>service manager</kc>, the status (on, of or blinking) of the <kc>led</kc>;</li> 
+                                <li>The <kc>WasteServiceStatusGUI</kc> shows the <kc>service manager</kc>, the current weigth of the material stored in the two waste-containers;</li> 
+                            </ol>
+                        </li> 
                     </ul>
                 </td>
             </tr>
