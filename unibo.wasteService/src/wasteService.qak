@@ -1,0 +1,75 @@
+System wasteservice
+
+Request storeWaste : storeWaste(MAT, QUA)
+Reply loadaccept : loadaccept(_)
+Reply loadrejected : loadrejected(_)
+
+Context ctxwasteservice ip [host="localhost" port=8055]
+
+QActor wasteserviceactor context ctxwasteservice {
+	
+	[#
+		var requestMaterialToStore = ""
+		var requestWeightToStore = 0.0
+		val currentWeightsMap = mutableMapOf<String, Double>("Plastic" to 0.0, "Glass" to 0.0)
+		val maxWeightsMap = mutableMapOf<String, Double>("Plastic" to 500.0, "Glass" to 500.0)
+	#]
+	
+	State idle initial {
+		println("$name	|	in idle ")
+	}
+	Transition t0 whenRequest storeWaste -> requestEvaluation
+	
+	State requestEvaluation {
+		printCurrentMessage
+		onMsg(storeWaste : storeWaste(MAT, QUA)){
+			
+			[#
+				requestMaterialToStore = payloadArg(0)
+				requestWeightToStore = payloadArg(1).toDouble()
+				val currentWeight = currentWeightsMap[requestMaterialToStore]
+				
+			#]
+			if[# currentWeight != null && 
+				(currentWeight + requestWeightToStore) <= maxWeightsMap[requestMaterialToStore]!! #
+			]{
+				
+				[# currentWeightsMap[requestMaterialToStore] = currentWeight + requestWeightToStore #]
+				replyTo storeWaste with loadaccept : loadaccept(_)
+			}
+			else{
+				
+				replyTo storeWaste with loadrejected : loadrejected(_)
+			}
+		}
+	}
+	Goto idle
+}
+
+QActor wastetruckactor context ctxwasteservice{
+	[#
+		var Mat = ""
+		var Qua = ""	
+	#]
+	State idle initial{
+		println("$name	|	started")
+		
+		[#
+			Mat = if (kotlin.random.Random.nextFloat() > 0.5) "glass" else "plastic" 
+			Qua = kotlin.random.Random.nextInt(100, 200).toString()
+		#]
+		
+		request wasteserviceactor -m storeWaste : storeWaste($Mat, $Qua)
+	}
+	Transition t0 whenReply loadaccept -> unloadwaste
+					whenReply loadrejected -> goaway
+	
+	State unloadwaste{
+		println("$name	|	Request accepted")
+	}
+	
+	State goaway{
+		println("$name	|	Request rejected")
+	}
+} 
+
