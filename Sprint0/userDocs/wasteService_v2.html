@@ -87,9 +87,9 @@ kc{
 	font-size: 90%;
 }
 pre{
-	font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+	font-family:monospace;
     font-weight: 500;
-	font-size: 90%;
+	font-size: 85%;
 	background-color: #f5f5f5;
 	border: 1.5px solid silver;
 	padding: 5px;
@@ -268,6 +268,24 @@ div.imagedesc{
 <key>val</key> MAXGB             :  Float
 <key>var</key> currWeightGb :  Float</pre>
 
+    <h4>Deposit Action</h4>
+    Rappresenta una sequenza di azioni eseguite dal <kc>transport trolley</kc>
+    <ul>
+        <li>prelevare un "waste load" dal "waste truck" che si trova in <kc>INDOOR</kc>. (D'ora in avanti ci riferiremo a questa microazione come <kc>Pickingup</kc>)</li>
+        <li>spostare il carico dall'<kc>INDOOR</kc> all'apposito container (<kc>PLASTICBOX</kc> o <kc>GLASSBOX</kc>).</li>
+        <li>depositare il carico nel container. (D'ora in avanti ci riferiremo a questa microazione come <kc>Droppingout</kc>)</li>
+    </ul>
+
+    <h4>Sonar</h4>
+
+    <h4>Led</h4>
+
+    <h4>DLIMIT</h4>
+    Valore prefissato che indica la distanza massima dal sonar a cui un oggetto si puo' trovare senza compromettere il funzionamento del <kc>transport trolley</kc>. <br>
+    Puo' essere formalizzato tramite una costante:
+    <pre>
+<key>val</key> DLIMIT :  Float</pre>
+
     <h4>TruckLoad</h4>
     Represents the weight, expressed in Kg, of the waste that the waste truck intends to deposit.
     <pre>
@@ -277,12 +295,6 @@ div.imagedesc{
     Represents the material, Plastic or Glass, of the waste that the waste truck intends to deposit.
     <pre>
 <key>enum</key> <key>class</key> Material { <i>PLASTIC</i>, <i>GLASS</i> }</pre>
-
-    <h4>DLIMIT</h4>
-    Valore prefissato che indica la distanza massima dal sonar a cui un oggetto si puo' trovare senza compromettere il funzionamento del <kc>transport trolley</kc>. <br>
-    Puo' essere formalizzato tramite una costante:
-    <pre>
-<key>val</key> DLIMIT :  Float</pre>
 
     <h4>Current state of the transport trolley</h4>    
     Indicates the status of the <kc>transport trolley</kc>, if it is Idle, Stopped, Moving, Pickingup, Droppingout. <br>
@@ -295,7 +307,7 @@ div.imagedesc{
     <pre>
 <key>enum</key> <key>class</key> CurrStateLed { <i>ON</i>, <i>OFF</i>, <i>BLINKING</i> }</pre>
 
-    <h4>Deposit</h4>
+    <h4>Deposit request</h4>
     Rappresenta la richiesta di deposito del meteriale; viene inviata dal guidatore del <kc>Waste-truck</kc> tramite lo Smart device
     e viene ricevuta ed elaborata dal <kc>WasteService</kc>. <br>
     Poichè non esiste alcun costrutto "<i>built-in</i>" nel linguaggio Kotlin o in altri linguaggi "<i>general purpose</i>", per esprimere il concetto di <kc>Request</kc> o 
@@ -376,7 +388,7 @@ assertTrue(asw.contains("loadrejected"))</pre>
     <br> <br>
     Il basicorobot è in grado di eseguire comandi base di spostamento inviando messaggi:
     <pre>
-<key3>//MOVE = w | s | l | r | h</key3>
+<key3>// MOVE = w | s | l | r | h</key3>
 <key2>Dispatch</key2> cmd   :  cmd(MOVE)</pre>
     Servendosi di questi comandi elementari il <kc>basicorobot</kc> è in grado di far eseguire al robot uno <kc>step</kc> ovvero un passo in avanti 
     per il tempo passato come parametro fornendo una risposta, che può essere <kc>stepdone</kc> se lo step viene eseguito con successo 
