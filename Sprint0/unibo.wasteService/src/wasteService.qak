@@ -58,34 +58,3 @@ QActor wasteserviceactor context ctxwasteservice {
 	}
 	Goto idle
 }
-
-
-/* 
-QActor wastetruckactor context ctxwasteservice{
-	[#
-		var Mat = ""
-		var Qua = ""	
-	#]
-	State idle initial{
-		println("$name	|	started")
-		
-		[#
-			Mat = if (kotlin.random.Random.nextFloat() > 0.5) "glass" else "plastic" 
-			Qua = kotlin.random.Random.nextInt(100, 200).toString()
-		#]
-		
-		request wasteserviceactor -m storeWaste : storeWaste($Mat, $Qua)
-	}
-	Transition t0 whenReply loadaccept -> unloadwaste
-					whenReply loadrejected -> goaway
-	
-	State unloadwaste{
-		println("$name	|	Request accepted")
-	}
-	
-	State goaway{
-		println("$name	|	Request rejected")
-	}
-} 
-
-*/

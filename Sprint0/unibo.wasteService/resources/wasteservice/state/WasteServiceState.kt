@@ -19,6 +19,8 @@ data class WasteServiceState(private val boxMaxWeight : MutableMap<Material, Dou
         }
     }
 
+
+
     fun updateBoxWeight(material: Material, value : Double){
         boxCurrentWeight[material] = boxCurrentWeight[material]!!.plus(value)
     }

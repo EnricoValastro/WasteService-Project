@@ -104,7 +104,14 @@ key2{
     font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-weight: 500;
 	font-size: 100%;
-    color: #d90854;
+    color: #ad0d0f;
+}
+
+key3{
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 500;
+	font-size: 100%;
+    color: #01b948;
 }
 
 m{
@@ -277,10 +284,10 @@ div.imagedesc{
 <key>val</key> DLIMIT :  Float</pre>
 
     <h4>Current state of the transport trolley</h4>    
-    Indicates the status of the <kc>transport trolley</kc>, if it is Idle, Stopped, Moving. <br>
+    Indicates the status of the <kc>transport trolley</kc>, if it is Idle, Stopped, Moving, Pickingup, Droppingout. <br>
     Puo' essere formalizzato tramite un enumerativo:
     <pre>
-<key>enum</key> <key>class</key> CurrStateTrolley { <i>IDLE</i>, <i>STOPPED</i>, <i>MOVING</i> }</pre>
+<key>enum</key> <key>class</key> CurrStateTrolley { <i>IDLE</i>, <i>STOPPED</i>, <i>MOVING</i>, <i>PICKINGUP</i>, <i>DROPPINGOUT</i> }</pre>
 
     <h4>Current state of the led</h4>
     Indicates the status of the <kc>led</kc>, if it is On, Blinking, Off. <br>
@@ -309,6 +316,75 @@ div.imagedesc{
     <pre>
 <key2>Reply</key2> loadrejected : loadrejected(_)</pre>
 
+    <h4>WasteService</h4>
+    E' il servizio che si occupa di coordinare tutte le attività di raccolta e smistamento dei rifiuti, interfacciandosi con il <kc>transport trolley</kc>
+    per svolgere le azioni necessarie. <br>
+    Il <kc>WasteService</kc> è quindi un'entità attiva che deve essere in grado di ricevere richieste (<kc>storeWaste</kc>) e inviare risposte 
+    (<kc>loadaccept</kc>, <kc>loadrejected</kc>). Pertanto può essere formalizzato usando il linguaggio Qak come un <kc>Attore</kc> (<a href="../unibo.wasteService/src/wasteService.qak">wasteService.qak</a>).
+    <pre>
+<key2>QActor</key2> wasteserviceactor <key2>context</key2> ctxwasteservice {
+        <key2>State</key2> setup <key2>initial</key2> {
+            ...
+        }
+        <key2>Goto</key2> idle
+        
+        <key2>State</key2> idle {
+            ...
+        }
+        <key2>Transition</key2> t0 <key2>whenRequest</key2> storeWaste -> requestEvaluation
+        
+        <key2>State</key2> requestEvaluation {
+            <key2>onMsg</key2>(storeWaste : storeWaste(MAT, QUA)){
+                
+                <key2>if</key2>[# boxState.canStore(requestMaterialToStore, requestWeightToStore) #]
+                {
+                    ...
+                    <key2>replyTo</key2> storeWaste <key2>with</key2> loadaccept : loadaccept(_)
+                }
+                <key2>else</key2>{
+                    <key2>replyTo</key2> storeWaste <key2>with</key2> loadrejected : loadrejected(_)
+                } 
+            }
+        }
+        <key2>Goto</key2> idle
+    }</pre>
+
+    Per verificare il corretto funzionamento del <kc>wasteService</kc> e comprendere meglio quale sia il comportamento atteso, abbiamo predisposto
+    alcuni semplici test (<a href="../unibo.wasteService/test/unibo/testwasteservice/TestWasteServiceActor.kt">TestWasteServiceActor.kt</a>).
+
+    <pre>
+<key>var</key> storeWaste = "msg(storeWaste, request, testunit, wasteserviceactor, storeWaste(PLASTIC, 100),1)"        
+<key>var</key> asw = conn.request(storeWaste)
+assertTrue(asw.contains("loadaccept"))
+
+<key>var</key> storeWaste = "msg(storeWaste, request, testunit, wasteserviceactor, storeWaste(PLASTIC, 1000),1)"        
+<key>var</key> asw = conn.request(storeWaste)
+assertTrue(asw.contains("loadrejected"))</pre>
+
+    <h4>DDR Robot</h4>
+    Il <kc>Differential Drive Robot</kc> è un robot fisico che esegue diverse mosse di base come:
+    <ul>
+        <li>muoversi avanti-indietro lungo una direzione costante</li>
+        <li>fermarsi</li>
+        <li>ruotare di 90° a destra o sinistra</li>
+    </ul>
+    Queste mosse sono realizzate inviando opportuni comandi al robot. <br>
+    Il committente fornisce del software in grado di interfacciarsi con il <kc>DDR Robot</kc> e con altri robot (reali o virtuali):
+    <a href="https://github.com/anatali/issLab2022/tree/main/unibo.basicrobot22">unibo.basicrobot22</a>. <br>
+    L'attore Qak <a href="./resouces/qak/basicrobot.qak">basicrobot.qak</a> di <kc>unibo.basicrobot22</kc> è in grado di interfacciarsi con il DDR robot e comandare mosse elementari:
+    <br> <br>
+    Il basicorobot è in grado di eseguire comandi base di spostamento inviando messaggi:
+    <pre>
+<key3>//MOVE = w | s | l | r | h</key3>
+<key2>Dispatch</key2> cmd   :  cmd(MOVE)</pre>
+    Servendosi di questi comandi elementari il <kc>basicorobot</kc> è in grado di far eseguire al robot uno <kc>step</kc> ovvero un passo in avanti 
+    per il tempo passato come parametro fornendo una risposta, che può essere <kc>stepdone</kc> se lo step viene eseguito con successo 
+    o <kc>stepfail</kc> in caso contrario:
+    <pre>
+<key2>Request</key2> step   :  step(TIME)
+<key2>Reply</key2> stepdone :  stepdone(V)
+<key2>Reply</key2> stepfail :  stepfail(DURATION, CAUSE)
+    </pre>
 
 
 
@@ -363,45 +439,18 @@ div.imagedesc{
     </p>
 </div>
 
-<div class="remark">
-    <h3>Formalisation of the Requirements</h3>
-
-    <p>
-        In order to formalize the requirements we will use the <ks>QActor meta-model</ks> (Qak) developed by our software house. 
-        The documentation for this meta-model can be found here : <a href="./resouces/html/qak.html" style="color: #0000CD;" ;">QActor meta-model</a>.
-    </p>
-
-    <h4>Truck-WasteService interaction: Request-reply</h4>
-    From the requirements, and on the basis of what has been clarified by the client, it is clear that the interaction 
-    between <kc>Waste Truck</kc> and <kc>WasteService</kc> occurs through the exchange of messages that can be <b>formalized</b>
-    in the following way through the <b>Qak</b> meta-model:
-    <pre>
-        <span></span>
-Request storeload : storeload(MATERIAL, WEIGHT)
-Reply loadaccept : loadaccept()
-Reply loadrejected : loadrejected()
-    </pre>
-    <p>Il <kc>WasteService</kc> di conseguenza deve essere un'entità capace di ricevere richieste e inviare risposte </p>
-
-    <h4></h4>
-
-
-    
-
-
-</div>
 
 <h2>Problem analysis</h2>
  
-<h2>Test plans</h2> 
 
-<h2>Project</h2> 
 
-<h2>Testing</h2> 
 
-<h2>Deployment</h2> 
 
-<h2>Maintenance</h2> 
+
+
+
+
+
  
 <!-- USEFUL
 <table style="width:100%" border="1">

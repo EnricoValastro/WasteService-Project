@@ -83,7 +83,8 @@ class TestWasteServiceActor {
     fun testAccept() {
         var asw = ""
         val prevState =obs.currentTypedState!!
-        val storeWaste = "msg(storeWaste, request, testunit, wasteserviceactor, storeWaste($material,$weight),1)"
+
+        var storeWaste = "msg(storeWaste, request, testunit, wasteserviceactor, storeWaste($material, $weight),1)"
         println("TestWasteServiceActor	|	testaccept on message: $storeWaste")
         try {
             asw = conn.request(storeWaste)
