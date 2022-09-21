@@ -277,14 +277,56 @@ div.imagedesc{
     </ul>
 
     <h4>Sonar</h4>
+        Si tratta di un sensore 'HC-SR04'. 
+        Il committente ci fornisce il seguente software (<a href="./resouces/c/SonarAlone.c">SonarAlone.c</a>), il quale rende disponibile un generatore di dati (distanza misurata) sul dispositivo di output.<br>
+        Inoltre ci viene fornito software relativo al Sonar in <a href="./resouces/qak/sonarqak22.qak">unibo.sonarqak22</a>
+        <br>
+        Formalizziamo il sonar come un <kc>attore QAk</kc> visto che è possibile utilizzare lo scambio di messaggi. Tale entità è in grado di emettere eventi in base alla distanza rilevata.
+        
+        <pre>
+<key2>Dispatch</key2> sonaractivate     : info(ARG)
+<key2>Dispatch</key2> sonardeactivate   : info(ARG)
+<key2>Event</key2> sonar               : distance(V)</pre>
+
+    In particolare i comandi <i>sonaractivate</i> e <i>sonardeactivate</i> servono per attivare e disattivare il sonar, 
+    mentre l'evento sonar viene emesso o da <i>sonarSimulator</i> o  da <i>sonardatasource</i>, rispettivamente sonar simulato o concreto, 
+    e successivamente inviato al prossimo attore della pipe. <br>
+    L'architettura fornita dal committente è del seguente tipo: <br></br>
+
+    <img src="./resouces/images/archsonar.png" alt="" width="800">
+    <br>
+    L'attore <i>distanceFilter</i> si occupa di filtrare e inviare al prossimo attore solo eventi di tipo <i>obstacle: obstacle (distance)</i> quando la distanza rilevata è minore di una distanza prefissata definita successivamente (DLIMIT).
 
     <h4>Led</h4>
+    Il Led is an output device present on the RaspberryPI, which performs certain actions, including: <br>
+    <ul>
+        <li>Led Off : when the Transport Trolley is in HOME.</li>
+        <li>Led On: when the Transport Trolley is stopped (when distance detected < DLIMIT)</li>
+        <li>Led Blink: when the Transport Trolley is in motion or is unloading/loading material. </li>
+    </ul>
+    The customer already provides us with software for the LED: <a href="https://github.com/anatali/issLab2022/tree/main/unibo.ledqak22">unibo.ledqak22</a> and 
+    <a href="https://github.com/anatali/issLab2022/tree/main/it.unibo.radarSystem22.domain"> it.unibo.radarSystem22.domain</a> <br>
+    It can be formalized using the enumerative:
+    <pre>
+<key>enum</key> <key>class</key> LedState { <i>ON</i>, <i>OFF</i>, <i>BLINK</i> }</pre>
+    Il servizio offerto dal Led viene esplicitato mediante un attore QAK.... (fare il qak del led) . <br>
+    testing
 
     <h4>DLIMIT</h4>
     Valore prefissato che indica la distanza massima dal sonar a cui un oggetto si puo' trovare senza compromettere il funzionamento del <kc>transport trolley</kc>. <br>
     Puo' essere formalizzato tramite una costante:
     <pre>
 <key>val</key> DLIMIT :  Float</pre>
+
+    Quando il valore misurato dal Sonar è minore di DLIMIT ci si aspetta che: 
+    <ul>
+        <li>
+            Se il robot si muove in avanti arresta il suo movimento e riprenderà quando la distanza diventerà maggiore di DLIMIT. 
+        </li>
+        <li>
+            Se il robot invece si sta girando, comunque termina l'operazione, e riprenderà successivamente da quel "punto" quando la distanza sarà nuovamente maggiore di DLIMIT. 
+        </li>
+    </ul>
 
     <h4>TruckLoad</h4>
     Represents the weight, expressed in Kg, of the waste that the waste truck intends to deposit.
