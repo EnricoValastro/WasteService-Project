@@ -1,0 +1,99 @@
+/*
+ * sonarqak22
+ * Usa MQTT
+ */
+
+System /*-trace*/ sonarqak22
+mqttBroker "broker.hivemq.com" : 1883  eventTopic "unibo/nat/radar"
+ 
+Dispatch sonaractivate   : info(ARG)
+Dispatch sonardeactivate : info(ARG)
+Event    sonar           : distance( V )   //emitted by sonarSimulator or sonardatasource	
+Event    sonardata       : distance( V )   //for the application level
+
+Context ctxsonarqak22 ip [host="localhost" port=8080] 
+
+//DATA SOURCES
+CodedQActor sonarsimulator  context ctxsonarqak22 className "sonarSimulator"  
+CodedQActor sonardatasource context ctxsonarqak22 className "sonarHCSR04Support2021"
+
+/*
+ * Actors for the sonar-data handling pipe
+ * NOTE : we do not use the it.unibo`.radarSystem22.domain
+ * we could do it by introducing an observer that emits the event
+ */
+//CodedQActor datalogger     context ctxsonaronrasp className "dataLogger"
+CodedQActor datacleaner    context ctxsonarqak22 className "dataCleaner"
+//CodedQActor distancefilter context ctxsonaronrasp className "distanceFilter"
+
+
+QActor sonarqak22 context ctxsonarqak22{
+	[# val simulate       = true
+	   val sonarActorName = "sonarqak22"
+	   val usingDomain    = false
+	#]
+	State s0 initial {
+		//printCurrentMessage
+		run  sonarConfig.configureTheSonar(simulate, sonarActorName, usingDomain)
+		 
+		//ASSUMPTION: the sonar subsystem emits the event sonar:distance(V)
+	}
+	Transition t0 whenMsg sonaractivate   -> activateTheSonar
+			      whenMsg sonardeactivate -> deactivateTheSonar
+	
+	State activateTheSonar{
+		printCurrentMessage
+		if[#  `it.unibo`.radarSystem22.domain.utils.DomainSystemConfig.simulation #]{
+			forward sonarsimulator -m sonaractivate : info(ok) 
+			//run sonarConfig.activateSonarSimulated() //usingDomain
+		}else {
+			 forward sonardatasource -m sonaractivate : info(ok)  
+		}
+	}
+	Transition t0  whenEvent sonar         -> handleSonarData  
+	               whenMsg sonardeactivate -> deactivateTheSonar
+	
+	State deactivateTheSonar{
+		printCurrentMessage
+	}
+	Goto end
+ 
+  	State handleSonarData{
+  		 onMsg( sonar : distance(D) ){
+   		 	[# val D = payloadArg(0) #]  
+  		    //println("%%%%%%%%%%%%%%%%%%%%%%%%%%% emit %%%%%%%%%%%%%%% ${D}")
+  		 	emit sonardata : distance($D) //for the application
+  		 }
+  	}
+   	Transition t0 whenEvent sonar -> handleSonarData
+   				  whenMsg sonardeactivate -> deactivateTheSonar
+   		
+	State end{ 
+		println("sonarqak22 BYE")
+		[# System.exit(0) #]
+	}
+}
+
+QActor sonarmastermock context ctxsonarqak22{
+	State s0 initial {
+		forward sonarqak22 -m sonaractivate : info(ok)
+		delay 10000 
+		forward sonarqak22 -m sonardeactivate : info(ok)
+	}
+} 
+
+//Just to have a local feedback ...
+/* 
+QActor sonardatahandler context ctxsonarqak22{
+	State s0 initial {
+	}
+	Transition t0 //whenEvent sonar      -> handleSonarData
+				  whenEvent sonardata -> handleSonarData
+	State handleSonarData{
+		printCurrentMessage
+	}
+	Transition t0 //whenEvent sonar     -> handleSonarData
+				  whenEvent sonardata -> handleSonarData
+}
+
+*/
