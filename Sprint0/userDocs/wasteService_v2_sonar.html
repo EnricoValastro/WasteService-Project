@@ -291,12 +291,12 @@ div.imagedesc{
 
     In particolare i comandi <i>sonaractivate</i> e <i>sonardeactivate</i> servono per attivare e disattivare il sonar, 
     mentre l'evento sonar viene emesso o da <i>sonarSimulator</i> o  da <i>sonardatasource</i>, rispettivamente sonar simulato o concreto, 
-    e successivamente inviato al prossimo attore della pipe.
+    e successivamente inviato al prossimo attore della pipe. <br>
     L'architettura fornita dal committente è del seguente tipo: <br></br>
 
     <img src="./resouces/images/archsonar.png" alt="" width="800">
-
-    L'attore <i>distanceFilter</i> si occupa di filtrare e inviare al prossimo attore solo eventi di tipo <kc>obstacle: obstacle (distance)</kc> quando la distanza rilevata è minore di una distanza prefissata definita successivamente (DLIMIT).
+    <br>
+    L'attore <i>distanceFilter</i> si occupa di filtrare e inviare al prossimo attore solo eventi di tipo <i>obstacle: obstacle (distance)</i> quando la distanza rilevata è minore di una distanza prefissata definita successivamente (DLIMIT).
     <h4>Led</h4>
 
     <h4>DLIMIT</h4>
@@ -304,6 +304,16 @@ div.imagedesc{
     Puo' essere formalizzato tramite una costante:
     <pre>
 <key>val</key> DLIMIT :  Float</pre>
+
+    Quando il valore misurato dal Sonar è minore di DLIMIT ci si aspetta che: <br></br>
+    <ul>
+        <li>
+            Se il robot si muove in avanti arresta il suo movimento e riprenderà quando la distanza diventerà maggiore di DLIMIT. 
+        </li>
+        <li>
+            Se il robot invece si sta girando, comunque termina l'operazione, e riprenderà successivamente da quel "punto" quando la distanza sarà nuovamente maggiore di DLIMIT. 
+        </li>
+    </ul>
 
     <h4>TruckLoad</h4>
     Represents the weight, expressed in Kg, of the waste that the waste truck intends to deposit.
