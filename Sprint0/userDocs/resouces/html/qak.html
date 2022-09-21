@@ -214,7 +214,16 @@ div.imagedesc{
                 </li>
                 <li>
                     There is no "built-in" construct in Kotlin or any 'General Purpose' language
-
+                </li>
+                <li>
+                    Sebbene gli attori Kotlin permettano di lavorare a scambio di messaggi, in Kotlin non esiste nessun costrutto nativo che permetta
+                    di discriminare i diversi tipi di messaggio(Dispatch, Request, Reply, ecc...), il linguaggio Qak ci agevola in tal senso mettendo a 
+                    disposizione costrutti built-in per differenziare le varie tipologie di messaggio.
+                </li>
+                <li>
+                    Gli attori Kotlin seguono un'architettura <kc>message-driven</kc>, ciò comporta che il comportamento di un attore Kotlin sia guidato
+                    dai messaggi che esso riceve e dall'ordine in cui li riceve. Il metalinguaggio Qak amplia le funzionalità degli attori Kotlin permettendo 
+                    di "ingorare" momentaneamente alcuni messaggi.
                 </li>
             </ul>
 </div>

@@ -146,7 +146,7 @@ h3 {
 h4 {
     background-color: #6dd4f4b5;
     font-size: 100%;
-	width: 95%;
+	width: 100%;
 	border-radius: 5px;
 	padding: 2px;
 }
@@ -246,7 +246,7 @@ div.imagedesc{
 <key>val</key> serviceAreaLength :  Float
 <key>val</key> serviceAreaWidth   :  Float</pre>
 
-    <h4>PlasticBox</h4>
+    <div id="PBOX"><h4>PlasticBox</h4></div>    
     Container adibito al deposito di materiale plastico, con capienza massima pari a MAXPB Kg. <br>
     Puo' essere formalizzato usando:
     <ul>
@@ -254,7 +254,7 @@ div.imagedesc{
         <li>una variabile, <kc>currWeightPb</kc>, che esprime il peso corrente della plastica contenuta nel container.</li>
     </ul> 
     <pre>
-<key>val</key> MAXPB             :  Float
+<key>val</key> MAXPB        :  Float
 <key>var</key> currWeightPb :  Float</pre>
 
     <h4>GlassBox</h4>
@@ -265,14 +265,14 @@ div.imagedesc{
         <li>una variabile, <kc>currWeightGb</kc>, che esprime il peso corrente del vetro contenuto nel container.</li>
     </ul> 
     <pre>
-<key>val</key> MAXGB             :  Float
+<key>val</key> MAXGB        :  Float
 <key>var</key> currWeightGb :  Float</pre>
 
     <h4>Deposit Action</h4>
     Rappresenta una sequenza di azioni eseguite dal <kc>transport trolley</kc>
     <ul>
         <li>prelevare un "waste load" dal "waste truck" che si trova in <kc>INDOOR</kc>. (D'ora in avanti ci riferiremo a questa microazione come <kc>Pickingup</kc>)</li>
-        <li>spostare il carico dall'<kc>INDOOR</kc> all'apposito container (<kc>PLASTICBOX</kc> o <kc>GLASSBOX</kc>).</li>
+        <li>spostare il carico dall'<kc>INDOOR</kc> all'apposito container (<a href="#PBOX"><kc>PLASTICBOX</kc></a>  o <kc>GLASSBOX</kc>).</li>
         <li>depositare il carico nel container. (D'ora in avanti ci riferiremo a questa microazione come <kc>Droppingout</kc>)</li>
     </ul>
 
@@ -301,6 +301,12 @@ div.imagedesc{
     Puo' essere formalizzato tramite un enumerativo:
     <pre>
 <key>enum</key> <key>class</key> CurrStateTrolley { <i>IDLE</i>, <i>STOPPED</i>, <i>MOVING</i>, <i>PICKINGUP</i>, <i>DROPPINGOUT</i> }</pre>
+
+    <h4>Position of the transport trolley in the room</h4>
+    Il committente ha chiarito che come posizioni del <kc>transport trolley</kc> sono valide anche indicazioni solo qualitative, come "at Indoor", "at Home" etc... <br>
+    Pertanto è possibile formalizzare questo requisito come segue.
+    <pre>
+<key>enum</key> <key>class</key> TTPosition { <i>HOME</i>, <i>INDOOR</i>, <i>PLASTICBOX</i>, <i>GLASSBOX</i> }</pre>
 
     <h4>Current state of the led</h4>
     Indicates the status of the <kc>led</kc>, if it is On, Blinking, Off. <br>
@@ -396,9 +402,16 @@ assertTrue(asw.contains("loadrejected"))</pre>
     <pre>
 <key2>Request</key2> step   :  step(TIME)
 <key2>Reply</key2> stepdone :  stepdone(V)
-<key2>Reply</key2> stepfail :  stepfail(DURATION, CAUSE)
-    </pre>
+<key2>Reply</key2> stepfail :  stepfail(DURATION, CAUSE)</pre>
 
+    <h4>Transport Trolley</h4>
+    Il <kc>transport trolley</kc> è un'entità software che deve essere in grado di interagire con il <kc>DDR robot</kc>. 
+    Per fare questo il transport trolley deve interfacciarsi con il <kc>basicorobot</kc>. <br>
+    Il trasport trolley deve essere capace di eseguire le stesse azioni che il DDR robot è capace di eseguire, 
+    tuttavia il software fornito dal committente <kc>basicorobot</kc> (<a href="https://github.com/anatali/issLab2022/tree/main/unibo.basicrobot22">unibo.basicrobot22</a>)
+    è un attore e come tale non prevede il concetto di <i>ereditarietà</i>, pertanto il transport trolley non può essere formalizzato usando l'ereditarietà, ciò implica
+    che il transport trolley <b>non è il DDR robot</b> ma <b>usa il DDR robot</b> e quindi deve essere modellato come un attore.
+    
 
 
 
