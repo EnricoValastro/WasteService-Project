@@ -1,0 +1,38 @@
+System ledqak
+
+Event    update_led 	 : update_led(LEDSTATE) // LEDSTATE = ON | OFF | BLINK
+
+Context ctxledqak ip [host="localhost" port=8057]
+
+QActor ledqakactor context ctxledqak {
+	[#	var newState = ws.LedState.OFF	#]
+	
+	
+	
+	State setup initial {
+		println("$name | setup")
+		
+	}
+	
+	State on {
+		printCurrentMessage
+		println("led on")
+	}
+	Transition t0 whenEvent update_led -> off
+	
+	
+	State off{
+		printCurrentMessage
+		println("led off")
+	}
+	Transition t0 whenEvent update_led -> on
+	
+	
+	State blink{
+		printCurrentMessage
+		println("led blinking")
+	}
+	Transition t0 whenEvent update_led -> blink
+	
+	
+}
