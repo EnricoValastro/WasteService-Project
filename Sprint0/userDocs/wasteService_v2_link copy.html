@@ -1,0 +1,548 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!--
+    <link rel="stylesheet" type="text/css" href="../css/issStyle1.css">
+    <script type="text/javascript" src="../css/issStyle.js"></script>
+-->
+<style type="text/css">
+body
+{
+    margin-left:  30px;
+    margin-right: 30px;
+};
+
+P
+{
+    font-family: Tahoma;
+    font-size: 10pt;
+};
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+	font-size: 93%;
+}
+
+a:hover {
+    background-color: #cccccc;
+}
+
+
+hr {
+    clear: both;
+    height: 1px;
+    color: #242424;
+    background-color: transparent;
+}
+
+h1, h2, h3 {
+    color: #242424;
+    clear: left;
+    font: 100% Tahoma, Helvetica, Arial, sans-serif;
+    margin-bottom: 0.5em;
+    padding-top: 0.5em;
+	border-radius: 10px;
+	padding: 5px;
+}
+
+top {
+	width: 100%;
+}
+
+
+#i {
+    color: #ff1010;
+}
+tt{
+	font-family: "Arial";
+    font-size: 90%;
+	color: #006600;
+}
+em{
+	font-family: "Arial";
+    font-size: 80%;
+	font-weight: bold;
+	border-style:solid;
+	border-color: #abe876;
+    color: #1632cc;
+}
+bc{
+	font-family: "Arial";
+	font-size: 90%;
+	font-weight: bold;
+    color: #990000;
+	background-color: #fcf8c7;
+}
+ks{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	font-size: 90%;
+}
+kc{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #008000	;
+	font-size: 90%;
+}
+pre{
+	font-family:monospace;
+    font-weight: 500;
+	font-size: 85%;
+	background-color: #f5f5f5;
+	border: 1.5px solid silver;
+	padding: 5px;
+}
+key{
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 500;
+	font-size: 100%;
+    color: #304ceb;
+}
+key2{
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 500;
+	font-size: 100%;
+    color: #ad0d0f;
+}
+
+key3{
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 500;
+	font-size: 100%;
+    color: #01b948;
+}
+
+m{
+	font-family: "Helvetica";
+	line-height: 100%;
+ 	font-size: 75%;
+}
+div.body{
+	 
+    font-size: 18px;
+}
+k{
+    color: #990000;
+	font-weight: bold;
+	font-size: 90%;
+}
+h1 {
+    font-size: 150%;
+    background-color: #b2c0ff;
+	padding: 10px;
+}
+
+h2 {
+    background-color: #9ed8ff;
+    font-size: 130%;
+}
+
+h3 {
+	background-color: #e6ccff;
+    font-size: 100%;
+}
+h4 {
+    background-color: #6dd4f4b5;
+    font-size: 100%;
+	width: 100%;
+	border-radius: 5px;
+	padding: 2px;
+}
+h5 {
+    background-color: #d5ffb0;
+    font-size: 100%;
+
+}
+div.req{
+	background-color: #d9ffb3;
+    font-size: 18px;
+	width: 700px;
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}
+div.remark{
+	background-color: #E3F2FD;
+    border: 1.5px solid #d5f2ed;
+    padding: 15px;
+    margin: 10px;
+	border-radius: 25px;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+ol, ul, li {
+  margin: 0;
+  margin-left: 10px;
+  padding: 0;
+  padding-bottom: 5px;
+}
+
+table, th, td {
+	border: 1px solid black;
+}
+
+img {
+	border: 1.5px solid #d5f2ed
+
+}
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+}
+
+div.wrapdesc{
+	width: 90%;
+	margin: auto;
+}
+
+div.imagedesc{
+	width: 85%;
+	margin: auto;
+}
+</style>
+    
+<head>
+    <meta charset="UTF-8">
+    <title>WasteService</title>
+</head>
+    
+<body>
+<div id="top">
+<h1>LABORATORIO DI INGEGNERIA DEI SISTEMI SOFTWARE <font size="5"></font> </h1>
+</div>  
+
+<div class="body"> 
+<h2>Introduction</h2>
+ 
+ 
+<h2>Requirements</h2>
+<div class="remark">
+    <a href="./resouces/html/TemaFinale22.html">TemaFinale22</a>
+</div>
+
+<h2>Requirement analysis</h2>
+<div class="remark">
+    <h3>Formalization of the requirements</h3>
+
+    <p>
+        To formalize the requirements we will use the constructs of the <a href="https://kotlinlang.org/?_gl=1*9jnzrr*_ga*MjM2NjMwNzA5LjE2NjA2NDE3NDI.*_ga_9J976DJZ68*MTY2MTI3MTkwNy4zLjEuMTY2MTI3MjM4OS4wLjAuMA..&_ga=2.160972985.500669650.1661271908-236630709.1660641742">Kotlin</a> language. <br>
+        Tuttavia, alcuni requisiti introducono un <kc>abstraction gap</kc>, che risulta difficile colmare con i costrutti dei linguaggi di programmazione comuni.
+        In order to formalize the requirements we will use the <ks>QActor meta-model</ks> (QAk) developed by our software house. 
+        
+        The documentation for this meta-model can be found here : <a href="./resouces/html/qak.html" style="color: #0000CD;" ;">QActor meta-model</a>.
+    </p>
+    
+
+    <h4>Service Area</h4>
+    A conventional rectangular room whose dimension are known, free of internal obstacles and bordered by solid walls. We can formalize the room as a rectangle of size "<kc>serviceAreaLength</kc>" and "<kc>serviceAreaWidth</kc>".
+    <pre>
+<key>val</key> serviceAreaLength :  Float
+<key>val</key> serviceAreaWidth   :  Float</pre>
+
+    <div id="PBOX"><h4>PlasticBox</h4></div>    
+    Container used for the storage of plastic material, with a maximum capacity of MAXPB Kg. <br>
+    It can be formalized using:
+    <ul>
+        <li>constant, <kc>MAXPB</kc>, to indicate the maximum container capacity</li>
+        <li>variable, <kc>currWeightPb</kc>, expressing the current weight of the plastic contained in the container.</li>
+    </ul> 
+    <pre>
+<key>val</key> MAXPB        :  Float
+<key>var</key> currWeightPb :  Float</pre>
+
+    <div id="GBOX"><h4>GlassBox</h4></div>
+    Container used for the storage of glass material, with a maximum capacity of a MAXGB Kg. <br>
+    It can be formalized using:
+    <ul>
+        <li>constant, <kc>MAXGB</kc>, to indicate the maximum container capacity</li>
+        <li>variable, <kc>currWeightGb</kc>, expressing the current weight of the glass contained in the container.</li>
+    </ul> 
+    <pre>
+<key>val</key> MAXGB        :  Float
+<key>var</key> currWeightGb :  Float</pre>
+
+    <h4>Deposit Action</h4>
+    Represents a sequence of actions performed by the <a href="#Ttrolley"><kc>transport trolley</kc></a>
+    <ul>
+        <li>pick up a "waste load" from "waste truck" which is located in <kc>INDOOR</kc>. (From now on we will refer to this microaction as <kc>Pickingup</kc>)</li>
+        <li>move the load from <kc>INDOOR</kc> to appropriate container (<a href="#PBOX"><kc>PLASTICBOX</kc></a>  o <a href="#GBOX"><kc>GLASSBOX</kc></a>).</li>
+        <li>storing the load in the container. (From now on we will refer to this microaction as <kc>Droppingout</kc>)</li>
+    </ul>
+
+    <h4>Sonar</h4>
+        It is a sensor 'HC-SR04'. 
+        The client provides us with the following software (<a href="./resouces/c/SonarAlone.c">SonarAlone.c</a>), which makes available a data generator(measured distance) on the output device<br>
+        We are also provided with software related to Sonar in <a href="./resouces/qak/sonarqak22.qak">unibo.sonarqak22</a>
+        <br>
+        We formalize the sonar as a <kc>QAk</kc> actor, able to emit events based on the distance.
+        
+        <pre>
+<key2>Dispatch</key2> sonaractivate     : info(ARG)
+<key2>Dispatch</key2> sonardeactivate   : info(ARG)
+<key2>Event</key2> sonar               : distance(V)</pre>
+
+    In particular, the <i>sonaractivate</i> and <i>sonardeactivate</i> commands are used to turn sonar on and off, 
+    while the sonar event is output either from <i>sonarSimulator</i> or from <i>sonardatasource</i>, 
+    and then sent to the next actor of the pipe. <br>
+    The architecture provided by the client is of the following type: <br></br>
+
+    <img src="./resouces/images/archsonar.png" alt="" width="800">
+    <br>
+
+    The actor <i>distanceFilter</i> filters and sends to the next actor only events of type <i>obstacle: obstacle (distance)</i> 
+    when the detected 'filtered' distance is less than a fixed distance defined later (<a href="#DL"><kc>DLIMIT<kc></a>)
+    <pre>
+<key2>Event</key2> obstacle  :  obstacle(distance)</pre>
+
+    <div id="led"><h4>Led</h4></div>
+    The Led is an output device present on the RaspberryPI, which performs certain actions, including: <br>
+    <ul>
+        <li>Led Off: when the Transport Trolley is in HOME.</li>
+        <li>Led On: when the Transport Trolley is stopped (when distance detected <a href="#DL"><kc>DLIMIT</kc></a>)</li>
+        <li>Led Blink: when the Transport Trolley is in motion or is unloading/loading material. </li>
+    </ul>
+    The customer already provides us with software for the LED: <a href="https://github.com/anatali/issLab2022/tree/main/unibo.ledqak22">unibo.qak</a> and 
+    <a href="https://github.com/anatali/issLab2022/tree/main/it.unibo.radarSystem22.domain"> it.unibo.radarSystem22.domain</a> <br>
+    
+    The service offered by the LED is expressed through a QA actor <a href="../unibo.wasteService/src/ledQak.qak">Qakled</a> <br>
+
+    <div id="DL"><h4>DLIMIT</h4></div>
+    Prefixed value indicating the maximum distance from the sonar at which an object can be found without compromising the operation of the <a href="#Ttrolley"><kc>transport trolley</kc></a>
+    It can be formalized by a constant:
+    <pre>
+<key>val</key> DLIMIT :  Float</pre>
+
+        When the value measured by Sonar is less than DLIMIT it is expected that: 
+    <ul>
+        <li>
+            If the robot moves forward it stops its movement and will resume when the distance becomes greater than DLIMIT. 
+        </li>
+        <li>
+            If the robot is turning, however, it finishes the operation, and will resume later from that "point" when the distance is again greater than DLIMIT. 
+        </li>
+    </ul>
+
+    <h4>TruckLoad</h4>
+    Represents the weight, expressed in Kg, of the waste that the waste truck intends to deposit.
+    <pre>
+<key>var</key> truckLoad :  Float</pre>
+
+    <h4>Type of the material</h4>
+    Represents the material, Plastic or Glass, of the waste that the waste truck intends to deposit.
+    <pre>
+<key>enum</key> <key>class</key> Material { <i>PLASTIC</i>, <i>GLASS</i> }</pre>
+
+    <h4>Current state of the transport trolley</h4>    
+    Indicates the status of the <a href="#Ttrolley"><kc>transport trolley</kc></a>, if it is Idle, Stopped, Moving, Pickingup, Droppingout. <br>
+    It can be formalized by an enumerative:
+    <pre>
+<key>enum</key> <key>class</key> CurrStateTrolley { <i>IDLE</i>, <i>STOPPED</i>, <i>MOVING</i>, <i>PICKINGUP</i>, <i>DROPPINGOUT</i> }</pre>
+
+    <h4>Position of the transport trolley in the room</h4>
+    The client clarified that as <a href="#Ttrolley"><kc>transport trolley</kc></a> positions only qualitative indications, such as "at Indoor", "at Home" etc... <br>
+    Therefore it is possible to formalize this requirement as follows.
+    <pre>
+<key>enum</key> <key>class</key> TTPosition { <i>HOME</i>, <i>INDOOR</i>, <i>PLASTICBOX</i>, <i>GLASSBOX</i> }</pre>
+
+    <h4>Current state of the led</h4>
+    Indicates the status of the <a href="#led"><kc>led</kc></a>, if it is On, Blinking, Off. <br>
+    <pre>
+<key>enum</key> <key>class</key> CurrStateLed { <i>ON</i>, <i>OFF</i>, <i>BLINKING</i> }</pre>
+
+    <h4>Deposit request</h4>
+    Represents the request for storage of the material; is sent by the driver of the <kc>Waste-truck</kc> via the Smart device
+    and is received and processed by <a href="#WS"><kc>WasteService</kc></a>. <br>
+    Since there is no "<i>built-in</i>" construct in Kotlin or other languages "<i>general purpose</i>", to express the concept of <kc>Request</kc> o 
+    <kc>Reply</kc> we will make use of the <kc>QAk</kc> language that allows us to easily overcome this <kc>abstraction-gap</kc>.
+    <pre>
+<key2>Request</key2> storeWaste : storeWaste(MATERIAL, TRUCKLOAD)</pre>
+
+    <div id="loadaccept"><h4>Loadaccept</h4></div>
+    This is a positive response that <a href="#WS"><kc>WasteService</kc></a> sends to the Truck driver after receiving a <kc>Request</kc>
+    in case it is possible to store the cargo in the appropriate container. <br>
+    The formalization of this concept can be expressed through the use of the QAk language:
+    <pre>
+<key2>Reply</key2> loadaccept : loadaccept(_)</pre>
+
+   <div id="loadrejected"><h4>Loadrejected</h4></div> 
+   This is a negative answer that <a href="#WS"><kc>WasteService</kc></a> sends to the Truck driver after receiving a <kc>Request</kc>
+   in case it is not possible to store the cargo in the appropriate container. <br>
+   The formalization of this concept can be expressed through the use of the QAk language:
+    <pre>
+<key2>Reply</key2> loadrejected : loadrejected(_)</pre>
+
+    <div id="WS"><h4>WasteService</h4></div>
+    It is the service that coordinates all waste collection and sorting activities, interfacing with the <a href="#Ttrolley"><kc>transport trolley</kc></a>
+    to carry out the necessary actions. <br>
+    The <kc>WasteService</kc> is therefore an active entity that must be able to receive requests (<kc>storeWaste</kc>) and send replies 
+    (<a href="#loadaccpet"><kc>loadaccept</kc></a>, <a href="#loadrejected"><kc>loadrejected</kc></a>). Therefore it can be formalized using the QAk language as a <kc>Actor</kc> (<a href="../unibo.wasteService/src/wasteService.qak">wasteService.qak</a>).
+    <pre>
+<key2>QActor</key2> wasteserviceactor <key2>context</key2> ctxwasteservice {
+        <key2>State</key2> setup <key2>initial</key2> {
+            ...
+        }
+        <key2>Goto</key2> idle
+        
+        <key2>State</key2> idle {
+            ...
+        }
+        <key2>Transition</key2> t0 <key2>whenRequest</key2> storeWaste -> requestEvaluation
+        
+        <key2>State</key2> requestEvaluation {
+            <key2>onMsg</key2>(storeWaste : storeWaste(MAT, QUA)){
+                
+                <key2>if</key2>[# boxState.canStore(requestMaterialToStore, requestWeightToStore) #]
+                {
+                    ...
+                    <key2>replyTo</key2> storeWaste <key2>with</key2> loadaccept : loadaccept(_)
+                }
+                <key2>else</key2>{
+                    <key2>replyTo</key2> storeWaste <key2>with</key2> loadrejected : loadrejected(_)
+                } 
+            }
+        }
+        <key2>Goto</key2> idle
+    }</pre>
+
+    To verify the proper functioning of the <kc>wasteService</kc> and better understand the expected behavior, we have prepared
+    some simple tests (<a href="../unibo.wasteService/test/unibo/testwasteservice/TestWasteServiceActor.kt">TestWasteServiceActor.kt</a>).
+
+    <pre>
+<key>var</key> storeWaste = "msg(storeWaste, request, testunit, wasteserviceactor, storeWaste(PLASTIC, 100),1)"        
+<key>var</key> asw = conn.request(storeWaste)
+assertTrue(asw.contains("loadaccept"))
+
+<key>var</key> storeWaste = "msg(storeWaste, request, testunit, wasteserviceactor, storeWaste(PLASTIC, 1000),1)"        
+<key>var</key> asw = conn.request(storeWaste)
+assertTrue(asw.contains("loadrejected"))</pre>
+
+    <div id="DDR"><h4>DDR Robot</h4></div>
+    The <kc>Differential Drive Robot</kc> is a physical robot that performs several basic moves such as:
+    <ul>
+        <li>move back and forth along a constant direction</li>
+        <li>stopped</li>
+        <li>rotate 90° to the right or left</li>
+    </ul>
+    These moves are accomplished by sending appropriate commands to the robot. <br>
+    The client provides software able to interface with the <kc>DDR Robot</kc> and with other robots (real or virtual):
+    <a href="https://github.com/anatali/issLab2022/tree/main/unibo.basicrobot22">unibo.basicrobot22</a>. <br>
+    The actor QAk <a href=". /resouces/qak/basicrobot.qak">basicrobot.qak</a> of <kc>unibo.basicrobot22</kc> is able to interface with the DDR robot and command elementary moves:
+    <br> <br>
+    The basicorobot can execute basic navigation commands by sending messages:
+    <pre>
+<key3>// MOVE = w | s | l | r | h</key3>
+<key2>Dispatch</key2> cmd   :  cmd(MOVE)</pre>
+    Using these elementary commands the <kc>basicrobot</kc> is able to make the robot run a <kc>step</kc> or a step forward 
+    for the time spent as a parameter providing a response, which can be <kc>stepdone</kc> if the step is successfully performed 
+    or <kc>stepfail</kc> if not:
+    <pre>
+<key2>Request</key2> step   :  step(TIME)
+<key2>Reply</key2> stepdone :  stepdone(V)
+<key2>Reply</key2> stepfail :  stepfail(DURATION, CAUSE)</pre>
+
+    <div id="Ttrolley"><h4>Transport Trolley</h4></div>
+    The <kc>transport trolley</kc> is a software entity that must be able to interact with the <a href="#DDR"><kc>DDR robot</kc></a>. 
+    To do this the transport trolley must interface with the <kc>basicrobot</kc>. <br>
+    The transport trolley must be capable of performing the same actions as the robot DDR, 
+    however the software provided by the client <kc>basicrobot</kc> (<a href="https://github.com/anatali/issLab2022/tree/main/unibo.basicrobot22">unibo.basicrobot22</a>)
+    is an actor and as such does not provide the concept of <i>inheritance</i>, therefore the transport trolley cannot be formalized using inheritance, this implies
+    that the transport trolley <b>is not the DDR robot</b> but <b>uses the DDR robot</b> and therefore must be modeled as an actor.
+    
+
+
+
+</div>
+
+<div class="remark">
+    <h3>User Stories</h3>
+    In order to make the images that describe the User Stories more understandable, we introduce the following legend:
+    <br><br>
+    <img src="./resouces/images/uSLegend.drawio.png" alt="">
+    <h4>Store waste</h4>
+    <p>
+        As a waste truck driver:
+        <ul>
+            <li>
+                When I arrive in the <kc>Indoor</kc> area, I intend to notify my interest in depositing a waste load through a smart device <div style="border: 2px solid #00FFFF; display:inline-block; border-radius: 100%;height: 20px;width: 20px;text-align: center;">1</div>.
+                I expect the <kc>WasteService</kc> to provide some tools to specify the type of load (Plastic or Glass) and the weight of the load. 
+                I expect to receive a positive (<kc>loadaccept</kc>) <div style="border: 2px solid #00FFFF; display:inline-block; border-radius: 100%;height: 20px;width: 20px;text-align: center;">2a</div> or negative (<kc>loadrejected</kc>) <div style="border: 2px solid #00FFFF; display:inline-block; border-radius: 100%;height: 20px;width: 20px;text-align: center;">2b</div> response.
+            </li>
+            <li>
+                If the response is positive (<kc>loadaccept</kc>), I expect the <kc>transport trolley</kc> to pick up the waste load <div style="border: 2px solid #00FFFF; display:inline-block; border-radius: 100%;height: 20px;width: 20px;text-align: center;">3</div> and move it from the <kc>Indoor</kc> area to the appropriate container <div style="border: 2px solid #00FFFF; display:inline-block; border-radius: 100%;height: 20px;width: 20px;text-align: center;">5</div>. In any case as soon as the <kc>transport trolley</kc> takes the waste load, I free the <kc>Indoor</kc> area and leave <div style="border: 2px solid #00FFFF; display:inline-block; border-radius: 100%;height: 20px;width: 20px;text-align: center;">4</div>.
+            </li>
+            <li>
+                If the received answer is negative (<kc>loadrejected</kc>), I will free the <kc>Indoor</kc> area and go away <div style="border: 2px solid #00FFFF; display:inline-block; border-radius: 100%;height: 20px;width: 20px;text-align: center;">3</div>. 
+            </li>
+        </ul>
+        <div style="display: flex; justify-content: space-around;">
+            <img src="./resouces/images/uSIndoorArrival1.drawio.png" alt="" style="width: 40%;"><img src="./resouces/images/uSIndoorArrival2.drawio.png" alt="" style="width: 40%;">
+        </div>
+    </p>
+    <h4>Supervise service-area </h4>
+    <p>
+        As a service-manager, I intend to use the <kc>WasteServiceStatusGUI</kc> provided by the <kc>WasteService</kc> to observe:
+        <ul>
+            <li>
+                The current state of the <kc>transport trolley</kc> (working <div style="border: 2px solid #00FFFF; display:inline-block; border-radius: 100%;height: 20px;width: 20px;text-align: center;">1</div>, stopped <div style="border: 2px solid #00FFFF; display:inline-block; border-radius: 100%;height: 20px;width: 20px;text-align: center;">2</div>, idle <div style="border: 2px solid #00FFFF; display:inline-block; border-radius: 100%;height: 20px;width: 20px;text-align: center;">3</div>) and its position in the room.
+                <br><br>
+                <img src="./resouces/images/uSSuperviseStatus1.drawio.png" alt="" style="width: 40%;">    
+            </li>
+            <li>
+                The current weigth of the material stored in the two waste-containers <div style="border: 2px solid #00FFFF; display:inline-block; border-radius: 100%;height: 20px;width: 20px;text-align: center;">3</div> <div style="border: 2px solid #00FFFF; display:inline-block; border-radius: 100%;height: 20px;width: 20px;text-align: center;">4</div>.
+                <br><br>
+                <img src="./resouces/images/uSSuperviseStatus2.drawio.png" alt="" style=" width: 40%;">
+            </li>
+            <li>
+                The current state of the Led (off, on, blinking) <div style="border: 2px solid #00FFFF; display:inline-block; border-radius: 100%;height: 20px;width: 20px;text-align: center;">5</div>.
+                <br><br>
+                <img src="./resouces/images/uSSuperviseStatus3.drawio.png" alt="" style="width: 40%;">
+            </li>
+        </ul>
+    </p>
+</div>
+
+
+<h2>Problem analysis</h2>
+ 
+
+
+
+
+
+
+
+
+
+ 
+<!-- USEFUL
+<table style="width:100%" border="1">
+<tr>
+<td style="width:50%">
+</td>
+<td></td>
+</tr>
+</table>
+-->
+	      	
+<br/><br/> 	
+
+<div style="background-color:rgba(60, 131, 186, 0.9); width:50%;text-align:center;color:white; margin-left: 25%; border-radius: 25px;" >
+    <br>
+    By students: <br>
+    Name: Annamaria Simonitto, Enrico Valastro, Alessio Reitano   
+    <br>
+    Email: annamaria.simonitto@studio.unibo.it, enrico.valastro@studio.unibo.it, alessio.reitano@studio.unibo.it
+    <br><br>
+    <img src="./resouces/images/AnnamariaSimonitto.jpg" alt="" width="8%" height="8%">
+    <img src="./resouces/images/EnricoValastro.jpeg" alt="" width="8.5%" height="8.5%">
+    <img src="./resouces/images/AlessioReitano.jpeg" alt="" width="10%" height="10%">
+</div> 
+</body>
+</html>

@@ -1,0 +1,101 @@
+/*
+================================================================================
+build_ctxwasteservice.gradle
+GENERATED ONLY ONCE
+USAGE:	 
+  	gradle  -b build_ctxwasteservice.gradle eclipse		//to set the dependency on the library
+	gradle  -b build_ctxwasteservice.gradle distZip
+	gradle  -b build_ctxwasteservice.gradle -q tasks --all
+	gradle  -b build_ctxwasteservice.gradle cleanDistDir	//to clean the src directory
+================================================================================
+*/
+plugins {
+    id 'java'
+    id 'eclipse'
+    //id 'application'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.71'
+}
+
+version '1.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+    flatDir {   dirs '../unibolibs'	 }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+//COROUTINE
+    compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core-common', version: '1.1.0'
+    compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '1.1.0'
+//ARDUINO
+    // https://mvnrepository.com/artifact/org.scream3r/jssc
+    compile group: 'org.scream3r', name: 'jssc', version: '2.8.0'
+//MQTT
+// https://mvnrepository.com/artifact/org.eclipse.paho/org.eclipse.paho.client.mqttv3
+    compile group: 'org.eclipse.paho', name: 'org.eclipse.paho.client.mqttv3', version: '1.2.1'
+//JSON
+    // https://mvnrepository.com/artifact/org.json/json
+    compile group: 'org.json', name: 'json', version: '20160810'
+//COAP
+	// https://mvnrepository.com/artifact/org.eclipse.californium/californium-core
+	compile group: 'org.eclipse.californium', name: 'californium-core', version: '2.0.0-M12'
+	// https://mvnrepository.com/artifact/org.eclipse.californium/californium-proxy
+	compile group: 'org.eclipse.californium', name: 'californium-proxy', version: '2.0.0-M12'
+//LOG4j	
+	compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25' 
+//MONGO
+	// https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver
+	//compile group: 'org.mongodb', name: 'mongo-java-driver', version: '3.8.2'
+
+//CUSTOM
+    compile name: 'uniboInterfaces'
+    compile name: '2p301'
+    compile name: 'it.unibo.qakactor-2.4'
+ 
+    //For p2p two-way connections (TCP, UDP, BTH, Serial ...)
+    compile name: 'unibonoawtsupports'
+
+	//BLS
+	//compile name: 'it.unibo.bls19Local-1.0'
+	//RADAR
+	compile name: 'radarPojo'
+	//RADAR GUI
+	// https://mvnrepository.com/artifact/org.pushingpixels/trident
+	compile group: 'org.pushingpixels', name: 'trident', version: '1.3'
+	//ROBOT nano (SAM)
+    //compile name: 'labbaseRobotSam'
+	//compile mame: 'pi4j-core' //2-12 SNAPSHOT non in gradle
+ 	//PLANNER
+    //compile name: 'it.unibo.planner'
+ 	// https://mvnrepository.com/artifact/com.googlecode.aima-java/aima-core
+	compile group: 'com.googlecode.aima-java', name: 'aima-core', version: '3.0.0'
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+sourceSets {
+    main.java.srcDirs += 'src'
+    main.java.srcDirs += 'resources'
+    test.java.srcDirs += 'test'		//test is specific
+}
+/*
+mainClassName = 'it.unibo.TODOKt'
+
+jar {
+    println("executing jar")
+    from sourceSets.main.allSource
+    manifest {
+        attributes 'Main-Class': "$mainClassName"
+    }
+}
+*/

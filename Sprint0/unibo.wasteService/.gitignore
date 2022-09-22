@@ -4,7 +4,7 @@ bin/default
 .classpath
 .project
 build
-logs 
+logs
 
 log4jInfo.log
 
@@ -15,6 +15,11 @@ package-lock.json
 
 # MQTT generated
 *-tcp*
+
+ # Ignore Gradle project-specific cache directory
+.gradle
+gradlew
+gradlew.bat
 
 
 /ReadMe.html
