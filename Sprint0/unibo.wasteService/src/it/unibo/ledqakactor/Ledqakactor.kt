@@ -13,36 +13,47 @@ class Ledqakactor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name
 	override fun getInitialState() : String{
 		return "setup"
 	}
-	@kotlinx.coroutines.ObsoleteCoroutinesApi
-	@kotlinx.coroutines.ExperimentalCoroutinesApi			
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
-			var newState = ws.LedState.OFF	 
+		var ledState = led.state.LedState(led.state.CurrStateLed.OFF) 
 		return { //this:ActionBasciFsm
 				state("setup") { //this:State
 					action { //it:State
 						println("$name | setup")
 					}
+					 transition( edgeName="goto",targetState="off", cond=doswitch() )
 				}	 
 				state("on") { //this:State
 					action { //it:State
+						
+									ledState.updateLedState(led.state.CurrStateLed.ON)	
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("led on")
+						updateResourceRep(ledState.toJsonString() 
+						)
 					}
-					 transition(edgeName="t00",targetState="off",cond=whenEvent("update_led"))
+					 transition(edgeName="t00",targetState="blink",cond=whenDispatch("blink"))
+					transition(edgeName="t01",targetState="off",cond=whenDispatch("turnOff"))
 				}	 
 				state("off") { //this:State
 					action { //it:State
+						
+									ledState.updateLedState(led.state.CurrStateLed.OFF)	
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("led off")
+						updateResourceRep(ledState.toJsonString() 
+						)
 					}
-					 transition(edgeName="t01",targetState="on",cond=whenEvent("update_led"))
+					 transition(edgeName="t02",targetState="on",cond=whenDispatch("turnOn"))
+					transition(edgeName="t03",targetState="blink",cond=whenDispatch("blink"))
 				}	 
 				state("blink") { //this:State
 					action { //it:State
+						
+									ledState.updateLedState(led.state.CurrStateLed.BLINKING)	
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("led blinking")
+						updateResourceRep(ledState.toJsonString() 
+						)
 					}
-					 transition(edgeName="t02",targetState="blink",cond=whenEvent("update_led"))
+					 transition(edgeName="t04",targetState="on",cond=whenDispatch("turnOn"))
+					transition(edgeName="t05",targetState="off",cond=whenDispatch("turnOff"))
 				}	 
 			}
 		}

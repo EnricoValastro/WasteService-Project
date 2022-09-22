@@ -13,8 +13,7 @@ class Wasteserviceactor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm
 	override fun getInitialState() : String{
 		return "setup"
 	}
-	@kotlinx.coroutines.ObsoleteCoroutinesApi
-	@kotlinx.coroutines.ExperimentalCoroutinesApi			
+
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		
 				val boxMaxWeight = mutableMapOf<wasteservice.state.Material, Double>(wasteservice.state.Material.PLASTIC to 500.0, wasteservice.state.Material.GLASS to 500.0)

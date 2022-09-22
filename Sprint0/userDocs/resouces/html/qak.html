@@ -294,41 +294,39 @@ In fact, the behavior of a QActor is modeled as a Moore machine in which state-t
 
     A Qak model is defined by organizing its description according to the following template: <br>
     <pre>
-    System < NAME OF THE SYSTEM >
-    //mqttBroker "broker.hivemq.com" : 1883 //OPTIONAL
+System < NAME OF THE SYSTEM >
+//mqttBroker "broker.hivemq.com" : 1883 //OPTIONAL
 
-    //DECLARATION OF MESSAGES AND EVENTS
+//DECLARATION OF MESSAGES AND EVENTS
 
-    //DECLARATION OF CONTEXTS
-    Context CTXNAME ip [host="HOSTIP" port=PORTNUM]
+//DECLARATION OF CONTEXTS
+Context CTXNAME ip [host="HOSTIP" port=PORTNUM]
 
-    //DECLARATION OF ACTORS
-    </pre>
+//DECLARATION OF ACTORS</pre>
 
 <h3>The Qak syntax</h3>
 
     <h4>Message declaration</h4>
     <pre>
-    Event:    "Event"     name=ID  ":" msg = PHead  ;
-    Dispatch: "Dispatch"  name=ID  ":" msg = PHead  ;
-    Request:  "Request"   name=ID  ":" msg = PHead  ;
-    Reply:    "Reply"     name=ID  ":" msg = PHead  ;
+Event:    "Event"     name=ID  ":" msg = PHead  ;
+Dispatch: "Dispatch"  name=ID  ":" msg = PHead  ;
+Request:  "Request"   name=ID  ":" msg = PHead  ;
+Reply:    "Reply"     name=ID  ":" msg = PHead  ;
 
-    PHead :       PAtom | PStruct | PStructRef ;
-    ...
-    </pre>
+PHead :       PAtom | PStruct | PStructRef ;
+...</pre>
+
     <h4>Message-sending operations</h4>
     <pre>
-        Forward   : "forward" dest=[QActorDeclaration]
-                              "-m" msgref=[Dispatch] ":" val = PHead ;
-        Emit      : "emit" msgref=[Event] ":" val = PHead     ;
-        Demand    : "request" dest=[QActorDeclaration]
-                              "-m" msgref=[Request]  ":" val = PHead ;
-        Answer    : "replyTo" reqref=[Request]
-                              "with"    msgref=[Reply]   ":" val = PHead ;
-        ReplyReq  : "askFor"  reqref=[Request]
-                              "request" msgref=[Request] ":" val = PHead ;
-    </pre>
+Forward   : "forward" dest=[QActorDeclaration]
+                        "-m" msgref=[Dispatch] ":" val = PHead ;
+Emit      : "emit" msgref=[Event] ":" val = PHead     ;
+Demand    : "request" dest=[QActorDeclaration]
+                        "-m" msgref=[Request]  ":" val = PHead ;
+Answer    : "replyTo" reqref=[Request]
+                        "with"    msgref=[Reply]   ":" val = PHead ;
+ReplyReq  : "askFor"  reqref=[Request]
+                        "request" msgref=[Request] ":" val = PHead ;</pre>
 
     <h3>Documentation</h3>
 

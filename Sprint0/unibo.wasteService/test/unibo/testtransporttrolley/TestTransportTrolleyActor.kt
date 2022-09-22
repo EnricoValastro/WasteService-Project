@@ -85,18 +85,18 @@ class TestTransportTrolleyActor {
 
     @Test
     fun testStateChange2(){
-        println("TestTransportTrolleyActor  |   testPickup...")
-        val pickup = "msg(droppingout, dispatch, testunit, transporttrolley, droppingout(Plastic), 1)"
-        conn.forward(pickup)
+        println("TestTransportTrolleyActor  |   testDropout...")
+        val dropout = "msg(droppingout, dispatch, testunit, transporttrolley, droppingout(Plastic), 1)"
+        conn.forward(dropout)
 
         assertEquals(obs.getNext().getTTState().toString(), "DROPPINGOUT")
     }
 
     @Test
     fun testStateChange3(){
-        println("TestTransportTrolleyActor  |   testPickup...")
-        val pickup = "msg(backhome, dispatch, testunit, transporttrolley, backhome, 1)"
-        conn.forward(pickup)
+        println("TestTransportTrolleyActor  |   testBackHome...")
+        val backHome = "msg(backhome, dispatch, testunit, transporttrolley, backhome, 1)"
+        conn.forward(backHome)
 
         assertEquals(obs.getNext().getTTState().toString(), "IDLE")
     }
