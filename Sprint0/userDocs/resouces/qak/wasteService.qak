@@ -1,0 +1,60 @@
+System wasteservice
+
+Request storeWaste : storeWaste(MATERIAL, TRUCKLOAD)
+Reply loadaccept : loadaccept(_)
+Reply loadrejected : loadrejected(_)
+
+Context ctxwasteservice ip [host="localhost" port=8055]
+
+QActor wasteserviceactor context ctxwasteservice {
+	
+[#
+		val boxMaxWeight = mutableMapOf<wasteservice.state.Material, Double>(wasteservice.state.Material.PLASTIC to 500.0, wasteservice.state.Material.GLASS to 500.0)
+		val boxState  = wasteservice.state.WasteServiceState(boxMaxWeight)
+		lateinit var requestMaterialToStore : wasteservice.state.Material 
+		var requestWeightToStore = 0.0
+	#]
+	
+	State setup initial {
+		println("$name | setup")
+		
+	}
+	Goto idle
+	
+	State idle {
+		println("$name	|	in idle ")
+		updateResource[#boxState.toJsonString()#]
+	}
+	Transition t0 whenRequest storeWaste -> requestEvaluation
+	
+	State requestEvaluation {
+		onMsg(storeWaste : storeWaste(MAT, QUA)){
+			
+			[#
+				try{
+					requestMaterialToStore = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())  
+					requestWeightToStore = payloadArg(1).toDouble()	
+					
+			#]
+					if[# boxState.canStore(requestMaterialToStore, requestWeightToStore) #]
+					{
+						[# boxState.updateBoxWeight(requestMaterialToStore, requestWeightToStore) #]				
+						replyTo storeWaste with loadaccept : loadaccept(_)
+				
+					}
+					else{
+						replyTo storeWaste with loadrejected : loadrejected(_)
+					}
+			[#
+					
+				}catch(e : Exception){
+				#]
+					replyTo storeWaste with loadrejected : loadrejected(_)
+				[#
+				}	
+			#]
+			
+		}
+	}
+	Goto idle
+}

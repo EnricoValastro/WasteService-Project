@@ -7,15 +7,14 @@ import org.junit.Test
 import kotlin.Throws
 import java.lang.InterruptedException
 import unibo.actor22comm.utils.CommUtils
+import unibo.coapobs.TypedCoapTestObserver
 import unibo.comm22.coap.CoapConnection
 import unibo.comm22.interfaces.Interaction2021
 import unibo.comm22.tcp.TcpClientSupport
 import wasteservice.state.Material
 import wasteservice.state.WasteServiceState
 import java.lang.Exception
-import java.util.concurrent.BlockingQueue
 import java.util.concurrent.ArrayBlockingQueue
-import kotlin.test.DefaultAsserter.assertTrue
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

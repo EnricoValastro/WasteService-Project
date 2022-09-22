@@ -1,4 +1,4 @@
-package unibo.testwasteservice
+package unibo.coapobs
 
 import org.eclipse.californium.core.CoapHandler
 import java.util.concurrent.BlockingQueue

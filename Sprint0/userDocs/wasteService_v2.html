@@ -251,29 +251,49 @@ div.imagedesc{
     Puo' essere formalizzato usando:
     <ul>
         <li>una costante, <kc>MAXPB</kc>, per indicare la capienza massima del container</li>
-        <li>una variabile, <kc>currWeightPb</kc>, che esprime il peso corrente della plastica contenuta nel container.</li>
+        <li>una variabile, <kc>boxCurrWeightPb</kc>, che esprime il peso corrente della plastica contenuta nel container.</li>
     </ul> 
     <pre>
-<key>val</key> MAXPB        :  Float
-<key>var</key> currWeightPb :  Float</pre>
+<key>val</key> MAXPB        :  Double
+<key>var</key> boxCurrWeightPb :  Double</pre>
+
+Al fine di gestire lo stato dei due container (<kc>PLASTICBOX</kc> e <kc>GLASSBOX</kc>) con un'unica coppia di variabili è possibile utilizzare le 
+<kc><i>MutableMap</i></kc> di Kotlin, distinguendo i due container per mezzo del <kc>type of the material</kc>: come mostrato in <a href="../unibo.wasteService/resources/wasteservice/state/WasteServiceState.kt">WasteServiceState.kt</a>
+
+<pre>
+<key>private val</key> boxMaxWeight : MutableMap < Material, Double >
+<key>private val</key> boxCurrentWeight : MutableMap < Material, Double ></pre>
 
     <h4>GlassBox</h4>
     Container adibito al deposito di materiale vetroso, con capienza massima pari a MAXGB Kg. <br>
     Puo' essere formalizzato usando:
     <ul>
         <li>una costante, <kc>MAXGB</kc>, per indicare la capienza massima del container</li>
-        <li>una variabile, <kc>currWeightGb</kc>, che esprime il peso corrente del vetro contenuto nel container.</li>
+        <li>una variabile, <kc>boxCurrWeightGb</kc>, che esprime il peso corrente del vetro contenuto nel container.</li>
     </ul> 
     <pre>
-<key>val</key> MAXGB        :  Float
-<key>var</key> currWeightGb :  Float</pre>
+<key>val</key> MAXGB        :  Double
+<key>var</key> boxCurrWeightGb :  Double</pre>
+
+Al fine di gestire lo stato dei due container (<kc>PLASTICBOX</kc> e <kc>GLASSBOX</kc>) con un'unica coppia di variabili è possibile utilizzare le 
+<kc><i>MutableMap</i></kc> di Kotlin, distinguendo i due container per mezzo del <kc>type of the material</kc>: come mostrato in <a href="../unibo.wasteService/resources/wasteservice/state/WasteServiceState.kt">WasteServiceState.kt</a>
+
+<pre>
+<key>private val</key> boxMaxWeight : MutableMap < Material, Double >
+<key>private val</key> boxCurrentWeight : MutableMap < Material, Double ></pre>
 
     <h4>Deposit Action</h4>
     Rappresenta una sequenza di azioni eseguite dal <kc>transport trolley</kc>
     <ul>
-        <li>prelevare un "waste load" dal "waste truck" che si trova in <kc>INDOOR</kc>. (D'ora in avanti ci riferiremo a questa microazione come <kc>Pickingup</kc>)</li>
-        <li>spostare il carico dall'<kc>INDOOR</kc> all'apposito container (<a href="#PBOX"><kc>PLASTICBOX</kc></a>  o <kc>GLASSBOX</kc>).</li>
-        <li>depositare il carico nel container. (D'ora in avanti ci riferiremo a questa microazione come <kc>Droppingout</kc>)</li>
+        <li>prelevare un "waste load" dal "waste truck" che si trova in <kc>INDOOR</kc>.</li>
+        <li>spostare il carico dall'INDOOR all'apposito container (<a href="#PBOX"><kc>PLASTICBOX</kc></a>  o <kc>GLASSBOX</kc>).</li>
+        <li>depositare il carico nel container.</li>
+    </ul>
+    Il committente ha specificato che sarebbe opportuno liberare il "truck" appena possibile per tale motivo è opportuno spezzare la <kc>deposit action</kc>,
+    in questa fase preliminare, in due azioni:
+    <ul>
+        <li><kc>Pickingup</kc>: muovere il transport trolley fino alla INDOOR e prelevare il carico.</li>
+        <li><kc>Droppingout</kc>: muovere il transport trolley fino al container e depositare il carico.</li>
     </ul>
 
     <h4>Sonar</h4>
@@ -335,12 +355,13 @@ div.imagedesc{
 
     <h4>Type of the material</h4>
     Represents the material, Plastic or Glass, of the waste that the waste truck intends to deposit.
+    E' possibile modellare tale concetto per mezzo di un enumerativo: <a href="../unibo.wasteService/resources/wasteservice/state/WasteServiceState.kt">WasteServiceState.kt</a>
     <pre>
 <key>enum</key> <key>class</key> Material { <i>PLASTIC</i>, <i>GLASS</i> }</pre>
 
     <h4>Current state of the transport trolley</h4>    
     Indicates the status of the <kc>transport trolley</kc>, if it is Idle, Stopped, Moving, Pickingup, Droppingout. <br>
-    Puo' essere formalizzato tramite un enumerativo:
+    Puo' essere formalizzato tramite un enumerativo <a href="../unibo.wasteService/resources/transporttrolley/state/TransportTrolleyState.kt">TransportTrolleyState.kt</a>:
     <pre>
 <key>enum</key> <key>class</key> CurrStateTrolley { <i>IDLE</i>, <i>STOPPED</i>, <i>MOVING</i>, <i>PICKINGUP</i>, <i>DROPPINGOUT</i> }</pre>
 
@@ -381,7 +402,7 @@ div.imagedesc{
     E' il servizio che si occupa di coordinare tutte le attività di raccolta e smistamento dei rifiuti, interfacciandosi con il <kc>transport trolley</kc>
     per svolgere le azioni necessarie. <br>
     Il <kc>WasteService</kc> è quindi un'entità attiva che deve essere in grado di ricevere richieste (<kc>storeWaste</kc>) e inviare risposte 
-    (<kc>loadaccept</kc>, <kc>loadrejected</kc>). Pertanto può essere formalizzato usando il linguaggio Qak come un <kc>Attore</kc> (<a href="../unibo.wasteService/src/wasteService.qak">wasteService.qak</a>).
+    (<kc>loadaccept</kc>, <kc>loadrejected</kc>). Pertanto può essere formalizzato usando il linguaggio Qak come un <kc>Attore</kc> (<a href="./resouces/qak/wasteService.qak">wasteService.qak</a>).
     <pre>
 <key2>QActor</key2> wasteserviceactor <key2>context</key2> ctxwasteservice {
         <key2>State</key2> setup <key2>initial</key2> {
@@ -447,16 +468,51 @@ assertTrue(asw.contains("loadrejected"))</pre>
 <key2>Reply</key2> stepfail :  stepfail(DURATION, CAUSE)</pre>
 
     <h4>Transport Trolley</h4>
-    Il <kc>transport trolley</kc> è un'entità software che deve essere in grado di interagire con il <kc>DDR robot</kc>. 
-    Per fare questo il transport trolley deve interfacciarsi con il <kc>basicorobot</kc>. <br>
+    Il <kc>transport trolley</kc> è un'entità software che deve essere in grado di interagire con il <kc>DDR robot</kc> al fine di eseguire una 
+    <kc>deposit action</kc>. <br>
     Il trasport trolley deve essere capace di eseguire le stesse azioni che il DDR robot è capace di eseguire, 
-    tuttavia il software fornito dal committente <kc>basicorobot</kc> (<a href="https://github.com/anatali/issLab2022/tree/main/unibo.basicrobot22">unibo.basicrobot22</a>)
+    per fare questo il transport trolley deve interfacciarsi con il <kc>basicorobot</kc>, 
+    tuttavia il software fornito dal committente in <a href="https://github.com/anatali/issLab2022/tree/main/unibo.basicrobot22">unibo.basicrobot22</a>
     è un attore e come tale non prevede il concetto di <i>ereditarietà</i>, pertanto il transport trolley non può essere formalizzato usando l'ereditarietà, ciò implica
-    che il transport trolley <b>non è il DDR robot</b> ma <b>usa il DDR robot</b> e quindi deve essere modellato come un attore.
+    che il transport trolley <b>non è il DDR robot</b> ma <b>usa il DDR robot</b> e quindi può essere modellato come un attore usando il linguaggio Qak:
+     <a href="./resouces/qak/transportTrolley.qak">transporttrolley.qak</a>. <br><br>
+
+    <pre>
+<key2>Dispatch</key2> pickingup : pickingup(_)
+<key2>Dispatch</key2> droppingout : droppingout(MATERIAL)
+<key2>Dispatch</key2> backhome : backhome(_)
+
+<key2>QActor</key2> transporttrolley <key2>context</key2> ctxtransporttrolley {
+	
+	<key2>State</key2> s0 <key2>initial</key2>{
+        ...
+	}
+	<key2>Goto</key2> idle
+	
+	<key2>State</key2> idle{
+        ...
+	}
+	<key2>Transition</key2> t0 <key2>whenMsg</key2> pickingup -> pickup
+	
+	<key2>State</key2> pickup{
+		...
+	}
+	<key2>Transition</key2> t0 <key2>whenMsg</key2> droppingout -> dropout
+	
+	<key2>State</key2> dropout{
+		...
+	}
+	<key2>Transition</key2> t0 <key2>whenMsg</key2> backhome -> backhome
+                        <key2>whenMsg</key2> pickingup -> pickup
+	
+	<key2>State</key2> backhome{
+        ...
+	}
+	<key2>Goto</key2> idle</pre>
+
+    Per verificare il corretto funzionamento del <kc>transportTrolley</kc> e comprendere meglio quale sia il comportamento atteso, abbiamo predisposto
+    alcuni semplici test (<a href="../unibo.wasteService/test/unibo/testtransporttrolley/TestTransportTrolleyActor.kt">TestTransportTrolleyActor.kt</a>).
     
-
-
-
 </div>
 
 <div class="remark">
@@ -509,17 +565,7 @@ assertTrue(asw.contains("loadrejected"))</pre>
 
 
 <h2>Problem analysis</h2>
- 
 
-
-
-
-
-
-
-
-
- 
 <!-- USEFUL
 <table style="width:100%" border="1">
 <tr>
