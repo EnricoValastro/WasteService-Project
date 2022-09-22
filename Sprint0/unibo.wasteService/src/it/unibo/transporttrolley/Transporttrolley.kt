@@ -14,6 +14,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 		return "s0"
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
+		val interruptedStateTransitions = mutableListOf<Transition>()
 		
 				val tTstate = transporttrolley.state.TransportTrolleyState(transporttrolley.state.CurrStateTrolley.IDLE)
 				
@@ -21,14 +22,22 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				state("s0") { //this:State
 					action { //it:State
 						println("$name | setup")
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
 				}	 
 				state("idle") { //this:State
 					action { //it:State
 						updateResourceRep(tTstate.toJsonString() 
 						)
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition(edgeName="t00",targetState="pickup",cond=whenDispatch("pickingup"))
 				}	 
 				state("pickup") { //this:State
@@ -37,7 +46,11 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 									tTstate.updateTTState(transporttrolley.state.CurrStateTrolley.PICKINGUP)
 						updateResourceRep(tTstate.toJsonString() 
 						)
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition(edgeName="t01",targetState="dropout",cond=whenDispatch("droppingout"))
 				}	 
 				state("dropout") { //this:State
@@ -46,7 +59,11 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 									tTstate.updateTTState(transporttrolley.state.CurrStateTrolley.DROPPINGOUT)
 						updateResourceRep(tTstate.toJsonString() 
 						)
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition(edgeName="t02",targetState="backhome",cond=whenDispatch("backhome"))
 					transition(edgeName="t03",targetState="pickup",cond=whenDispatch("pickingup"))
 				}	 
@@ -54,7 +71,11 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					action { //it:State
 						
 									tTstate.updateTTState(transporttrolley.state.CurrStateTrolley.IDLE)
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
 				}	 
 			}

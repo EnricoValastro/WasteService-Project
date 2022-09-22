@@ -14,12 +14,17 @@ class Ledqakactor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name
 		return "setup"
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
+		val interruptedStateTransitions = mutableListOf<Transition>()
 		var ledState = led.state.LedState(led.state.CurrStateLed.OFF) 
 		return { //this:ActionBasciFsm
 				state("setup") { //this:State
 					action { //it:State
 						println("$name | setup")
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition( edgeName="goto",targetState="off", cond=doswitch() )
 				}	 
 				state("on") { //this:State
@@ -29,7 +34,11 @@ class Ledqakactor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name
 						println("$name in ${currentState.stateName} | $currentMsg")
 						updateResourceRep(ledState.toJsonString() 
 						)
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition(edgeName="t00",targetState="blink",cond=whenDispatch("blink"))
 					transition(edgeName="t01",targetState="off",cond=whenDispatch("turnOff"))
 				}	 
@@ -40,7 +49,11 @@ class Ledqakactor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name
 						println("$name in ${currentState.stateName} | $currentMsg")
 						updateResourceRep(ledState.toJsonString() 
 						)
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition(edgeName="t02",targetState="on",cond=whenDispatch("turnOn"))
 					transition(edgeName="t03",targetState="blink",cond=whenDispatch("blink"))
 				}	 
@@ -51,7 +64,11 @@ class Ledqakactor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name
 						println("$name in ${currentState.stateName} | $currentMsg")
 						updateResourceRep(ledState.toJsonString() 
 						)
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition(edgeName="t04",targetState="on",cond=whenDispatch("turnOn"))
 					transition(edgeName="t05",targetState="off",cond=whenDispatch("turnOff"))
 				}	 

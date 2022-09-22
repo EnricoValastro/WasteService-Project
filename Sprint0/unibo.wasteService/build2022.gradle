@@ -78,9 +78,8 @@ dependencies {
     /* UNIBO *************************************************************************************************************** */
     implementation name: 'uniboInterfaces'
     implementation name: '2p301'
-    implementation name: 'it.unibo.qakactor-2.7'
-    implementation name: 'unibonoawtsupports'  //required by the old infrastructure
-	implementation name: 'unibo.actor22-1.1'
+	implementation name: 'unibo.qakactor22-3.2'
+	implementation name: 'unibo.comm22-1.1'
 
     /* AIMA **************************************************************************************************************** */
  	//PLANNER  
@@ -106,7 +105,7 @@ eclipse {
 
 application {
     // Define the main class for the application.
-    mainClass = 'it.unibo.ctxledqak.MainCtxledqakKt'
+    mainClass = 'it.unibo.ctxtransporttrolley.MainCtxtransporttrolleyKt'
 }
 
  jar {
