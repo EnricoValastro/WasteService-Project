@@ -19,4 +19,6 @@ eventedgeattr = {
 with Diagram('wasteserviceArch', show=False, outformat='png', graph_attr=graphattr) as diag:
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
+     with Cluster('ctxwasteservice', graph_attr=nodeattr):
+          wasteserviceactor=Custom('wasteserviceactor','./qakicons/symActorSmall.png')
 diag

@@ -603,19 +603,49 @@ assertTrue(asw.contains("loadrejected"))</pre>
 
 <div class="remark">
     <h3>Logical architecture</h3>
+    On the basis of the considerations made in the analysis phase, it is possible to outline a first logical architecture of the system. <br>
+     It is evident that the system is composed of different actors who live in separate contexts and interact
+     between them exchanging messages.
+    <img src="./resouces/images/wasteservicesystemarch.png" alt="">
+
+    Below you can see the code of the executable models and the tests produced by the analysis phase:   
+    <br><br>
+    <table>
+        <tr>
+            <th><kc>Models</kc></th> 
+          <th><kc>Test</kc></th>
+          
+        </tr>
+        <tr>
+          <td><a href="./resouces/qak/wasteService.qak">wasteService.qak     </a></td>
+          <td><a href="../unibo.wasteService/test/unibo/testwasteservice/TestWasteServiceActor.kt">TestWasteServiceActor.kt</a></td>
+          
+        </tr>
+        <tr>
+          <td><a href="./resouces/qak/transportTrolley.qak">transportTrolley.qak     </a></td>
+          <td><a href="../unibo.wasteService/test/unibo/testtransporttrolley/TestTransportTrolleyActor.kt">TestTransportTrolleyActor.kt</a></td>
+          
+        </tr>
+        <tr>
+            <td><a href="./resouces/qak/ledQak.qak">ledQak.qak     </a></td>
+            <td><a href="../unibo.wasteService/test/unibo/testled/TestLedQakActor.kt">TestLedQakActor.kt</a></td>
+            
+          </tr>
+      </table>
+
 </div>
 
 
 <h2>Work Plan</h2>
  <div class="remark">
     <h3>Work to do: Sprint1</h3>
-    Nello Sprint1 ci occuperemo dell'analisi e dello sviluppo della <kc><i>Businness Core</i></kc>, ovvero della parte di applicazione che contiene
-    la logica per lo smistamento e la navigazione verso le aree designate. <br>
-    Nello specifico:
+    In Sprint1 we will deal with the analysis and development of the <kc> <i> Business Core </i> </kc>, that is the part of the application that contains
+    the logic for store waste and navigate to designated areas. <br>
+    In particular:
     <ul>
-        <li>Approfondiremo l'analisi relativa al sottoproblema trattato</li>
-        <li>Svilupperemo e approfondiremo l'architettura logica dell'applicazione zoomando sulla parte interessata</li>
-        <li>Terminando con un prototipo eseguibile e un TestPlan</li>
+        <li> We will deepen the analysis related to the considered subproblem  </li>
+        <li> We will develop and deepen the logical architecture of the application by zooming in on the interested part </li>
+        <li> Ending with an executable prototype and a TestPlan for the considered problem</li>
     </ul>
     Di seguito è possibile visionare lo <a href="../../Sprint1/userDocs/sprint1.html">Sprint1</a>
  </div>

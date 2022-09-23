@@ -13,8 +13,8 @@ class Wasteserviceactor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm
 	override fun getInitialState() : String{
 		return "setup"
 	}
-
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
+		val interruptedStateTransitions = mutableListOf<Transition>()
 		
 				val boxMaxWeight = mutableMapOf<wasteservice.state.Material, Double>(wasteservice.state.Material.PLASTIC to 500.0, wasteservice.state.Material.GLASS to 500.0)
 				val boxState  = wasteservice.state.WasteServiceState(boxMaxWeight)
@@ -24,7 +24,11 @@ class Wasteserviceactor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm
 				state("setup") { //this:State
 					action { //it:State
 						println("$name | setup")
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
 				}	 
 				state("idle") { //this:State
@@ -32,7 +36,11 @@ class Wasteserviceactor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm
 						println("$name	|	in idle ")
 						updateResourceRep(boxState.toJsonString() 
 						)
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition(edgeName="t00",targetState="requestEvaluation",cond=whenRequest("storeWaste"))
 				}	 
 				state("requestEvaluation") { //this:State
@@ -58,7 +66,11 @@ class Wasteserviceactor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm
 								
 												}	
 						}
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
 				}	 
 			}
