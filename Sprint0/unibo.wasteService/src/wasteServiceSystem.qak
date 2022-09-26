@@ -1,8 +1,9 @@
 System wasteservicesystem
 
-Dispatch pickingup : pickingup(_)
-Dispatch droppingout : droppingout(MATERIAL)
-Dispatch backhome : backhome(_)
+Request pickup : pickup(_)
+Request droppout : droppout(MAT)
+Reply pickupdone : pickupdone(_)
+Reply dropoutdone : dropoutdone(_)
 
 Dispatch turnOn  : turnOn(_)
 Dispatch turnOff : turnOff(_)
@@ -27,8 +28,6 @@ Context ctxwasteservice ip[host="localhost" port=8050]
 
 ExternalQActor basicrobot context ctxrobot
 
-
-
 QActor wasteservicestatusgui context ctxserver{
 	State s0 initial{
 		
@@ -37,24 +36,22 @@ QActor wasteservicestatusgui context ctxserver{
 
 QActor wasteservice context ctxwasteservice{
 	State s0 initial{
-		forward transporttrolley -m pickingup : pickingup
-		forward transporttrolley -m droppingout : droppingout(Plastic)
-		forward transporttrolley -m backhome : backhome
+		request transporttrolley -m pickup : pickup(_)
+		request transporttrolley -m droppout : dropout(PLASTIC)
 		
 		onMsg(storeWaste : storewaste(M, W)) {
 			
-			if[# (payloadArg(0).compareTo("ciao") #]
-					{
-										
-						replyTo storeWaste with loadaccept : loadaccept(_)
+			if[# (payloadArg(0).compareTo("ciao") #]{
+				replyTo storeWaste with loadaccept : loadaccept(_)
 				
-					}
-					else{
-						replyTo storeWaste with loadrejected : loadrejected(_)
-					}
+			}
+			else{
+				replyTo storeWaste with loadrejected : loadrejected(_)
+			}
 		}
 	}
 }
+	
 QActor transporttrolley context ctxwasteservice{
 	State s0 initial{
 		forward led -m turnOn : turnOn
@@ -64,6 +61,8 @@ QActor transporttrolley context ctxwasteservice{
 		forward basicrobot -m cmd : cmd
 		request basicrobot -m step : step(w)
 		
+		replyTo pickup with pickupdone : pickupdone(_)
+		replyTo droppout with dropoutdone : dropoutdone(_)
 		
 	}
 }
@@ -76,8 +75,7 @@ QActor led context ctxpi{
 
 QActor sonar context ctxpi{
 	State s0 initial{
-		emit obstacle : obstacle(dist)
-		emit sonar : distance(v)
+		
 	}
 }
 

@@ -103,14 +103,14 @@ key{
 key2{
     font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-weight: 500;
-	font-size: 90%;
+	font-size: 95%;
     color: #ad0d0f;
 }
 
 key3{
     font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-weight: 500;
-	font-size: 100%;
+	font-size: 90%;
     color: #01b948;
 }
 
@@ -281,7 +281,7 @@ Kotlin's <kc> <i> MutableMap </i> </kc>, distinguishing the two containers by me
 <key>private val</key> boxMaxWeight : MutableMap < Material, Double >
 <key>private val</key> boxCurrentWeight : MutableMap < Material, Double ></pre>
 
-    <h4>Deposit Action</h4>
+    <div id="DEP"><h4>Deposit Action</h4></div>
     Represents a sequence of actions performed by the <a href="#Ttrolley"><kc>transport trolley</kc></a>
     <ul>
         <li>pick up a "waste load" from "waste truck" which is located in <kc>INDOOR</kc>.</li>
@@ -602,11 +602,12 @@ assertTrue(asw.contains("loadrejected"))</pre>
 </div>
 
 <div class="remark">
-    <h3>Logical architecture</h3>
+    <h3>Logical Architecture</h3>
     On the basis of the considerations made in the analysis phase, it is possible to outline a first logical architecture of the system. <br>
-     It is evident that the system is composed of different actors who live in separate contexts and interact
-     between them exchanging messages.
-    <img src="./resouces/images/wasteservicesystemarch.png" alt="">
+    It is evident that the system is composed of different actors who live in separate contexts and interact
+    between them exchanging messages. <br><br>
+    <center><img src="./resouces/images/LogicalArch.png" alt=""></center>
+    <br>
 
     Below you can see the code of the executable models and the tests produced by the analysis phase:   
     <br><br>
@@ -650,24 +651,108 @@ assertTrue(asw.contains("loadrejected"))</pre>
     Di seguito è possibile visionare lo <a href="../../Sprint1/userDocs/sprint1.html">Sprint1</a>
  </div>
 
+<h2>Sprint0 Review</h2>
+
+<div class="remark">
+    <h3>Changes applied</h3>
+    Sulla base dell'interazione con il committente, risulta necessario eseguire una <kc>Sprint review</kc>, vengono apportate le seguenti modifiche all'analisi dei requisiti.
+    <h4><a href="#DEP">Deposit Action</a> - Review</h4>
+    Da requisito il <kc>truck driver</kc> deve liberare la <kc>INDOOR</kc> il prima possibile, tale momento coincide con il prelievo 
+    dei rifiuti dal truck da parte del <kc>transportTrolley</kc>. Per tale motivo il <kc>wasteService</kc> deve essere conscio di 
+    quando il <i>transportTrolley</i> conclude l'azione di <kc>pickup</kc>, ciò implica che l'interazione tra i due debba essere di tipo
+    <i><kc>Request-response</kc></i> perlomeno per quanto riguarda l'azione di <i>pickup</i>. <br>
+    E' possibile formalizzare l'interazione necessaria all'esecuzione delle due azioni utilizzando il linguaggio Qak come segue:
+    <pre>
+<key2>Request</key2> pickup : pickup(_)
+<key2>Request</key2> dropout: dropout(MAT)
+
+<key2>Reply</key2> pickupdone: pickupdone(_)
+<key2>Reply</key2> dropoutdone: dropoutdone(_)</pre>
+
+    <h4><a href="#WS">Waste Service</a> - Review</h4>
+    A seguito dell'interazione con il committente la formalizzazione del <kc>wasteService</kc> viene estesa introducendo parte del behavior
+    e le interazioni con il <kc>transportTrolley</kc>, come mostrato in <a href="./resouces/qak/wasteService2.qak">wasteService2</a>.
+    <pre>
+<key2>QActor</key2> wasteserviceactor <key2>context</key2> ctxwasteservice {
+    	
+[#
+    val boxMaxWeight = mutableMapOf< wasteservice.state.Material, Double>(wasteservice.state.Material.PLASTIC to 500.0,
+                                                                            wasteservice.state.Material.GLASS to 500.0)
+    val boxState  = wasteservice.state.WasteServiceState(boxMaxWeight)
+    lateinit var requestMaterialToStore : wasteservice.state.Material 
+    var requestWeightToStore = 0.0
+#]
+
+    <key2>State</key2> setup <key2>initial</key2> {
+        ...
+    }<key2>Goto</key2> idle
+    
+    <key2>State</key2> idle {
+        ...
+    }<key2>Transition</key2> t0 <key2>whenRequest</key2> storeWaste -> requestEvaluation
+    
+    <key2>State</key2> requestEvaluation {
+        <key2>onMsg</key2>(storeWaste : storeWaste(MAT, QUA)){
+            ...             
+        }
+    }<key2>Goto</key2> acceptRequest <key2>if</key2>[# boxState.canStore(requestMaterialToStore, requestWeightToStore) #]
+                            <key2>else</key2> rejectRequest
+
+    <key2>State</key2> rejectRequest{
+        <key2>replyTo</key2> storeWaste <key2>with</key2> loadrejected : loadrejected(_)
+    }<key2>Goto</key2> idle
+
+    <key2>State</key2> acceptRequest{
+        <key2>request</key2> transporttrolley <key2>-m</key2> pickup : pickup
+    }<key2>Transition</key2> t0 <key2>whenReply</key2> pickupdone -> dropout
+
+    <key2>State</key2> dropout{
+        ...				
+        <key2>replyTo</key2> storeWaste <key2>with</key2> loadaccept : loadaccept(_)
+        <key2>request</key2> transporttrolley <key2>-m</key2> dropout : dropout(TYPE)
+    }<key2>Transition</key2> t0 <key2>whenReply</key2> dropoutdone -> idle
+}</pre>
+
+<h4><a href="#Ttrolley">Transport Trolley</a> - Review</h4>
+Il <kc>transportTrolley</kc> viene modificato in modo da supportare il nuovo tipo di comunicazione (<i>Request-response</i>) con il 
+<kc>wasteService</kc> come mostrato in <a href="./resouces/qak/wasteService2.qak">transportTrolley2</a>.
+<pre>
+<key2>QActor</key2> transporttrolley <key2>context</key2> ctxwasteservice{
+    [#
+        val tTstate = transporttrolley.state.TransportTrolleyState(transporttrolley.state.CurrStateTrolley.IDLE)
+        lateinit var MaterialToStore : wasteservice.state.Material 
+    #]
+    
+    <key2>State</key2> s0 <key2>initial</key2>{
+        ...
+    }<key2>Goto</key2> idle
+    
+    <key2>State</key2> idle{
+        ...
+    }<key2>Transition</key2> t0 <key2>whenRequest</key2> pickup -> pickingup
+                    
+    <key2>State</key2> pickingup{
+        ...
+        <key2>replyTo</key2> pickup <key2>with</key2> pickupdone : pickupdone(_)
+    }<key2>Transition</key2> t0 <key2>whenRequest</key2> dropout -> droppingout
+    
+    <key2>State</key2> droppingout{
+        <key2>onMsg</key2>(dropout : dropout(MAT)){
+            [# MaterialToStore = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase()) #]
+        }
+        ...
+        <key2>replyTo</key2> dropout <key2>with</key2> dropoutdone : dropoutdone(_)
+    }<key2>Goto</key2> idle
+}</pre>
 
 
+Per quanto riguarda il requisito di ritorno a <kc>HOME</kc> del <i>transportTrolley</i> tale problematica verra affrontata nello <a href="../../Sprint1/userDocs/sprint1.html">Sprint1</a>
+</div>
 
-
-
-
-
-
- 
-<!-- USEFUL
-<table style="width:100%" border="1">
-<tr>
-<td style="width:50%">
-</td>
-<td></td>
-</tr>
-</table>
--->
+<div class="remark">
+    <h3>New Logical Architecture</h3>
+    <center><img src="./resouces/images/newLogicalArch.png" alt=""></center>
+</div>
 	      	
 <br/><br/> 	
 
