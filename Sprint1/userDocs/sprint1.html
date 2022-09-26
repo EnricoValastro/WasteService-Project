@@ -220,25 +220,46 @@ div.imagedesc{
 
 <div class="body"> 
 <h2>Introduction</h2>
- 
+    <div class="remark">
+        At the end of the requirement analysis, reported in <a href="../../Sprint0/userDocs/sprint0.html">Sprint0</a>, the logical architecture is as follows: <br></br>
+        <center><img src="../../Sprint0/userDocs/resouces/images/wasteservicesystemarch.png" width="45%" height="60%"></center>
+        <br>
+        In this Sprint we will focus on what for us is the <kc>Business Core</kc> of the system, which will consist of wasteservice, transporttrolley and basicrobot as shown in the figure.
+        <center><img src=""></center>
+    </div>
  
 <h2>Requirements</h2>
 <div class="remark">
-    <a href="./resouces/html/TemaFinale22.html">TemaFinale22</a>
+    <a href="../../Sprint0/userDocs/resouces/html/TemaFinale22.html">TemaFinale22</a>
 </div>
 
-<h2>Requirement analysis</h2>
+<h2>Problem analysis</h2>
+    <div class="remark">
+        <h4>Ritorno alla home/Gestione delle nuove richieste</h4>
+        Quando il truck ha scaricato il carico all'indoor, il <kc>transport trolley</kc> ha il compito di portare tale carico 
+        in uno degli appositi container qualora il <kc>wasteservice</kc> abbia risposto in maniera positiva.
+        Nel frattempo il wasteservice potrebbe comunque gestire una nuova richiesta mentre sta completando quella precedente. 
+        Come da requisito una volta terminata la deposit action e nel caso in cui non ci siano richieste il transport trolley deve tornare alla Home.
+        Per gestire ciò vengono analizzate diverse soluzioni:
+        <br>
+        <ul>
+            <li>
+                Il transport trolley si invia un automessaggio <key2>forward</key2> transporttrolley <key2>-m</key2> gotohome: gotohome
+            </li>
+            <li>
+                
+            </li>
+            <li>
+                Il wasteservice invia un messaggio al transport trolley del tipo <key2>forward</key2> transporttrolley <key2>-m</key2> gotohome: gotohome
+            </li>
+        </ul>
+        Come analisti del problema scegliamo la seconda soluzione.
+        <h4>Quando il truck deve andare via?</h4>
+            L'interazione con il committente ha evidenziato il fatto che il "truck" deve essere mandato via il prima possibile. 
+        <h4>Come capire dove si trova il robot? Che tipo di sistema di coordinate devo usare?</h4>
+    </div>
+    
 
-
-
-
-
-
-
-
-
-
- 
 <!-- USEFUL
 <table style="width:100%" border="1">
 <tr>
@@ -258,9 +279,9 @@ div.imagedesc{
     <br>
     Email: annamaria.simonitto@studio.unibo.it, enrico.valastro@studio.unibo.it, alessio.reitano@studio.unibo.it
     <br><br>
-    <img src="./resouces/images/AnnamariaSimonitto.jpg" alt="" width="8%" height="8%">
-    <img src="./resouces/images/EnricoValastro.jpeg" alt="" width="8.5%" height="8.5%">
-    <img src="./resouces/images/AlessioReitano.jpeg" alt="" width="10%" height="10%">
+    <img src="../../Sprint0/userDocs/resouces/images/AnnamariaSimonitto.jpg" alt="" width="8%" height="8%">
+    <img src="../../Sprint0/userDocs/resouces/images/EnricoValastro.jpeg" alt="" width="8.5%" height="8.5%">
+    <img src="../../Sprint0/userDocs/resouces/images/AlessioReitano.jpeg" alt="" width="10%" height="10%">
 </div> 
 </body>
 </html>

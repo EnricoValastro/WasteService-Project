@@ -17,8 +17,6 @@ eventedgeattr = {
     'style': 'dotted'
 }
 with Diagram('wasteservicesystemArch', show=False, outformat='png', graph_attr=graphattr) as diag:
-  with Cluster('ctxtruck', graph_attr=nodeattr):
-          smartdevice=Custom('smartdevice','./qakicons/symActorSmall.png')
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
      with Cluster('ctxpi', graph_attr=nodeattr):
@@ -26,7 +24,8 @@ with Diagram('wasteservicesystemArch', show=False, outformat='png', graph_attr=g
           sonar=Custom('sonar','./qakicons/symActorSmall.png')
      with Cluster('ctxrobot', graph_attr=nodeattr):
           basicrobot=Custom('basicrobot(ext)','./qakicons/externalQActor.png')
-     
+     with Cluster('ctxtruck', graph_attr=nodeattr):
+          smartdevice=Custom('smartdevice','./qakicons/symActorSmall.png')
      with Cluster('ctxserver', graph_attr=nodeattr):
           wasteservicestatusgui=Custom('wasteservicestatusgui','./qakicons/symActorSmall.png')
      with Cluster('ctxwasteservice', graph_attr=nodeattr):
@@ -40,11 +39,4 @@ with Diagram('wasteservicesystemArch', show=False, outformat='png', graph_attr=g
      transporttrolley >> Edge(color='blue', style='solid', xlabel='cmd', fontcolor='blue') >> basicrobot
      transporttrolley >> Edge(color='magenta', style='solid', xlabel='step', fontcolor='magenta') >> basicrobot
      smartdevice >> Edge(color='magenta', style='solid', xlabel='storeWaste', fontcolor='magenta') >> wasteservice
-     transporttrolley >> Edge(color='darkgreen', style='dashed', xlabel='pickupdone', fontcolor='darkgreen') >> wasteservice
-     transporttrolley >> Edge(color='darkgreen', style='dashed', xlabel='dropoutdone', fontcolor='darkgreen') >> wasteservice
-     basicrobot >> Edge(color='darkgreen', style='dashed', xlabel='stepdone', fontcolor='darkgreen') >> transporttrolley
-     basicrobot >> Edge(color='darkgreen', style='dashed', xlabel='stepfail', fontcolor='darkgreen') >> transporttrolley
-     wasteservice >> Edge(color='darkgreen', style='dashed', xlabel='loadaccept', fontcolor='darkgreen') >> smartdevice
-     wasteservice >> Edge(color='darkgreen', style='dashed', xlabel='loadrejected', fontcolor='darkgreen') >> smartdevice
-
 diag
