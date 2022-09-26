@@ -220,13 +220,7 @@ div.imagedesc{
 
 <div class="body"> 
 <h2>Introduction</h2>
-    <div class="remark">
-        At the end of the requirement analysis, reported in <a href="../../Sprint0/userDocs/sprint0.html">Sprint0</a>, the logical architecture is as follows: <br></br>
-        <center><img src="../../Sprint0/userDocs/resouces/images/wasteservicesystemarch.png" width="45%" height="60%"></center>
-        <br>
-        In this Sprint we will focus on what for us is the <kc>Business Core</kc> of the system, which will consist of wasteservice, transporttrolley and basicrobot as shown in the figure.
-        <center><img src=""></center>
-    </div>
+    
  
 <h2>Requirements</h2>
 <div class="remark">
@@ -235,19 +229,23 @@ div.imagedesc{
 
 <h2>Problem analysis</h2>
     <div class="remark">
+        At the end of the requirement analysis, reported in <a href="../../Sprint0/userDocs/sprint0.html">Sprint0</a>, the logical architecture is as follows: <br></br>
+        <center><img src="../../Sprint0/userDocs/resouces/images/newLogicalArch.png" width="45%" height="60%"></center>
+        <br>
+        In this Sprint we will focus on what for us is the <kc>Business Core</kc> of the system, which will consist of wasteservice, transporttrolley and basicrobot as shown in the figure.
+<center><img src=""></center>
+    </div>
+    <div class="remark">
         <h4>Ritorno alla home/Gestione delle nuove richieste</h4>
         Quando il truck ha scaricato il carico all'indoor, il <kc>transport trolley</kc> ha il compito di portare tale carico 
         in uno degli appositi container qualora il <kc>wasteservice</kc> abbia risposto in maniera positiva.
         Nel frattempo il wasteservice potrebbe comunque gestire una nuova richiesta mentre sta completando quella precedente. 
         Come da requisito una volta terminata la deposit action e nel caso in cui non ci siano richieste il transport trolley deve tornare alla Home.
         Per gestire ciò vengono analizzate diverse soluzioni:
-        <br>
+        <br><br>
         <ul>
             <li>
                 Il transport trolley si invia un automessaggio <key2>forward</key2> transporttrolley <key2>-m</key2> gotohome: gotohome
-            </li>
-            <li>
-                
             </li>
             <li>
                 Il wasteservice invia un messaggio al transport trolley del tipo <key2>forward</key2> transporttrolley <key2>-m</key2> gotohome: gotohome
@@ -257,8 +255,32 @@ div.imagedesc{
         <h4>Quando il truck deve andare via?</h4>
             L'interazione con il committente ha evidenziato il fatto che il "truck" deve essere mandato via il prima possibile. 
         <h4>Come capire dove si trova il robot? Che tipo di sistema di coordinate devo usare?</h4>
-    </div>
-    
+        <h4>Il problema della navigazione</h4>
+        Tale problematica risulta essere di fondamentale importanza, poichè bisogna individuare quale possa essere la soluzione
+        migliore affinchè il robot si muova all'interno della <kc>Service Area</kc> sapendo che i punti di interesse sono <kc>HOME</kc>, <kc>INDOOR</kc>, <kc>PLASTIC BOX</kc> e <kc>GLASS BOX</kc>.
+        In questa sezione analizzeremo le varie soluzioni possibili:
+        <ul>
+            <h4>Uso con coordinate</h4>
+            Tale sistema fa uso di coordinate già stabilite per spostare il <kc>transport trolley</kc>. 
+            In questo caso la stanza è divisa in tanti quadrati di dimensione <kc>RD</kc>. Quindi ogni punto d'interesse è identificato da coordinate (x,y), 
+            il che ci permette di utilizzare alcuni dei software messi a disposizione dalla nostra "Software house" come:
+            <br><br>
+            <ul>
+                <li>
+                    <a href="https://github.com/anatali/issLab2022/tree/main/unibo.mapperQak22">unibo.mapperQak22</a>
+                </li>
+                <li>
+                    <a href="https://github.com/anatali/issLab2022/tree/main/unibo.planner22">unibo.planner22</a>
+                </li>
+                <li>
+                    <a href="https://github.com/anatali/issLab2022/tree/main/unibo.pathexecutor">unibo.pathexecutor</a>
+                    
+                </li>
+            </ul>
+            <h4>Uso senza coordinate</h4>
+            
+        </ul>
+
 
 <!-- USEFUL
 <table style="width:100%" border="1">
