@@ -227,61 +227,56 @@ div.imagedesc{
     <a href="../../Sprint0/userDocs/resouces/html/TemaFinale22.html">TemaFinale22</a>
 </div>
 
+<h2>Work Plan</h2>
+<div class="remark">
+    In this Sprint we will focus on the <kc>Core Business</kc> of the system, we will analyze the main problems 
+        relating to the core business, proposing solutions and identifying the best among them. 
+        We will also develop a working prototype of the analyzed subproblem and automated tests to verify its correct functioning. <br>
+        In particular, we will analyze the problems related to:
+        <ul>
+            <li>
+                <a href="#depAct"><b>Deposit Action</b></a>
+                <ul>
+                    <li>How to move the <kc>transport trolley</kc> to its destination.</li>
+                    <li>How the components of the system interacts.</li>
+                    <li>How to manage the <kc>Service Area</kc> status.</li>
+                </ul>
+            </li>
+            <li>
+                <a href="#BackHome"><b>Back to Home</b></a>
+                <ul>
+                    <li>Who manages the "<i>back to home</i>" action </li>
+                    <li>How the components interact</li>
+                </ul>
+            </li>
+            <li> 
+                <a href="#ASAP"><b>Send the <kc>truck</kc> away as soon as possible</b> </a>
+                <ul>
+                    <li>Identify the moment when the truck must leave the <kc>INDOOR</kc></li>
+                    <li>How to tell the truck to leave <kc>INDOOR</kc></li>
+                </ul>
+            </li>
+        </ul>
+        
+</div>
+
 <h2>Problem analysis</h2>
-    <div class="remark">
-        At the end of the requirement analysis, reported in <a href="../../Sprint0/userDocs/sprint0.html">Sprint0</a>, the logical architecture is as follows: <br></br>
-        <center><img src="../../Sprint0/userDocs/resouces/images/newLogicalArch.png" width="45%" height="60%"></center>
-        <br>
-        In this Sprint we will focus on what for us is the <kc>Business Core</kc> of the system, which will consist of wasteservice, transporttrolley and basicrobot as shown in the figure.
-<center><img src=""></center>
-    </div>
-    <div class="remark">
-        <h4>Ritorno alla home/Gestione delle nuove richieste</h4>
-        Quando il truck ha scaricato il carico all'indoor, il <kc>transport trolley</kc> ha il compito di portare tale carico 
-        in uno degli appositi container qualora il <kc>wasteservice</kc> abbia risposto in maniera positiva.
-        Nel frattempo il wasteservice potrebbe comunque gestire una nuova richiesta mentre sta completando quella precedente. 
-        Come da requisito una volta terminata la deposit action e nel caso in cui non ci siano richieste il transport trolley deve tornare alla Home.
-        Per gestire ciò vengono analizzate diverse soluzioni:
-        <br><br>
-        <ul>
-            <li>
-                Il transport trolley si invia un automessaggio <key2>forward</key2> transporttrolley <key2>-m</key2> gotohome: gotohome
-            </li>
-            <li>
-                Il wasteservice invia un messaggio al transport trolley del tipo <key2>forward</key2> transporttrolley <key2>-m</key2> gotohome: gotohome
-            </li>
-        </ul>
-        Come analisti del problema scegliamo la seconda soluzione.
-        <h4>Quando il truck deve andare via?</h4>
-            L'interazione con il committente ha evidenziato il fatto che il "truck" deve essere mandato via il prima possibile. 
-        <h4>Come capire dove si trova il robot? Che tipo di sistema di coordinate devo usare?</h4>
-        <h4>Il problema della navigazione</h4>
-        Tale problematica risulta essere di fondamentale importanza, poichè bisogna individuare quale possa essere la soluzione
-        migliore affinchè il robot si muova all'interno della <kc>Service Area</kc> sapendo che i punti di interesse sono <kc>HOME</kc>, <kc>INDOOR</kc>, <kc>PLASTIC BOX</kc> e <kc>GLASS BOX</kc>.
-        In questa sezione analizzeremo le varie soluzioni possibili:
-        <ul>
-            <h4>Uso con coordinate</h4>
-            Tale sistema fa uso di coordinate già stabilite per spostare il <kc>transport trolley</kc>. 
-            In questo caso la stanza è divisa in tanti quadrati di dimensione <kc>RD</kc>. Quindi ogni punto d'interesse è identificato da coordinate (x,y), 
-            il che ci permette di utilizzare alcuni dei software messi a disposizione dalla nostra "Software house" come:
-            <br><br>
-            <ul>
-                <li>
-                    <a href="https://github.com/anatali/issLab2022/tree/main/unibo.mapperQak22">unibo.mapperQak22</a>
-                </li>
-                <li>
-                    <a href="https://github.com/anatali/issLab2022/tree/main/unibo.planner22">unibo.planner22</a>
-                </li>
-                <li>
-                    <a href="https://github.com/anatali/issLab2022/tree/main/unibo.pathexecutor">unibo.pathexecutor</a>
-                    
-                </li>
-            </ul>
-            <h4>Uso senza coordinate</h4>
-            
-        </ul>
-
-
+<div class="remark">
+    <h3>Sprint0 result</h3>
+    At the end of the requirement analysis, reported in <a href="../../Sprint0/userDocs/sprint0.html">Sprint0</a>, the logical architecture is as follows: <br></br>
+    <center><img src="../../Sprint0/userDocs/resouces/images/newLogicalArch.png" width="60%" height="60%"></center>
+    <br>
+</div>
+<div class="remark">
+    <div id="depAct"><h3>Requirement: Deposit Action</h3></div>
+    
+</div>
+<div class="remark">
+    <div id="BackHome"><h3>Requirement: Back to Home</h3></div>
+</div>
+<div class="remark">
+    <div id="ASAP" ><h3>Requirement: As soon as possible</h3></div>
+</div>
 <!-- USEFUL
 <table style="width:100%" border="1">
 <tr>
