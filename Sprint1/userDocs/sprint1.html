@@ -276,6 +276,23 @@ div.imagedesc{
 </div>
 <div class="remark">
     <div id="ASAP" ><h3>Requirement: As soon as possible</h3></div>
+    After the interaction with the customer we made it clear that the truck must be sent away as soon as possible. We need to identify when the truck should leave the <kc>INDOOR</kc> and  how to send it away.
+    <h4>Leave the <kc>INDOOR</kc></h4>
+    Different ways:
+    <ul>
+        <li>The truck could leave the <kc>INDOOR</kc> immediately after unloading</li>
+        <li>The truck could leave the <kc>INDOOR</kc> after the transport trolley has unloaded the garbage in the container</li>
+    </ul>
+    To meet the requirement of the customer and then send the truck away as soon as possible, we will use the first option that results in the end of the <kc>pickup </kc>action.
+    
+
+    <h4>How to send it away</h4>
+    Different ways:
+    <ul>
+        <li>We can send the truck away with the <kc>loadaccept</kc> after the trolley has finished the pickup action.</li>
+        <li>We can send the truck away with a new message after the trolley pickingup, having already sent him the <kc>loadaccept</kc> to accept the load.</li>
+    </ul>
+    It is less expensive in terms of load on the network to send a single message (loadaccept) to accept the load and to send the truck away.
 </div>
 <!-- USEFUL
 <table style="width:100%" border="1">
