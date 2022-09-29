@@ -121,6 +121,15 @@ key4{
     color: #008232;
 }
 
+pro{
+    font-weight: bold;
+    color:blue;
+}
+cons{
+    font-weight: bold;
+    color: red;
+}
+
 m{
 	font-family: "Helvetica";
 	line-height: 100%;
@@ -279,10 +288,10 @@ div.imagedesc{
 <div class="remark">
     <div id="depAct"><h3>Requirement: Deposit Action</h3></div>
     <h4>Muovere il robot verso una destinazione</h4>
-    <h5>Come orientarsi nella stanza</h5>
+    <h5>Orientate in the environment</h5>
     Dai requisiti risulta chiaro che le dimensioni della stanza siano note apriori, così come sono note le posizioni dei punti d'interesse
     (<kc>HOME</kc>, <kc>INDOOR</kc>, <kc>PLASTICBOX</kc>, <kc>GLASSBOX</kc>) e altri valori costanti.
-    Affinchè il sistema sia a conoscenza di tali informazioni, sarebbe opportuno configurarlo in maniera opportuna. <br>
+    Affinchè il sistema sia a conoscenza di tali informazioni, sarebbe opportuno configurarlo in maniera opportuna. <br><br>
     A tal proposito si potrebbero seguire due differenti approcci: <br>
     <ol>
         <li>Cablare i valori nel codice dell'applicazione</li>
@@ -306,6 +315,31 @@ div.imagedesc{
     <key4>"MAXGB"</key4>: 500,
     <key4>"DLIMIT"</key4>: 40
 }</pre>
+
+    Sorge quindi la problematica di come rappresentare la posizione dei punti d'interesse (<kc>HOME</kc>, <kc>INDOOR</kc>, <kc>PLASTICBOX</kc>, <kc>GLASSBOX</kc>), e del robot.
+    <br><br>
+    E' possibile, anche in questo caso seguire approcci differenti:
+    <ol>
+        <li>Utilizzare un sistema di coordinate GPS (DMS: gradi-minuti-secondi)</li>
+        <li>Utilizzare un sistema di coordinate cartesiane X e Y</li>
+        <li>Utilizzare gli elementi strutturali della <kc>Service Area</kc> (pareti, ostacoli ecc) come punti di riferimento</li>
+    </ol>    
+    <br>
+    <ks><b>Coordinate GPS</b></ks> <br><br>
+    L'utilizzo di coordinate GPS richiede la conoscenza delle coordinate GPS dei luoghi d'interesse e la presenza di un GPS a bordo del 
+    <kc>DDR</kc>, i vantaggi e svantaggi di tale approccio sono:
+    <br>
+    <pro>+</pro> Maggiore precisione <br>
+    <cons>-</cons> Dotare il DDR robot di un sensore GPS. <br>
+    <cons>-</cons> Processamento delle coordinate GPS per comprendere quali "mosse" il robot debba eseguire. <br>
+    <cons>-</cons> Maggiore complessità. <br>
+    <cons>-</cons> Introduzione di un ulteriore <i>overhead</i> di rete. <br> <br>
+
+    <ks><b>Coordinate cartesiane</b></ks> <br><br>
+    L'utilizzo delle coordinate cartesiane 
+
+    <h5>Path finding</h5>
+    <h5>Deposit e move actions managing</h5>
 
     <h4>Interazione tra i componenti</h4>
 
