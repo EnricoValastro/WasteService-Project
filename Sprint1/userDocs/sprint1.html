@@ -114,6 +114,13 @@ key3{
     color: #01b948;
 }
 
+key4{
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 500;
+	font-size: 90%;
+    color: #008232;
+}
+
 m{
 	font-family: "Helvetica";
 	line-height: 100%;
@@ -151,9 +158,11 @@ h4 {
 	padding: 2px;
 }
 h5 {
-    background-color: #d5ffb0;
+    background-color: #91df4d;
     font-size: 100%;
-
+    width: 100%;
+	border-radius: 5px;
+	padding: 2px;
 }
 div.req{
 	background-color: #d9ffb3;
@@ -269,7 +278,38 @@ div.imagedesc{
 </div>
 <div class="remark">
     <div id="depAct"><h3>Requirement: Deposit Action</h3></div>
-    
+    <h4>Muovere il robot verso una destinazione</h4>
+    <h5>Come orientarsi nella stanza</h5>
+    Dai requisiti risulta chiaro che le dimensioni della stanza siano note apriori, così come sono note le posizioni dei punti d'interesse
+    (<kc>HOME</kc>, <kc>INDOOR</kc>, <kc>PLASTICBOX</kc>, <kc>GLASSBOX</kc>) e altri valori costanti.
+    Affinchè il sistema sia a conoscenza di tali informazioni, sarebbe opportuno configurarlo in maniera opportuna. <br>
+    A tal proposito si potrebbero seguire due differenti approcci: <br>
+    <ol>
+        <li>Cablare i valori nel codice dell'applicazione</li>
+        <li>Utilizzare un file di configurazione</li>
+    </ol>
+    Dal momento che il software debba essere capace di funzionare correttamente in <kc>Service areas</kc> di qualsiasi dimensioni, 
+    la soluzione <b>n.1</b> risulta poco riutilizzabile e quindi inadatta, inquanto un cambiamento di <i>Service Area</i> richiederebbe un 
+    cambiamento nel codice dell'applicazione con conseguente <i>rebuild</i> dell'applicazione stessa. <br>
+    Per tale motivo consigliamo di utilizzare un <ks>file di configurazione</ks> che può essere facilmente modificato senza richiedere 
+    cambiamenti di codice. Poiche, al momento, l'unico componente interessato a conoscere i dati di configurazione è il <kc>wasteService</kc>
+    il file di configurazione può essere posizionato sul suo nodo computazionale, ed è consultabile in <a href="./resources/json/wasteServiceSystemConfig.json">wasteServiceSystemConfig.json</a>
+    <pre>
+{
+    <key4>"LOCATION"</key4>: {
+        <key4>"HOME"</key4>: ... ,
+        <key4>"INDOOR"</key4>: ... ,
+        <key4>"PLASTICBOX"</key4>: ... ,
+        <key4>"GLASSBOX"</key4>: ...
+    },
+    <key4>"MAXPB"</key4>: 500,
+    <key4>"MAXGB"</key4>: 500,
+    <key4>"DLIMIT"</key4>: 40
+}</pre>
+
+    <h4>Interazione tra i componenti</h4>
+
+    <h4>Stato della Service Area</h4>
 </div>
 <div class="remark">
     <div id="BackHome"><h3>Requirement: Back to Home</h3></div>
