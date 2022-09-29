@@ -367,6 +367,22 @@ div.imagedesc{
         <li>We can send the truck away with a new message after the trolley pickingup, having already sent him the <kc>loadaccept</kc> to accept the load.</li>
     </ul>
     It is less expensive in terms of load on the network to send a single message (loadaccept) to accept the load and to send the truck away.
+    <pre>
+    <key2>State</key2> acceptRequest{
+        <key2>request</key2> transporttrolley <key2>-m</key2> pickup : pickup
+    }<key2>Transition</key2> t0 <key2>whenReply</key2> pickupdone -> dropout
+                                                        
+    <key2>State</key2> dropout{
+        [# boxState.updateBoxWeight(requestMaterialToStore, requestWeightToStore) #]				
+        <key2>replyTo</key2> storeWaste <key2>with</key2> loadaccept : loadaccept(_)
+        [#var TYPE = requestMaterialToStore.toString()#]
+        <key2>request</key2> transporttrolley <key2>-m</key2> dropout : dropout(TYPE)
+    }<key2>Transition</key2> t0 <key2>whenReply</key2> dropoutdone -> idle                                         
+}
+    </pre>
+    After the WasteService receives the message from the transportTrolley: <br>
+     <key2>Reply</key2> pickupdone : pickupdone(_) <br>
+     transits in the dropout state and sends to SmartDevice: <br> <key2>replyTo</key2> storeWaste <key2>with</key2> loadaccept : loadaccept(_).
 </div>
 <!-- USEFUL
 <table style="width:100%" border="1">
