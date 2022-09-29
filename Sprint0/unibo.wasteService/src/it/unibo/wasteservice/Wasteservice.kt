@@ -15,25 +15,89 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
+		
+				val boxMaxWeight = mutableMapOf<wasteservice.state.Material, Double>(wasteservice.state.Material.PLASTIC to 500.0, wasteservice.state.Material.GLASS to 500.0)
+				val boxState  = wasteservice.state.WasteServiceState(boxMaxWeight)
+				lateinit var requestMaterialToStore : wasteservice.state.Material 
+				var requestWeightToStore = 0.0
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						request("pickup", "pickup(_)" ,"transporttrolley" )  
-						request("droppout", "dropout(PLASTIC)" ,"transporttrolley" )  
-						if( checkMsgContent( Term.createTerm("storeWaste(MATERIAL,TRUCKLOAD)"), Term.createTerm("storewaste(M,W)"), 
+						println("$name	|	setup")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("idle") { //this:State
+					action { //it:State
+						println("$name	|	in idle ")
+						updateResourceRep(boxState.toJsonString() 
+						)
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t00",targetState="requestEvaluation",cond=whenRequest("storeWaste"))
+				}	 
+				state("requestEvaluation") { //this:State
+					action { //it:State
+						if( checkMsgContent( Term.createTerm("storeWaste(MATERIAL,TRUCKLOAD)"), Term.createTerm("storeWaste(MAT,QUA)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								if(  (payloadArg(0).compareTo("ciao")  
-								 ){answer("storeWaste", "loadaccept", "loadaccept(_)"   )  
-								}
-								else
-								 {answer("storeWaste", "loadrejected", "loadrejected(_)"   )  
-								 }
+									
+												try{
+													requestMaterialToStore = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())  
+													requestWeightToStore = payloadArg(1).toDouble()		
+												}catch(e : Exception){
+								answer("storeWaste", "loadrejected", "loadrejected(_)"   )  
+								
+												}	
 						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="acceptRequest", cond=doswitchGuarded({ boxState.canStore(requestMaterialToStore, requestWeightToStore)  
+					}) )
+					transition( edgeName="goto",targetState="rejectRequest", cond=doswitchGuarded({! ( boxState.canStore(requestMaterialToStore, requestWeightToStore)  
+					) }) )
+				}	 
+				state("rejectRequest") { //this:State
+					action { //it:State
+						answer("storeWaste", "loadrejected", "loadrejected(_)"   )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("acceptRequest") { //this:State
+					action { //it:State
+						request("pickup", "pickup" ,"transporttrolley" )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t01",targetState="dropout",cond=whenReply("pickupdone"))
+				}	 
+				state("dropout") { //this:State
+					action { //it:State
+						 boxState.updateBoxWeight(requestMaterialToStore, requestWeightToStore)  
+						answer("storeWaste", "loadaccept", "loadaccept(_)"   )  
+						var TYPE = requestMaterialToStore.toString() 
+						request("dropout", "dropout(TYPE)" ,"transporttrolley" )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t02",targetState="idle",cond=whenReply("dropoutdone"))
 				}	 
 			}
 		}

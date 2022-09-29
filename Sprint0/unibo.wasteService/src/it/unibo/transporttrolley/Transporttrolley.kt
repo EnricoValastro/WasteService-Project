@@ -15,21 +15,61 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
+		
+				val tTstate = transporttrolley.state.TransportTrolleyState(transporttrolley.state.CurrStateTrolley.IDLE)
+				lateinit var MaterialToStore : wasteservice.state.Material 
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						forward("turnOn", "turnOn" ,"led" ) 
-						forward("turnOff", "turnOff" ,"led" ) 
-						forward("blink", "blink" ,"led" ) 
-						forward("cmd", "cmd" ,"basicrobot" ) 
-						request("step", "step(w)" ,"basicrobot" )  
-						answer("pickup", "pickupdone", "pickupdone(_)"   )  
-						answer("droppout", "dropoutdone", "dropoutdone(_)"   )  
+						println("$name	|	setup")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("idle") { //this:State
+					action { //it:State
+						updateResourceRep(tTstate.toJsonString() 
+						)
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t03",targetState="pickingup",cond=whenRequest("pickup"))
+				}	 
+				state("pickingup") { //this:State
+					action { //it:State
+						
+									tTstate.updateTTState(transporttrolley.state.CurrStateTrolley.PICKINGUP)
+						updateResourceRep(tTstate.toJsonString() 
+						)
+						answer("pickup", "pickupdone", "pickupdone(_)"   )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t04",targetState="droppingout",cond=whenRequest("dropout"))
+				}	 
+				state("droppingout") { //this:State
+					action { //it:State
+						if( checkMsgContent( Term.createTerm("dropout(MAT)"), Term.createTerm("dropout(MAT)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 MaterialToStore = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())  
+						}
+						 tTstate.updateTTState(transporttrolley.state.CurrStateTrolley.DROPPINGOUT)  
+						updateResourceRep(tTstate.toJsonString() 
+						)
+						answer("dropout", "dropoutdone", "dropoutdone(_)"   )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
 				}	 
 			}
 		}
