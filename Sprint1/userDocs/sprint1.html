@@ -316,7 +316,7 @@ div.imagedesc{
     From the requirements we know that when the action of <kc>deposit action</kc> is finished 
     and if there are no other requests the <kc>transport trolley</kc> must return to the <kc>HOME</kc>. 
     <h4>Who sends the backHome command</h4>
-    To address this problem you need to understand who is in charge of telling the transport trolley to return to the position of HOME. <br>
+    To address this problem, it is necessary to understand who communicates to the transport trolley to return to the HOME position <br>
     There can be two entities that deal with this: <br>
     <ol>
         <li>WasteService</li>
@@ -335,11 +335,40 @@ div.imagedesc{
     Therefore by itself the transport trolley could return in HOME, but the risk is that there are within the system still some demands to manage of which the transport trolley
     It doesn’t know, so there’s no answer. In any case, a possible solution could be to send a message by the transport trolley.
     <br><br>
-    The first solution is the one suggested to the developer because among all it has the advantage of "knowing" if there are still requests for the system to be managed.
+    The first solution is the one suggested to the developer because among all it has the advantage of "knowing" if there are still system requests to manage.
 
     <h4>Waste Service and Transport Trolley interaction</h4>
+    The two components interact with each other by exchanging messages.
+    Specifically, also based on when discussed in the previous point and assuming that the first solution is the convenient one,
+    the WasteService could communicate to the transport trolley to return to HOME by means of a message such as:
+    <pre>
+<key2>forward</key2> transporttrolley <key2>-m</key2> gotohome: gothome(_)</pre>
 
-
+    <h5>Come fa il WasteService a capire che il Transport Trolley ha completato l'operazione di dropout</h5>
+    L'analisi del problema della <kc>deposit action</kc> ha messo in evidenza che l'operazione di pickup dovrebbe essere trattata 
+    come una <key2>Request</key2> mentre quella di dropout come un <key2>Dispatch</key2>. 
+    Nasce dunque il problema di informare il WasteService quando il <i>transport trolley</i> completa l'operazione di <i>dropout</i>. <br>
+    Una soluzione a tale problema potrebbe essere quella in cui il <i>transport trolley</i> invia un messaggio al <i>WasteService</i> per informarlo 
+    del completamento dell'operazione, come di seguito:
+    <pre>
+<key2>forward</key2> wasteService <key2>-m</key2> dropoutdone: dropoutdone(_)</pre>
+    
+    Quando il <i>WasteService</i> riceve questo messaggio potrebbe trovarsi in due stati differenti: <br>
+    <ol>
+        <li>idle: in attesa di una nuova richiesta da parte del truck o un messaggio dal <i>transport trolley</i></li>
+        <li>requestEvaluation: in cui valuta se accettare o rifiutare una richiesta da parte del truck</li>
+    </ol>
+    Nel primo caso il <i>WasteService</i> preleva subito il messaggio dalla coda e 
+    transita allo stato backhome in cui invia al <i>transport trolley</i> il comando:
+    <pre>
+<key2>Dispatch</key2> gotohome : gotohome(_)</pre>
+    
+    Nel secondo caso il messaggio <kc>dropoutdone</kc> viene inserito nella coda ma non elaborato immediatamente. <br>
+    Il <i>WasteService</i> continua a valutare la richiesta e se l'esito della valutazione è negativo invia una <kc>loadrejected</kc>
+    al truck e transita allo stato <i>idle</i> in cui preleva il messaggio <i>dropoutdone</i> dalla coda e lo processa come nel caso <b>n1</b>,
+    se l'esito della valutazione è positivo il <i>WasteService</i> invia una richiesta di <i>pickup</i> al <i>transport trolley</i>
+    e successivamente preleva dalla coda il messaggio <i>dropoutdone</i> e lo scarta, si mette quindi in ascolto di una risposta da parte del trolley.
+      
 </div>
 <div class="remark">
     <div id="ASAP" ><h3>Requirement: As soon as possible</h3></div>
