@@ -313,23 +313,32 @@ div.imagedesc{
 </div>
 <div class="remark">
     <div id="BackHome"><h3>Requirement: Back to Home</h3></div>
-    Dai requisiti sappiamo che nel momento in cui l'azione di <kc>deposit action</kc> è terminata 
-    e nel caso in cui non ci siano altre richieste il <kc>transport trolley</kc> deve ritornare alla <kc>HOME</kc>. 
-    
-    Per affrontare questa problematica bisogna capire chi si occupa di dire al transport trolley di tornare nella posizione di HOME.<br>
-    Possono essere due le entità che si occupano di ciò:
-        <h4>WasteService</h4>
-            E' il WasteService a comunicare al transport trolley di "rientrare" alla posizione di HOME.<br>
-            Questa soluzione dovrebbe essere quella utilizzata dallo sviluppatore poichè il wasteService, 
-            che ricordiamo essere un entità attiva, nello specifico ha il compito di gestire le richieste che provengono dal 
-            <kc>truck</kc> e quindi è a conoscenza se nel sistema vi siano ancora richieste da gestire o meno. 
-            Quando non vi sono richieste sarà suo compito in qualche modo (tramite dei comandi o messaggi) comunicare al transport trolley di tornare in HOME.
-        
-            <h4>Transport Trolley</h4>
-            E' il transport trolley stesso a muoversi fino a spostarsi in HOME.<br>
-            Tale soluzione non è in grado di verificare autonomamente se nel sistema vi siano ancora richieste, poichè non vi è nessun collegamento "diretto" tra truck e transport trolley.
-            Pertanto di per sè il transport trolley potrebbe ritornare in HOME, ma il rischio è che ci siano all'interno del sistema ancora delle richieste da gestire di cui il transport trolley
-            non ne è a conoscenza per cui non si avrà mai una risposta. In ogni caso una possibile soluzione potrebbe prevedere l'invio di automessaggio da parte del transport trolley.
+    From the requirements we know that when the action of <kc>deposit action</kc> is finished 
+    and if there are no other requests the <kc>transport trolley</kc> must return to the <kc>HOME</kc>. 
+    <h4>Who sends the backHome command</h4>
+    To address this problem you need to understand who is in charge of telling the transport trolley to return to the position of HOME. <br>
+    There can be two entities that deal with this: <br>
+    <ol>
+        <li>WasteService</li>
+        <li>Transport Trolley</li>
+    </ol>
+
+    <ks><b>WasteService</b></ks> <br><br>
+    It is the WasteService to communicate to the transport trolley to "re-enter" to the position of HOME.<br>
+    Remember that the wasteService is an active entity and specifically has the task of managing requests that come from 
+    <kc>truck</kc>. So you know whether there are still requests within the system that need to be handled or not. 
+    When there are no requests it will be its task in some way (via commands or messages) to communicate to the transport trolley to return to HOME.
+    <br><br>
+    <ks><b>Transport Trolley</b></ks> <br><br>
+    It is the transport trolley itself that moves to HOME.<br>
+    This solution is not able to independently check if there are still requests in the system, as there is no "direct" connection between <kc>truck</kc> and <kc>transport trolley.</kc>
+    Therefore by itself the transport trolley could return in HOME, but the risk is that there are within the system still some demands to manage of which the transport trolley
+    It doesn’t know, so there’s no answer. In any case, a possible solution could be to send a message by the transport trolley.
+    <br><br>
+    The first solution is the one suggested to the developer because among all it has the advantage of "knowing" if there are still requests for the system to be managed.
+
+    <h4>Waste Service and Transport Trolley interaction</h4>
+
 
 </div>
 <div class="remark">
