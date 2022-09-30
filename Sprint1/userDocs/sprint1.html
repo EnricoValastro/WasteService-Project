@@ -313,6 +313,24 @@ div.imagedesc{
 </div>
 <div class="remark">
     <div id="BackHome"><h3>Requirement: Back to Home</h3></div>
+    Dai requisiti sappiamo che nel momento in cui l'azione di <kc>deposit action</kc> è terminata 
+    e nel caso in cui non ci siano altre richieste il <kc>transport trolley</kc> deve ritornare alla <kc>HOME</kc>. 
+    
+    Per affrontare questa problematica bisogna capire chi si occupa di dire al transport trolley di tornare nella posizione di HOME.<br>
+    Possono essere due le entità che si occupano di ciò:
+        <h4>WasteService</h4>
+            E' il WasteService a comunicare al transport trolley di "rientrare" alla posizione di HOME.<br>
+            Questa soluzione dovrebbe essere quella utilizzata dallo sviluppatore poichè il wasteService, 
+            che ricordiamo essere un entità attiva, nello specifico ha il compito di gestire le richieste che provengono dal 
+            <kc>truck</kc> e quindi è a conoscenza se nel sistema vi siano ancora richieste da gestire o meno. 
+            Quando non vi sono richieste sarà suo compito in qualche modo (tramite dei comandi o messaggi) comunicare al transport trolley di tornare in HOME.
+        
+            <h4>Transport Trolley</h4>
+            E' il transport trolley stesso a muoversi fino a spostarsi in HOME.<br>
+            Tale soluzione non è in grado di verificare autonomamente se nel sistema vi siano ancora richieste, poichè non vi è nessun collegamento "diretto" tra truck e transport trolley.
+            Pertanto di per sè il transport trolley potrebbe ritornare in HOME, ma il rischio è che ci siano all'interno del sistema ancora delle richieste da gestire di cui il transport trolley
+            non ne è a conoscenza per cui non si avrà mai una risposta. In ogni caso una possibile soluzione potrebbe prevedere l'invio di automessaggio da parte del transport trolley.
+
 </div>
 <div class="remark">
     <div id="ASAP" ><h3>Requirement: As soon as possible</h3></div>
