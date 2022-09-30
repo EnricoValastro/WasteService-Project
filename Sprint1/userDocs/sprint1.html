@@ -282,7 +282,7 @@ div.imagedesc{
 <div class="remark">
     <h3>Sprint0 result</h3>
     At the end of the requirement analysis, reported in <a href="../../Sprint0/userDocs/sprint0.html">Sprint0</a>, the logical architecture is as follows: <br></br>
-    <center><img src="../../Sprint0/userDocs/resouces/images/newLogicalArch.png" width="60%" height="60%"></center>
+    <img src="../../Sprint0/userDocs/resouces/images/newLogicalArch.png" alt="" style="width: 40%; height: 40%;">
     <br>
 </div>
 <div class="remark">
@@ -291,7 +291,7 @@ div.imagedesc{
     <h5>Orientate in the environment</h5>
     Dai requisiti risulta chiaro che le dimensioni della stanza siano note apriori, così come sono note le posizioni dei punti d'interesse
     (<kc>HOME</kc>, <kc>INDOOR</kc>, <kc>PLASTICBOX</kc>, <kc>GLASSBOX</kc>) e altri valori costanti.
-    Affinchè il sistema sia a conoscenza di tali informazioni, sarebbe opportuno configurarlo in maniera opportuna. <br><br>
+    Affinchè il sistema sia a conoscenza di tali informazioni, sarebbe utile configurarlo in maniera opportuna. <br><br>
     A tal proposito si potrebbero seguire due differenti approcci: <br>
     <ol>
         <li>Cablare i valori nel codice dell'applicazione</li>
@@ -303,7 +303,8 @@ div.imagedesc{
     Per tale motivo consigliamo di utilizzare un <ks>file di configurazione</ks> che può essere facilmente modificato senza richiedere 
     cambiamenti di codice. Poiche, al momento, l'unico componente interessato a conoscere i dati di configurazione è il <kc>wasteService</kc>
     il file di configurazione può essere posizionato sul suo nodo computazionale, ed è consultabile in <a href="./resources/json/wasteServiceSystemConfig.json">wasteServiceSystemConfig.json</a>
-    <pre>
+    <div id="CONF">
+        <pre>
 {
     <key4>"LOCATION"</key4>: {
         <key4>"HOME"</key4>: ... ,
@@ -315,8 +316,10 @@ div.imagedesc{
     <key4>"MAXGB"</key4>: 500,
     <key4>"DLIMIT"</key4>: 40
 }</pre>
-
-    Sorge quindi la problematica di come rappresentare la posizione dei punti d'interesse (<kc>HOME</kc>, <kc>INDOOR</kc>, <kc>PLASTICBOX</kc>, <kc>GLASSBOX</kc>), e del robot.
+            
+    </div>
+    
+    Nasce quindi la problematica di come rappresentare la posizione dei punti d'interesse (<kc>HOME</kc>, <kc>INDOOR</kc>, <kc>PLASTICBOX</kc>, <kc>GLASSBOX</kc>), e del robot.
     <br><br>
     E' possibile, anche in questo caso seguire approcci differenti:
     <ol>
@@ -327,18 +330,120 @@ div.imagedesc{
     <br>
     <ks><b>Coordinate GPS</b></ks> <br><br>
     L'utilizzo di coordinate GPS richiede la conoscenza delle coordinate GPS dei luoghi d'interesse e la presenza di un GPS a bordo del 
-    <kc>DDR</kc>, i vantaggi e svantaggi di tale approccio sono:
+    <kc>DDR robot</kc>. <br><br> 
+    I vantaggi e svantaggi di tale approccio sono:
     <br>
-    <pro>+</pro> Maggiore precisione <br>
-    <cons>-</cons> Dotare il DDR robot di un sensore GPS. <br>
+    <pro>+</pro>   Maggiore precisione <br>
+    <cons>-</cons> Dotare il <i>DDR robot</i> di un sensore GPS. <br>
     <cons>-</cons> Processamento delle coordinate GPS per comprendere quali "mosse" il robot debba eseguire. <br>
     <cons>-</cons> Maggiore complessità. <br>
     <cons>-</cons> Introduzione di un ulteriore <i>overhead</i> di rete. <br> <br>
 
     <ks><b>Coordinate cartesiane</b></ks> <br><br>
-    L'utilizzo delle coordinate cartesiane 
+    L'utilizzo delle coordinate cartesiane impone la necessità di scegliere un'unità di misura in modo da mappare opportunamente la 
+    <i>Service Area</i>, a tal proposito si potrebbe utilizzare il <i>DDR robot</i> come unità di misura e mappare la <i>Servive Area</i>
+    su di una griglia con celle di lato <kc>RD</kc> (dimensione DDR robot) come mostrato nella figura seguente:
+    <img src="./resources/img/ServiceAreaMap.png" alt="">
+    <br> <br>
+    I luoghi d'interesse sono quindi rappresentati da una coppia di valori <b>X</b> e <b>Y</b>:
+    <pre>
+(0,0) indica la cella HOME
+(X, Y) indica la cella che si trova X celle sotto HOME e Y celle a destra</pre>
+    I vantaggi e gli svantaggi di questo approccio sono i seguenti: <br>
+    <pro>+</pro> Minor complessità rispetto al caso precedente <br>
+    <pro>+</pro> Possibilità di riutilizzare software gia sviluppato per mappare (<a href="https://github.com/anatali/issLab2022/tree/main/unibo.mapperQak22">unibo.mapperQak22</a>), 
+    indentificare il percorso (<a href="https://github.com/anatali/issLab2022/tree/main/unibo.planner22">unibo.planner22</a>) 
+    ed eseguire il path trovato (<a href="https://github.com/anatali/issLab2022/tree/main/unibo.pathexecutor">unibo.pathexecutor</a>) <br>
+    <cons>-</cons> Necessità di mappare la stanza  <br>
+    <cons>-</cons> Potrebbero essere necessari degli aggiustamenti in quanto le dimensioni della stanza potrebbero non essere multiple di RD <br><br>
+    <ks><b>Punti di riferimento</b></ks> <br><br>
+    Questa soluzione prende ispirazione dal <kc>BoundaryWalker</kc>, un robot capace di muoversi lungo il perimetro di una qualsiasi 
+    stanza delimitata da pareti, sfruttando la collissione con le pareti per capire quando effettuare una rotazione. <br>
+    Sfruttando il fatto che i punti d'interesse si trovino agli angoli della stanza la soluzione 
+    propone di utilizzare il sonar a bordo del <i>DDR robot</i> per rilevare la collissione con le pareti in modo da capire quando si è
+    raggiunto un determinato punto d'interesse. <br> <br>
+    I vantaggi e gli svantaggi di questo approccio senza coordinate, sono i seguenti: <br>
+    <pro>+</pro> Minor complessità rispetto ai casi precedenti <br>
+    <pro>+</pro> Non necessità l'utilizzo di software esterno (<i>unibo.planner22</i>, <i>unibo.pathexecutor</i>, <i>unibo.mapperQak22</i>) <br>
+    <cons>-</cons> Il codice necessario a muovere il robot dipende dal punto di partenza e dal punto di arrivo, pertanto 
+    sarà necessario prevedere tutti i possibili percorsi che il robot può effettuare <br>
+    <cons>-</cons> Bassa riutilizzabilità del software, se i punti d'interesse non si trovassero agli angoli della stanza la soluzione 
+    smetterebbe di funzionare<br>
+    <br>
+    In conclusione si consiglia vivamente agli sviluppatori di utilizzare il sistema di coordinate cartesiane, in quanto è più semplice da implementare,
+    permette la riutilizzabilità del software anche in <kc>Service Area</kc> differenti e permette l'utillizzo dei software gia sviluppati 
+    per mappare, pianificare e eseguire il percorso. <br>
+    Sulla base delle considerazione fatte finora il file di configurazione <a href="#CONF">sopracitato</a> conterrà le seguenti informazioni:
+    <pre>
+{
+    <key4>"LOCATION"</key4>: {
+        <key4>"HOME"</key4>: [0, 0],
+        <key4>"INDOOR"</key4>: [16, 0],
+        <key4>"PLASTICBOX"</key4>: [16, 19],
+        <key4>"GLASSBOX"</key4>: [0, 19]
+    },
+    <key4>"MAXPB"</key4>: 500,
+    <key4>"MAXGB"</key4>: 500,
+    <key4>"DLIMIT"</key4>: 40
+}</pre>
 
     <h5>Path finding</h5>
+    Una volta compreso come orientarsi nella stanza e come individuare i punti d'interesse nasce ora il problema di comprendere quale sia 
+    il percorso da intraprendere per raggiungere un determinato punto d'interesse. <br> <br>
+    Anche in questo caso gli approcci possibili sono due: <br>
+    <ol>
+        <li> Muoversi in linea retta</li>
+        <li> Muoversi lungo il perimetro della stanza</li>
+    </ol>
+    <br>
+    <ks><b>Linea retta</b></ks> <br><br>
+    Questa soluzione prevede di far muovere il robot sull'unica retta che collega il punto di partenza con il punto di arrivo, come mostrato in figura: <br>
+    <img src="./resources/img/path1.png" alt=""><br><br>
+    Tuttavia, il problema di questa soluzione risiende nel fatto che il DDR robot è in grado di ruotare su se stesso di 90° alla volta come riportato in <a href="file:///Users/enricovalastro/Desktop/issLab/IssClone/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/VirtualRobot.html#virtualrobot">DDR robot</a>
+    pertanto non è capace di camminare su di una linea a diversa angolazione, il percorso da intraprendere sarebbe il seguente:<br> 
+    <img src="./resources/img/path2.jpg" alt=""><br><br>
+    Quindi se si volesse seguire il percorso diretto si dovrebbe modificare opportunamente il codice del <kc>basicrobot22</kc> in modo da 
+    riuscire a effettuare rotazioni ad angolature diverse. <br><br>
+    I vantaggi e svantaggi di questo approccio sono i seguenti: <br>
+    <pro>+</pro> Percorso più breve se si riuscisse a modificare opportunamente il <i>basicrobot22</i> <br>
+    <cons>-</cons> Necessità di modificare il <i>basicrobot22</i> <br>
+    <cons>-</cons> Non è possibile utilizzare il software già sviluppato per pianificare(<i>unibo.planner22</i>) e eseguire il percorso(<i>unibo.pathexecutor</i>)
+    <br><br>
+    <ks><b>Buondary Walk</b></ks> <br><br>
+    Questa soluzione consiste nel far muovore il robot lungo il perimetro della stanza fino a destinazione, 
+    come mostrato in figura: <br>
+    <img src="./resources/img/path3.jpg" alt=""><br><br>
+    I vantaggi e gli svantaggi di questo approccio sono i seguenti: <br>
+    <pro>+</pro> Si dispone gia di componenti in grado di pianificare un percorso a partire dalle coordinate cartesiane della destinazione (<i>unibo.planner22</i>) e di eseguirlo(<i>unibo.pathexecutor</i>) <br>
+    <cons>-</cons> Il percorso potrebbe essere più lungo rispetto al caso precedente. <br><br>
+    Considerando quanto detto finora e considerando che al committente non interessa che il robot si muova su percorso più breve, 
+    consigliamo agli svilippatori di utilizzare la soluzione <i>Boundary Walk</i> in quanto permette di utilizzare
+    il software già sviluppato per pianificare e eseguire il percorso abbattendo cosi i tempi di sviluppo. <br><br>
+    Per quanto riguarda il <kc>pathexecutor</kc> esso è modellato come un attore, utilizzando il linguaggio QAk, che riceve una richiesta
+    di eseguire un percorso e risponde con un messaggio di conferma una volta completato il percorso o con una risposta di fallimento in caso contrario
+    specificando la parte di percorso non eseguita. Il codice QAk del <i>pathexecutor</i> è consultabile <a href="./resources/qak/basicrobot.qak">qui</a> <br>
+    <pre>
+<key2>Request</key2> dopath     : dopath(PATH)
+<key2>Reply</key2>   dopathdone : dopathdone(ARG)
+<key2>Reply</key2>   dopathfail : dopathfail(PATHSTILLTODO)</pre>
+
+    L'introduzione dell'attore <i>pathexecutor</i> comporta una modifica nell'architettura logica del sistema, esso si trova sullo stesso contesto del <i>basicrobot</i> pertanto l'architettura risultante sarà la seguente: <br>
+    <img src="./resources/img/ArchLogic1.1.png" alt="" style="width: 40%; height: 40%;"><br><br>
+
+    Per quanto riguarda il <kc>planner22</kc> esso è un utility Kotlin che permette di calcolare il percorso da intraprendere per raggiungere un determinato punto
+    individuato dalle coordinate X e Y. Il codice Kotlin del <i>planner22</i> è consultabile <a href="./resources/kotlin/planner22Util.kt">qui</a> <br>
+    Il suo utilizzo è molto semplice, per esempio per calcolare il path verso la destinazione "X=10" e "Y=12" basta eseguire il seguente codice:
+    <pre>
+planner22Util.initAI()
+planner22Util.setGoal(10,12)
+planner22Util.doPlan()</pre>
+
+
+
+
+
+
+
     <h5>Deposit e move actions managing</h5>
 
     <h4>Interazione tra i componenti</h4>
@@ -352,19 +457,19 @@ div.imagedesc{
     <div id="ASAP" ><h3>Requirement: As soon as possible</h3></div>
     After the interaction with the customer we made it clear that the truck must be sent away as soon as possible. We need to identify when the truck should leave the <kc>INDOOR</kc> and  how to send it away.
     <h4>Leave the <kc>INDOOR</kc></h4>
-    Different ways:
+    Possible solutions:
     <ul>
-        <li>The truck could leave the <kc>INDOOR</kc> immediately after unloading</li>
-        <li>The truck could leave the <kc>INDOOR</kc> after the transport trolley has unloaded the garbage in the container</li>
+        <li>The truck could leave the <kc>INDOOR</kc> immediately after unloading the load</li>
+        <li>The truck could leave the <kc>INDOOR</kc> after the <kc>transport trolley</kc> has unloaded the waste load in the container</li>
     </ul>
     To meet the requirement of the customer and then send the truck away as soon as possible, we will use the first option that results in the end of the <kc>pickup </kc>action.
     
 
     <h4>How to send it away</h4>
-    Different ways:
+    Possible solutions:
     <ul>
-        <li>We can send the truck away with the <kc>loadaccept</kc> after the trolley has finished the pickup action.</li>
-        <li>We can send the truck away with a new message after the trolley pickingup, having already sent him the <kc>loadaccept</kc> to accept the load.</li>
+        <li>We can use the <kc>loadaccept</kc> message to send the truck away. This solution consists in wait to send the "loadaccept" until the <kc>transport trolley</kc> has completed the <kc>pickup</kc> action</li>
+        <li>We can send the truck away by sending it a new message as soon as the <i>transport trolley</i> completes the <i>pickup</i> action.
     </ul>
     It is less expensive in terms of load on the network to send a single message (loadaccept) to accept the load and to send the truck away.
     <pre>
@@ -380,9 +485,8 @@ div.imagedesc{
     }<key2>Transition</key2> t0 <key2>whenReply</key2> dropoutdone -> idle                                         
 }
     </pre>
-    After the WasteService receives the message from the transportTrolley: <br>
-     <key2>Reply</key2> pickupdone : pickupdone(_) <br>
-     transits in the dropout state and sends to SmartDevice: <br> <key2>replyTo</key2> storeWaste <key2>with</key2> loadaccept : loadaccept(_).
+    After the <b><i>WasteService</i></b> receives the <kc>pickupdone</kc> reply from the <b><i>transportTrolley</i></b>, it transits 
+    in the <kc>dropout state</kc> and sends to the <b><i>SmartDevice</i></b> the <kc>loadaccept</kc> reply.
 </div>
 <!-- USEFUL
 <table style="width:100%" border="1">
