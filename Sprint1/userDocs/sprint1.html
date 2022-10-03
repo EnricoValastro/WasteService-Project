@@ -370,7 +370,7 @@ div.imagedesc{
     <cons>-</cons> Bassa riutilizzabilità del software, se i punti d'interesse non si trovassero agli angoli della stanza la soluzione 
     smetterebbe di funzionare<br>
     <br>
-    In conclusione si consiglia vivamente agli sviluppatori di utilizzare il sistema di coordinate cartesiane, in quanto è più semplice da implementare,
+    <b>In conclusione</b> si consiglia vivamente agli sviluppatori di utilizzare il sistema di coordinate cartesiane, in quanto è più semplice da implementare,
     permette la riutilizzabilità del software anche in <kc>Service Area</kc> differenti e permette l'utillizzo dei software gia sviluppati 
     per mappare, pianificare e eseguire il percorso. <br>
     Sulla base delle considerazione fatte finora il file di configurazione <a href="#CONF">sopracitato</a> conterrà le seguenti informazioni:
@@ -416,7 +416,7 @@ div.imagedesc{
     I vantaggi e gli svantaggi di questo approccio sono i seguenti: <br>
     <pro>+</pro> Si dispone gia di componenti in grado di pianificare un percorso a partire dalle coordinate cartesiane della destinazione (<i>unibo.planner22</i>) e di eseguirlo(<i>unibo.pathexecutor</i>) <br>
     <cons>-</cons> Il percorso potrebbe essere più lungo rispetto al caso precedente. <br><br>
-    Considerando quanto detto finora e considerando che al committente non interessa che il robot si muova su percorso più breve, 
+    <b>In conclusione</b>, considerando quando detto finora e considerando che al committente non interessa che il robot si muova su percorso più breve, 
     consigliamo agli svilippatori di utilizzare la soluzione <i>Boundary Walk</i> in quanto permette di utilizzare
     il software già sviluppato per pianificare e eseguire il percorso abbattendo cosi i tempi di sviluppo. <br><br>
     Per quanto riguarda il <kc>pathexecutor</kc> esso è modellato come un attore, utilizzando il linguaggio QAk, che riceve una richiesta
@@ -438,18 +438,71 @@ planner22Util.initAI()
 planner22Util.setGoal(10,12)
 planner22Util.doPlan()</pre>
 
-
-
-
-
-
-
-    <h5>Deposit e move actions managing</h5>
+    <div id="actManager"><h5>Deposit e move actions managing</h5></div>
+    Bisogna a questo punto comprendere quale componente del sistema debba essere il responsabile delle operazioni di deposito e movimento.
+    Tali operazioni devono essere responsabilità del <kc>WasteService</kc>, del <kc>transportTrolley</kc> o sarebbe opportuno 
+    dividire le responsabilità tra i due attori? <br><br>
+    Risulta evidente assegnare al <i>WasteService</i> la responsabilità delle operazioni di deposito, in quanto esso è il destinatario 
+    dell richieste di deposito provenienti dal truck. <br>
+    Per quanto riguarda invece le operazioni di movimento, tale responsabilità può essere assegnato sia al <i>WasteService</i> che al <i>transportTrolley</i>.
+    Tuttavia volendo rispetta il principio di <i><b>singola responsabilità</b></i> e volendo evitare di avere un attore troppo complesso,
+    si consiglia agli sviluppatori di assegnare al <i>transportTrolley</i> la responsabilità delle operazioni di movimento, il tal modo il <i>transportTrolley</i>
+    fungerà da attuatore, e nel caso in cui esso debba far uso di un <kc>planner</kc> potrebbe essere posto su di un nodo computazionale più potente 
+    senza causare un eccessivo <i>overhead</i> sulla rete dovuto hai messaggi di movimento.
 
     <h4>Interazione tra i componenti</h4>
+    Per quanto riguarda  l'interazione tra i componenti possiamo, in prima battuta, affermare che essi interagiscono a scambio di messaggi.
+    L'utilizzo del linguaggui <kc>QAk</kc> ci permette di tipizzare i messaggi in modo tale da avere un controllo maggiore sulle interazioni tra i componenti.
+    Nasce quindi il problema di individuare il tipo di messaggio per ogni interazione:
 
+    <h5>Deposit request</h5>
+    Come detto in precedenza, il <kc>WasteService</kc> è il destinatario delle richieste di deposito provenienti dal <kc>truck</kc>, 
+    come risulta già evidente in fase di analisi questa interazione è di tipo <kc>request-reply</kc>:
+    <pre>
+<key3>// MATERIAL = PLASTIC | GLASS</key3>
+<key2>Request</key2> storeWaste : storeWaste(MATERIAL, TRUCKLOAD)
+<key2>Reply</key2> loadaccept : loadaccept(_)
+<key2>Reply</key2> loadrejected : loadrejected(_)</pre>
+
+    <h5>Deposit action</h5>
+    L'azione di deposito è costituita da due fasi: la fase di <kc>pickup</kc> e la fase di <kc>dropout</kc>. <br>
+    Come analizzato in <a href="#actManager">precedenza</a> l'azione di deposito è gestita dal <kc>WasteService</kc> ma viene eseguita dal 
+    <kc>transportTrolley</kc>, è necessario quindi che i due si scambino opportuni messaggi. <br><br>
+
+    <b><ks>Pickup</ks></b><br><br>
+    Quando il <i>WasteService</i> accetta un carico, invia al <i>transportTrolley</i> un messaggio di <kc>pickup</kc> in modo che il 
+    esso muova il <kc>DDR robot</kc> fino alla <kc>INDOOR</kc> e prelevi il carico. L'interazione può avvenire in due differti modi:
+    <ul>
+        <li><b>Dispatch</b>: messaggio <i>fire&forget</i> che non richiede uan risposta da parte del destinatario</li>
+        <li><b>Request</b>: messaggio che richiede una risposta da parte del destinatario</li>
+    </ul>
+    Dal momento che il <i>WasteService</i> gestisce l'azione di deposito in tutte le sue parti, esso è interessato a sapare quando il 
+    <i>transportTrolley</i> ha concluso tale operazione in modo da potergli comandare l'esecuzione di un'altra azione, per tale motivo
+    sarebbe opportuno utilizzare un messaggio di tipo <kc>request-reply</kc>:
+    <pre>
+<key2>Request</key2> pickup : pickup(_)
+<key2>Reply</key2> pickupdone : pickupdone(_)</pre>
+
+    <b><ks>Dropout</ks></b><br><br>
+    Quando il <i>WasteService</i> riceve il messaggio di <kc>pickupdone</kc> invia al <i>transportTrolley</i> un messaggio di <kc>dropout</kc>, in modo che esso 
+    possa muovere il <i>DDR robot</i> verso il container e vi depositi il carico. Anche in questo caso l'interazione può avvenire in due differti modi:
+    <ul>
+        <li><b>Dispatch</b></li>
+        <li><b>Request</b></li>
+    </ul>
+    Poichè il committente ha specificato che sarebbe opportuno mandar via il <i>truck</i> il prima possibile, 
+    bisognerebbe evitare che il <i>WasteService</i> debba attendere la conclusione dell'azione di <kc>dropout</kc> 
+    prima di poter gestire la richiesta di un altro <i>truck</i>. Per tale motivo utilizzare un messaggio di tipo <i>request-reply</i> 
+    risulta poco pratico, sarebbe meglio utilizzare un messaggio di tipo <kc>dispatch</kc>, in modo che mentre il <i>transportTrolley</i>
+    esegue il <i>dropout</i> il <i>WasteService</i> possa gestire la richiesta di un altro <i>truck</i>:
+
+    <pre>
+<key3>// MATERIAL = PLASTIC | GLASS</key3>
+<key2>Dispatch</key2> dropout : dropout(MATERIAL)</pre>
+    
     <h4>Stato della Service Area</h4>
 </div>
+
 <div class="remark">
     <div id="BackHome"><h3>Requirement: Back to Home</h3></div>
     From the requirements we know that when the action of <kc>deposit action</kc> is finished 
