@@ -243,32 +243,32 @@ div.imagedesc{
 </div>
 
 <h2>Work Plan</h2>
-<div class="remark">
-    In this Sprint we will focus on the <kc>Core Business</kc> of the system, we will analyze the main problems 
-        relating to the core business, proposing solutions and identifying the best among them. 
-        We will also develop a working prototype of the analyzed subproblem and automated tests to verify its correct functioning. <br>
-        In particular, we will analyze the problems related to:
+<div class="osservazione">
+    In questo Sprint ci concentreremo sul <kc>Core Business</kc> del sistema, analizzeremo le principali problematiche
+        relative al core business, proponendo soluzioni e individuando le migliori tra di esse.
+        Svilupperemo inoltre un prototipo funzionante del sottoproblema analizzato e dei test automatizzati per verificarne il corretto funzionamento. <br>
+        In particolare, analizzeremo le problematiche relative a:
         <ul>
             <li>
                 <a href="#depAct"><b>Deposit Action</b></a>
                 <ul>
-                    <li>How to move the <kc>transport trolley</kc> to its destination.</li>
-                    <li>How the components of the system interacts.</li>
-                    <li>How to manage the <kc>Service Area</kc> status.</li>
+                    <li>Come spostare il <kc>transport trolley</kc> a destinazione.</li>
+                    <li>Come interagiscono i componenti del sistema.</li>
+                    <li>Come gestire lo stato della<kc>Service Area</kc>.</li>
                 </ul>
             </li>
             <li>
                 <a href="#BackHome"><b>Back to Home</b></a>
                 <ul>
-                    <li>Who manages the "<i>back to home</i>" action </li>
-                    <li>How the components interact</li>
+                    <li>Chi gestisce l'azione "<i>back to home</i>"</li>
+                    <li>Come interagiscono i componenti</li>
                 </ul>
             </li>
             <li> 
                 <a href="#ASAP"><b>Send the <kc>truck</kc> away as soon as possible</b> </a>
                 <ul>
-                    <li>Identify the moment when the truck must leave the <kc>INDOOR</kc></li>
-                    <li>How to tell the truck to leave <kc>INDOOR</kc></li>
+                    <li>Identifica il momento in cui il <kc>truck</kc> must leave the <kc>INDOOR</kc></li>
+                    <li>Come dire al <i>truck</i> di lasciare l' <kc>INDOOR</kc></li>
                 </ul>
             </li>
         </ul>
@@ -278,7 +278,7 @@ div.imagedesc{
 <h2>Problem analysis</h2>
 <div class="remark">
     <h3>Sprint0 result</h3>
-    At the end of the requirement analysis, reported in <a href="../../Sprint0/userDocs/sprint0.html">Sprint0</a>, the logical architecture is as follows: <br></br>
+    Al termine dell'analisi dei requisiti, riportata in <a href="../../Sprint0/userDocs/sprint0.html">Sprint0</a>, l'architettura logica è la seguente: <br></br>
     <img src="../../Sprint0/userDocs/resouces/images/newLogicalArch.png" alt="" style="width: 40%; height: 40%;">
     <br>
 </div>
@@ -361,7 +361,7 @@ div.imagedesc{
     raggiunto un determinato punto d'interesse. <br> <br>
     I vantaggi e gli svantaggi di questo approccio senza coordinate, sono i seguenti: <br>
     <pro>+</pro> Minor complessità rispetto ai casi precedenti <br>
-    <pro>+</pro> Non necessità l'utilizzo di software esterno (<i>unibo.planner22</i>, <i>unibo.pathexecutor</i>, <i>unibo.mapperQak22</i>) <br>
+    <pro>+</pro> Non necessita l'utilizzo di software esterno (<i>unibo.planner22</i>, <i>unibo.pathexecutor</i>, <i>unibo.mapperQak22</i>) <br>
     <cons>-</cons> Il codice necessario a muovere il robot dipende dal punto di partenza e dal punto di arrivo, pertanto 
     sarà necessario prevedere tutti i possibili percorsi che il robot può effettuare <br>
     <cons>-</cons> Bassa riutilizzabilità del software, se i punti d'interesse non si trovassero agli angoli della stanza la soluzione 
@@ -411,7 +411,7 @@ div.imagedesc{
     come mostrato in figura: <br>
     <img src="./resources/img/path3.jpg" alt=""><br><br>
     I vantaggi e gli svantaggi di questo approccio sono i seguenti: <br>
-    <pro>+</pro> Si dispone gia di componenti in grado di pianificare un percorso a partire dalle coordinate cartesiane della destinazione (<i>unibo.planner22</i>) e di eseguirlo(<i>unibo.pathexecutor</i>) <br>
+    <pro>+</pro> Si dispone già di componenti in grado di pianificare un percorso a partire dalle coordinate cartesiane della destinazione (<i>unibo.planner22</i>) e di eseguirlo (<i>unibo.pathexecutor</i>) <br>
     <cons>-</cons> Il percorso potrebbe essere più lungo rispetto al caso precedente. <br><br>
     <b>In conclusione</b>, considerando quando detto finora e considerando che al committente non interessa che il robot si muova su percorso più breve, 
     consigliamo agli svilippatori di utilizzare la soluzione <i>Boundary Walk</i> in quanto permette di utilizzare
@@ -442,14 +442,14 @@ planner22Util.doPlan()</pre>
     Risulta evidente assegnare al <i>WasteService</i> la responsabilità delle operazioni di deposito, in quanto esso è il destinatario 
     dell richieste di deposito provenienti dal truck. <br>
     Per quanto riguarda invece le operazioni di movimento, tale responsabilità può essere assegnato sia al <i>WasteService</i> che al <i>transportTrolley</i>.
-    Tuttavia volendo rispetta il principio di <i><b>singola responsabilità</b></i> e volendo evitare di avere un attore troppo complesso,
+    Tuttavia volendo rispettare il principio di <i><b>singola responsabilità</b></i> e volendo evitare di avere un attore troppo complesso,
     si consiglia agli sviluppatori di assegnare al <i>transportTrolley</i> la responsabilità delle operazioni di movimento, il tal modo il <i>transportTrolley</i>
     fungerà da attuatore, e nel caso in cui esso debba far uso di un <kc>planner</kc> potrebbe essere posto su di un nodo computazionale più potente 
     senza causare un eccessivo <i>overhead</i> sulla rete dovuto hai messaggi di movimento.
 
     <h4>Interazione tra i componenti</h4>
     Per quanto riguarda  l'interazione tra i componenti possiamo, in prima battuta, affermare che essi interagiscono a scambio di messaggi.
-    L'utilizzo del linguaggui <kc>QAk</kc> ci permette di tipizzare i messaggi in modo tale da avere un controllo maggiore sulle interazioni tra i componenti.
+    L'utilizzo del linguagguio <kc>QAk</kc> ci permette di tipizzare i messaggi in modo tale da avere un controllo maggiore sulle interazioni tra i componenti.
     Nasce quindi il problema di individuare il tipo di messaggio per ogni interazione:
 
     <h5>Deposit request</h5>
@@ -467,10 +467,10 @@ planner22Util.doPlan()</pre>
     <kc>transportTrolley</kc>, è necessario quindi che i due si scambino opportuni messaggi. <br><br>
 
     <b><ks>Pickup</ks></b><br><br>
-    Quando il <i>WasteService</i> accetta un carico, invia al <i>transportTrolley</i> un messaggio di <i>pickup</i> in modo che il 
+    Quando il <i>WasteService</i> accetta un carico, invia al <i>transportTrolley</i> un messaggio di <i>pickup</i> in modo che  
     esso muova il <kc>DDR robot</kc> fino alla <kc>INDOOR</kc> e prelevi il carico. L'interazione può avvenire in due differti modi:
     <ul>
-        <li><b>Dispatch</b>: messaggio <i>fire&forget</i> che non richiede uan risposta da parte del destinatario</li>
+        <li><b>Dispatch</b>: messaggio <i>fire&forget</i> che non richiede una risposta da parte del destinatario</li>
         <li><b>Request</b>: messaggio che richiede una risposta da parte del destinatario</li>
     </ul>
     Dal momento che il <i>WasteService</i> gestisce l'azione di deposito in tutte le sue parti, esso è interessato a sapare quando il 
@@ -503,7 +503,7 @@ planner22Util.doPlan()</pre>
     Nasce quindi la problematica di come rappresentare lo stato della <i>Service Area</i>, le soluzioni possibili sono: 
     <ul>
         <li>Cablare i valori all'interno del codice del <i>WasteService</i></li>
-        <li>Utilizzare una classe (Kotlin) che rappresenti lo stato della <i>Sercice Area</i></li>
+        <li>Utilizzare una classe (Kotlin) che rappresenti lo stato della <i>Service Area</i></li>
     </ul>
 
     <b><ks>Stato cablato</ks></b><br><br>
@@ -564,7 +564,7 @@ planner22Util.doPlan()</pre>
     dalla responsabilità di valutare le richieste (<kc>storeWaste</kc>) e si occuperà solo di rispondere al <i>truck</i> e gestire il 
     <i>transportTrolley</i>. <br>
     Il componente incaricato di gestire lo stato della <i>Service Area</i> può essere modellato come un attore QAk che verrà opportunamente 
-    interpellato dal <i>WasteService</i>. Sebbe questa soluzione preveda l'aggiunta di un nuovo attore QAk al sistema e lo scambio di messaggi 
+    interpellato dal <i>WasteService</i>. Sebbene questa soluzione preveda l'aggiunta di un nuovo attore QAk al sistema e lo scambio di messaggi 
     tra i due, consigliamo agli sviluppatori di adottare questo approccio. <br>
     In tal caso i messaggi scambiati tra il <i>WasteService</i> e il nuovo attore sarebbero:
     <pre>
@@ -593,7 +593,7 @@ planner22Util.doPlan()</pre>
     sono gestite dal <i>WasteService</i> è opportuno che sia lui ad essere incaricato della gestione di tale compito. <br>
 
     <h4>Interazione tra i componenti</h4>
-    Una volta compreso che il <i>WasteService</i> gestisce il <i>back to Home</i>, bisogna comprendo che ti di interazione avvenga tra 
+    Una volta compreso che il <i>WasteService</i> gestisce il <i>back to Home</i>, bisogna comprendere che tipo di interazione avvenga tra 
     il <i>WasteService</i> e il <i>transportTrolley</i> affinchè quest'ultimo esegua il ritorno alla <i>HOME</i>. <br>
     Anche in questa situazione le alternative sono due:
     <ul>
@@ -610,7 +610,7 @@ planner22Util.doPlan()</pre>
     Il <i>WasteService </i> deve quindi ordinare al <i>transportTrolley</i> di rientrare in <i>Home</i> se quest'ultimo ha concluso 
     l'operazione di deposito e se nel sistema non ci sono altre richieste da servire. <br>
     Tuttavia, l'analisi del problema <a href="#drp"><i>deposit action</i></a> ha evidenziato il fatto che il messaggio <kc>dropout</kc> 
-    sia di tipi <i>Dispatch</i>, ciò implica che quando il <i>WasteService</i> non si aspetta nessuno risposta a tale messaggio. <br>
+    sia di tipo <i>Dispatch</i>, ciò implica che il <i>WasteService</i> non si aspetta nessuna risposta a tale messaggio. <br>
     Bisogna quindi comprendere come possa fare il <i>WasteService</i> a sapere quando il <i>transportTrolley</i> ha terminato l'esecuzione 
     del <i>dropout</i>. Le alternative possibili sono due:
     <ul>
@@ -664,7 +664,7 @@ planner22Util.doPlan()</pre>
     </ul>
     La prima soluzione consiste nel ritardare l'invio del messaggio <i>loadaccept</i> fino a quando il <i>WasteService</i> non riceve il messaggio
     <i>pickupdone</i>. <br>
-    La seconda soluzione, invece, prevede di inviare immediatamente il messaggio <i>loadaccept</i> e iviare un nuovo messaggio, non appena 
+    La seconda soluzione, invece, prevede di inviare immediatamente il messaggio <i>loadaccept</i> e inviare un nuovo messaggio, non appena 
     il <i>WasteService</i> riceve il <i>pickupdone</i>, per mandare via il <i>truck</i>. <br>
     Sebbene le due soluzioni siano molto simili la prima ci permette di risparmiare l'invio di un messaggio sulla rete diminuendo 
     quindi il carico di rete (<kc>overhead</kc>), si consiglia per tanto agli sviluppatori di utilizzare tale soluzione. <br>
