@@ -95,29 +95,26 @@ pre{
 	padding: 5px;
 }
 key{
-    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-weight: 500;
-	font-size: 90%;
+    font-family:monospace;
+    font-weight: 500;	
     color: #304ceb;
 }
 key2{
-    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family:monospace;
     font-weight: 500;
-	font-size: 90%;
     color: #ad0d0f;
 }
 
 key3{
-    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family:monospace;
     font-weight: 500;
-	font-size: 100%;
     color: #01b948;
 }
 
 key4{
-    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family:monospace;
     font-weight: 500;
-	font-size: 90%;
+
     color: #008232;
 }
 
@@ -460,9 +457,9 @@ planner22Util.doPlan()</pre>
     come risulta già evidente in fase di analisi questa interazione è di tipo <kc>request-reply</kc>:
     <pre>
 <key3>// MATERIAL = PLASTIC | GLASS</key3>
-<key2>Request</key2> storeWaste : storeWaste(MATERIAL, TRUCKLOAD)
-<key2>Reply</key2> loadaccept : loadaccept(_)
-<key2>Reply</key2> loadrejected : loadrejected(_)</pre>
+<key2>Request</key2> storeWaste   : storeWaste(MATERIAL, TRUCKLOAD)
+<key2>Reply</key2>   loadaccept   : loadaccept(_)
+<key2>Reply</key2>   loadrejected : loadrejected(_)</pre>
 
     <h5>Deposit action</h5>
     L'azione di deposito è costituita da due fasi: la fase di <kc>pickup</kc> e la fase di <kc>dropout</kc>. <br>
@@ -470,7 +467,7 @@ planner22Util.doPlan()</pre>
     <kc>transportTrolley</kc>, è necessario quindi che i due si scambino opportuni messaggi. <br><br>
 
     <b><ks>Pickup</ks></b><br><br>
-    Quando il <i>WasteService</i> accetta un carico, invia al <i>transportTrolley</i> un messaggio di <kc>pickup</kc> in modo che il 
+    Quando il <i>WasteService</i> accetta un carico, invia al <i>transportTrolley</i> un messaggio di <i>pickup</i> in modo che il 
     esso muova il <kc>DDR robot</kc> fino alla <kc>INDOOR</kc> e prelevi il carico. L'interazione può avvenire in due differti modi:
     <ul>
         <li><b>Dispatch</b>: messaggio <i>fire&forget</i> che non richiede uan risposta da parte del destinatario</li>
@@ -480,18 +477,18 @@ planner22Util.doPlan()</pre>
     <i>transportTrolley</i> ha concluso tale operazione in modo da potergli comandare l'esecuzione di un'altra azione, per tale motivo
     sarebbe opportuno utilizzare un messaggio di tipo <kc>request-reply</kc>:
     <pre>
-<key2>Request</key2> pickup : pickup(_)
-<key2>Reply</key2> pickupdone : pickupdone(_)</pre>
+<key2>Request</key2> pickup     : pickup(_)
+<key2>Reply</key2>   pickupdone : pickupdone(_)</pre>
 
-    <b><ks>Dropout</ks></b><br><br>
-    Quando il <i>WasteService</i> riceve il messaggio di <kc>pickupdone</kc> invia al <i>transportTrolley</i> un messaggio di <kc>dropout</kc>, in modo che esso 
+    <div id="drp"><b><ks>Dropout</ks></b><br><br></div>
+    Quando il <i>WasteService</i> riceve il messaggio di <kc>pickupdone</kc> invia al <i>transportTrolley</i> un messaggio di <i>dropout</i>, in modo che esso 
     possa muovere il <i>DDR robot</i> verso il container e vi depositi il carico. Anche in questo caso l'interazione può avvenire in due differti modi:
     <ul>
         <li><b>Dispatch</b></li>
         <li><b>Request</b></li>
     </ul>
     Poichè il committente ha specificato che sarebbe opportuno mandar via il <i>truck</i> il prima possibile, 
-    bisognerebbe evitare che il <i>WasteService</i> debba attendere la conclusione dell'azione di <kc>dropout</kc> 
+    bisognerebbe evitare che il <i>WasteService</i> debba attendere la conclusione dell'azione di <i>dropout</i> 
     prima di poter gestire la richiesta di un altro <i>truck</i>. Per tale motivo utilizzare un messaggio di tipo <i>request-reply</i> 
     risulta poco pratico, sarebbe meglio utilizzare un messaggio di tipo <kc>dispatch</kc>, in modo che mentre il <i>transportTrolley</i>
     esegue il <i>dropout</i> il <i>WasteService</i> possa gestire la richiesta di un altro <i>truck</i>:
@@ -501,101 +498,188 @@ planner22Util.doPlan()</pre>
 <key2>Dispatch</key2> dropout : dropout(MATERIAL)</pre>
     
     <h4>Stato della Service Area</h4>
+    Affinche il <kc>WasteService</kc> possa rispondere in maniera opportuna alle richieste di deposito dei <kc>truck</kc> 
+    è necessario che esso sia a conoscenza dello stato interno (peso corrente, peso massimo) dei container della <kc>Service Area</kc>. <br>
+    Nasce quindi la problematica di come rappresentare lo stato della <i>Service Area</i>, le soluzioni possibili sono: 
+    <ul>
+        <li>Cablare i valori all'interno del codice del <i>WasteService</i></li>
+        <li>Utilizzare una classe (Kotlin) che rappresenti lo stato della <i>Sercice Area</i></li>
+    </ul>
+
+    <b><ks>Stato cablato</ks></b><br><br>
+    La prima soluzione prevede di cablare lo stato della <i>Service Area</i> all'interno del codice QAk del <i>WasteService</i> come di seguito:
+    <pre>
+<key2>QActor</key2> wasteservice <key2>context</key2> ctxwasteservice {
+    [#
+        var glassCurrWeight = 0
+        var glassMaxWeight = 500
+        var plasticCurrWeight = 0
+        var plasticMaxWeight = 500
+    #]
+    <key2>State</key2> s0 <key2>initial</key2>{...}    
+}</pre>
+    
+    Questa soluzione è quella più semplice, ma presenta dei problemi di manutenibilità e scalabilità, peraltro se all'interno del sistema 
+    ci fossero altri componenti interessati a conoscoscere lo stato della <i>Service Area</i> il <i>WasteService</i> potrebbe doversi  
+    occupare di gestire richieste provenienti da altri componenti del sistema, ne risulterebbe quindi un attore complesso e che viola 
+    il <i>principio di singola responsabilità</i>. <br><br>
+
+    <b><ks>Data class</ks></b><br><br>
+    La seconda soluzione prevede di utilizzare una classe Kotlin, nello specifico una <kc>data class</kc>, 
+    che rappresenti lo stato della <i>Service Area</i> e che venga interpellata ogni qual volta il <i>WasteService</i> deve valutare 
+    una nuova richiesta di deposito e che venga aggiornata ogni qual volta un carico viene accettato. <br>
+    Un esempio completo di tale soluzione è consultabile in <a href="./resources/kotlin/ServiceAreaState.kt">ServiceAreaState.kt</a>:
+    <pre>
+<key>enum</key> <key>class</key> Material {
+    PLASTIC, GLASS
+}
+
+<key>data class</key> WasteServiceState(<key>private val</key> boxMaxWeight : MutableMap < Material, Double > = 
+        Material.values().associateWith { 0.0 }.toMutableMap(),
+            <key>private val</key> boxCurrentWeight : MutableMap< Material, Double > =
+                Material.values().associateWith { 0.0 }.toMutableMap()
+) {
+    <key>fun</key> updateBoxWeight(material: Material, value : Double){...}
+    <key>fun</key> getCurrBoxWeight(material: Material) : Double {...}
+    <key>fun</key> canStore(material: Material, value: Double) : Boolean {...}
+}</pre>
+    Questa soluzione risulta molto più pratica della precedente in quanto lo stato della <i>Service Area</i> adesso è accessibile dall'esterno 
+    senza sovraccaricare il <i>WasteService</i>. <br>
+    Bisogna adesso comprendere come il <i>WasteService</i> debba accedere ai dati della <kc>ServiceAreaState</kc>, le soluzioni possibili 
+    sono due:
+    <ul>
+        <li>Accesso diretto: il <i>WasteService</i> accede direttamente ai dati della classe</li>
+        <li>Accesso indiretto: il <i>WasteService</i> demanda l'operazione di accesso ad un altro componente</li>
+    </ul>
+
+    <b><ks>Accesso diretto</ks></b><br><br>
+    Questa soluzione prevede che il <i>WasteService</i> acceda direttamente ai dati della classe <kc>ServiceAreaState</kc>, sebbene questo 
+    approccio sia più semplice e diretto responsabilizza il <i>WasteService</i> di gestire lo stato della <i>Service Area</i> violando così 
+    il principio di <i>singola responsabilità</i>, peraltro la soluzione risulta poco scalabile in quanto se il sistema dovesse 
+    crescere e i parametri da valutare aumentassero il carico di lavoro del <i>WasteService</i> aumenterebbe. <br><br>
+
+    <b><ks>Accesso indiretto</ks></b><br><br>
+    Questa soluzione, prevede che al momento del bisogno il <i>WasteService</i> richieda ad un componente incaricato di 
+    gestire lo stato della <i>Service Area</i> di fornirgli i dati richiesti, in questo modo il <i>WasteService</i> viene svincolato 
+    dalla responsabilità di valutare le richieste (<kc>storeWaste</kc>) e si occuperà solo di rispondere al <i>truck</i> e gestire il 
+    <i>transportTrolley</i>. <br>
+    Il componente incaricato di gestire lo stato della <i>Service Area</i> può essere modellato come un attore QAk che verrà opportunamente 
+    interpellato dal <i>WasteService</i>. Sebbe questa soluzione preveda l'aggiunta di un nuovo attore QAk al sistema e lo scambio di messaggi 
+    tra i due, consigliamo agli sviluppatori di adottare questo approccio. <br>
+    In tal caso i messaggi scambiati tra il <i>WasteService</i> e il nuovo attore sarebbero:
+    <pre>
+<key2>Request</key2> evalReq    : evalReq(MAT, QUA) 
+<key2>Reply</key2>   evalOk     : evalOk(_)
+<key2>Reply</key2>   evalKo     : evalKo(_)</pre>
+    
+    L'inserimento di questo nuovo attore all'interno del sistema modifica l'architettura logica, come in figura: <br>
+    <img src="./resources/img/ArchContManager.png" alt="" style="width: 45%; height: 45%; ">
 </div>
 
 <div class="remark">
     <div id="BackHome"><h3>Requirement: Back to Home</h3></div>
-    From the requirements we know that when the action of <kc>deposit action</kc> is finished 
-    and if there are no other requests the <kc>transport trolley</kc> must return to the <kc>HOME</kc>. 
-    <h4>Who sends the backHome command</h4>
-    To solve this problem, it is necessary to understand who communicates to the <i>transport trolley</i> to return to the <i>HOME</i> position <br>
-    There can be two entities that deal with this: <br>
-    <ol>
-        <li>WasteService</li>
-        <li>Transport Trolley</li>
-    </ol>
+    Dai requisiti sappiamo che appena la <kc>deposit action</kc> termina se non ci sono altre richieste da servire il 
+    <kc>transport trolley</kc> deve ritornare alla posizione <kc>HOME</kc>. Tale requisito apre diverse problematiche. 
+    <h4>Chi gestisce il ritono alla HOME</h4>
+    Bisogna comprendere a quale componente sia più opportuno affidare la responsabilità del rientro alla posizione <i>HOME</i>,
+    in <a href="#actManager">precedenza</a> si è stabilito che sarebbe opportuno assegnare al <kc>WasteService</kc> la gestione delle attività del <kc>DDR robot</kc> 
+    mentre al <i>transportTrolley</i> la gestione delle movenze. <br><br>
+    Bisogna quindi comprendere sotto quale di queste due categorie ricada il requisito <kc>back to Home</kc>, si tratta di un'azione o semplicemente di 
+    una movenza? <br><br>
+    Il requisito <i>back to Home</i> può essere visto come una movenza del robot, cioè come un'azione che sposta il <i>DDR robot</i> dalla sua posizone attuale fino alla posizone <i>HOME</i>, 
+    tuttavia poichè tale movenza è condizionata dal soddisfacimento di un requisito (assenza di nuove richieste nel sistema) essa può essere considerata 
+    come una attività che il <i>DDR robot</i> deve svolgere quando si verificano determinate condizioni. <br>
+    Inoltre la condizione che deve essere verificata per eseguire il <i>back to Home</i> è l'assenza di nuove richieste nel sistema, e poichè le richieste 
+    sono gestite dal <i>WasteService</i> è opportuno che sia lui ad essere incaricato della gestione di tale compito. <br>
 
-    <ks><b>WasteService</b></ks> <br><br>
-    It is the <kc>WasteService</kc> to communicate to the <kc>transport trolley</kc> to "re-enter" to the position of <i>HOME</i>.<br>
-    Remember that the <i>wasteService</i> is an active entity and specifically has the task of managing requests that come from 
-    <kc>truck</kc>. So you know whether there are still requests within the system that need to be handled or not. 
-    When there are no requests it will be its task in some way (via commands or messages) to communicate to the <i>transport trolley</i> to return to <i>HOME</i>.
-    <br><br>
-    <ks><b>Transport Trolley</b></ks> <br><br>
-    It is the <i>transport trolley</i> itself that moves to <i>HOME</i>.<br>
-    This solution is not able to independently check if there are still requests in the system, as there is no "direct" connection between <i>truck</i> and <i>transport trolley.</i>
-    Therefore by itself the <i>transport trolley</i> could return in <i>HOME</i>, but the risk is that there are within the system still some demands to manage of which the <i>transport trolley</i>
-    It doesn’t know, so there’s no answer. In any case, a possible solution could be to send a message by the <i>transport trolley</i>.
-    <br><br>
-    The first solution is the one suggested to the developer because among all it has the advantage of "knowing" if there are still system requests to manage.
+    <h4>Interazione tra i componenti</h4>
+    Una volta compreso che il <i>WasteService</i> gestisce il <i>back to Home</i>, bisogna comprendo che ti di interazione avvenga tra 
+    il <i>WasteService</i> e il <i>transportTrolley</i> affinchè quest'ultimo esegua il ritorno alla <i>HOME</i>. <br>
+    Anche in questa situazione le alternative sono due:
+    <ul>
+        <li>Request</li>
+        <li>Dispatch</li>
+    </ul>
 
-    <h4>Waste Service and Transport Trolley interaction</h4>
-    The two components interact with each other by exchanging messages.
-    Specifically, also based on when discussed in the previous point and assuming that the first solution is the convenient one,
-    the <i>WasteService</i> could communicate to the <i>transport trolley</i> to return to <i>HOME</i> by means of a message such as:
-    <pre>
-<key2>forward</key2> transporttrolley <key2>-m</key2> gotohome: gothome(_)</pre>
-
-    <h5>How does <i>transport trolley</i> understand that the Transport Trolley has completed the dropout</h5>
-    Analysis of the <kc>deposit action</kc> problem showed that the pickup operation should be treated 
-    as a <key2>Request</key2> while that of dropout as a <key2>Dispatch</key2>. 
-    Thus the problem arises of informing the WasteService when the <i>transport trolley</i> completes the <i>dropout</i> operation. <br>
-    A solution to this problem could be if the <i>transport trolley</i> sends a message to <i>WasteService</i> to inform him 
-    the completion of the operation, as follows:
-    <pre>
-<key2>forward</key2> wasteService <key2>-m</key2> dropoutdone: dropoutdone(_)</pre>
-    
-    When the <i>WasteService</i> receives this message it may be in two different states: <br>
-    <ol>
-        <li>idle: waiting for a new request from the truck or a message from the <i>transport trolley</i></li>
-        <li>requestEvaluation: evaluating whether to accept or reject a request from the truck</li>
-    </ol>
-    In the first case the <i>WasteService</i> immediately fetches the message from the queue and 
-    Transitions to the backhome state in which it sends the command to the <i>transport trolley</i>:
+    Poichè il <i>WasteService</i> non è interessato al momento in cui il <i>transportTrolley</i> termina l'esecuzione del rientro in <i>HOME</i> 
+    sarebbe opportuno optare per l'utilizzo di un <i>Dispatch</i> in tal modo il <i>WasteService</i> non dovrà gestire il messaggio di risposta.
+    Sulla base di ciò consigliamo agli sviluppatori di utilizzare il seguente messaggio per l'esecuzione del <i>back to Home</i>:
     <pre>
 <key2>Dispatch</key2> gotohome : gotohome(_)</pre>
     
-    In the second case the <kc>dropoutdone</kc> message is inserted in the queue but not processed immediately. <br>
-    The <i>WasteService</i> continues to evaluate the request and if the evaluation result is negative, sends a <kc>loadrejected</kc>
-    to the truck, transitioning to the <i>idle</i> state where it picks the <i>dropoutdone</i> message from the queue and processes it as in the <b>n1</b> case.
-    If the evaluation is positive, the <i>WasteService</i> sends a <i>pickup</i> request to the <i>transport trolley</i>
-    and then takes the <i>dropoutdone</i> message from the queue and discards it. Then listens for a reply from the trolley.
-      
+    Il <i>WasteService </i> deve quindi ordinare al <i>transportTrolley</i> di rientrare in <i>Home</i> se quest'ultimo ha concluso 
+    l'operazione di deposito e se nel sistema non ci sono altre richieste da servire. <br>
+    Tuttavia, l'analisi del problema <a href="#drp"><i>deposit action</i></a> ha evidenziato il fatto che il messaggio <kc>dropout</kc> 
+    sia di tipi <i>Dispatch</i>, ciò implica che quando il <i>WasteService</i> non si aspetta nessuno risposta a tale messaggio. <br>
+    Bisogna quindi comprendere come possa fare il <i>WasteService</i> a sapere quando il <i>transportTrolley</i> ha terminato l'esecuzione 
+    del <i>dropout</i>. Le alternative possibili sono due:
+    <ul>
+        <li>Modificare il tipo del messaggio <i>dropout</i> in <i>request</i></li>
+        <li>Fare in modo che il <i>transportTrolley</i> invii in maniera autonoma un messaggio di "notifica" quando termina l'esecuzione 
+        dell'operazione <i>dropout</i></li>
+    </ul>
+    La prima soluzione è da evitare in quanto come analizzato precedentemente utilizzare un messaggio di tipo <i>request</i> per il <i>dropout</i> è da evitare,
+    la seconda soluzione è quella consigliata in quanto permette al <i>WasteService</i> di sapere quando il <i>transportTrolley</i> ha terminato 
+    l'operazione di scarico senza la necessità di attendere una risposta. <br>
+    Per tale motivo consigliamo agli sviluppatori di utilizzare il seguente messaggio per la notifica di fine operazione <i>dropout</i>:
+    <pre>
+<key2>Dispatch</key2> dropoutdone : dropoutdone(_)</pre>
+    Alla ricezione di tale messaggio il <i>WasteService</i> potrebbe trovarsi in due possibili stati:
+    <ol>
+        <li><b>idle</b>: in attesa di una richiesta da parte del <i>truck</i> o di un messaggio dal <i>transportTrolley</i></li>
+        <li><b>requestEvaluation</b>: in cui valuta se accettare o rifiutare una nuova richiesta da parte del <i>truck</i></li>
+    </ol>
+    Nel primo caso il <i>WasteService</i> preleva immediatamente il messaggio dalla coda e transita allo stato <kc>backHome</kc> in cui 
+    invia al <i>transportTrolley</i> il messaggio <kc>gotohome</kc>. <br><br>
+    
+    Nel secondo caso il messaggio <kc>dropoutdone</kc> viene inserito in coda e non processato. Il <i>WasteService</i> conclude la 
+    valutazione della richiesta e se questa viene rifiutata invia al <i>truck</i> il messaggio <kc>loadrejected</kc>, transita 
+    allo stato <i>idle</i> preleva dalla coda il messaggio <i>dropoutdone</i> e lo processa come nel caso precedente.
+    Se la richiesta è accettata il <i>WasteService</i> invia al <i>transportTrolley</i> il messaggio <kc>pickup</kc> preleva dalla coda
+    il messaggio <i>dropoutdone</i> lo scarta e si mette in attessa della risposta <kc>pickupdone</kc>.
+    
 </div>
+
 <div class="remark">
     <div id="ASAP" ><h3>Requirement: As soon as possible</h3></div>
-    After the interaction with the customer we made it clear that the truck must be sent away as soon as possible. We need to identify when the truck should leave the <kc>INDOOR</kc> and  how to send it away.
+    Dopo l'interazione con il committente abbiamo chiarito che il <i>truck</i> deve essere liberato il prima possibile. 
+    Bisogna identificare quindi il momento migliore in cui il camion deve lasciare l'<kc>INDOOR</kc> e bisogna capire
+    quale sia il modo migliore per mandarlo via.
     <h4>Leave the <kc>INDOOR</kc></h4>
-    Possible solutions:
+    E' possibile liberare il <i>truck</i> in due momenti:
     <ul>
-        <li>The truck could leave the <kc>INDOOR</kc> immediately after unloading the load</li>
-        <li>The truck could leave the <kc>INDOOR</kc> after the <kc>transport trolley</kc> has unloaded the waste load in the container</li>
+        <li>Non appena il <i>transportTrolley</i> preleva il carico</li>
+        <li>Non appena il <i>transportTrolley</i> deposita il carico nel container</li>
     </ul>
-    To meet the requirement of the customer and then send the truck away as soon as possible, we will use the first option that results in the end of the <kc>pickup </kc>action.
-    
+    Sulla base di quanto detto dal committente il momento migliore per liberare il <i>truck</i> è subito dopo la fine dell'operazione di <i>pickup</i>
+    ovvero quando il <i>WasteService</i> riceve il messaggio:
+    <pre>
+<key2>Reply</key2> pickupdone : pickupdone(_)</pre>
 
     <h4>How to send it away</h4>
-    Possible solutions:
+    Anche in questo caso le soluzioni possibili sono due:
     <ul>
-        <li>We can use the <kc>loadaccept</kc> message to send the truck away. This solution consists in wait to send the "loadaccept" until the <kc>transport trolley</kc> has completed the <kc>pickup</kc> action</li>
-        <li>We can send the truck away by sending it a new message as soon as the <i>transport trolley</i> completes the <i>pickup</i> action.
+        <li>Utilizzare il messaggio <kc>loadaccept</kc> per mandare via il <i>truck</i></li>
+        <li>Utilizzare un nuovo messaggio</li>
     </ul>
-    It is less expensive in terms of load on the network to send a single message (loadaccept) to accept the load and to send the truck away.
+    La prima soluzione consiste nel ritardare l'invio del messaggio <i>loadaccept</i> fino a quando il <i>WasteService</i> non riceve il messaggio
+    <i>pickupdone</i>. <br>
+    La seconda soluzione, invece, prevede di inviare immediatamente il messaggio <i>loadaccept</i> e iviare un nuovo messaggio, non appena 
+    il <i>WasteService</i> riceve il <i>pickupdone</i>, per mandare via il <i>truck</i>. <br>
+    Sebbene le due soluzioni siano molto simili la prima ci permette di risparmiare l'invio di un messaggio sulla rete diminuendo 
+    quindi il carico di rete (<kc>overhead</kc>), si consiglia per tanto agli sviluppatori di utilizzare tale soluzione. <br>
+    Per meglio comprenderne il funzionamento di seguito viene riportato un frammento di codice del <i>WasteService</i>:
     <pre>
-    <key2>State</key2> acceptRequest{
-        <key2>request</key2> transporttrolley <key2>-m</key2> pickup : pickup
-    }<key2>Transition</key2> t0 <key2>whenReply</key2> pickupdone -> dropout
-                                                        
-    <key2>State</key2> dropout{
-        [# boxState.updateBoxWeight(requestMaterialToStore, requestWeightToStore) #]				
-        <key2>replyTo</key2> storeWaste <key2>with</key2> loadaccept : loadaccept(_)
-        [#var TYPE = requestMaterialToStore.toString()#]
-        <key2>request</key2> transporttrolley <key2>-m</key2> dropout : dropout(TYPE)
-    }<key2>Transition</key2> t0 <key2>whenReply</key2> dropoutdone -> idle                                         
-}
-    </pre>
-    After the <b><i>WasteService</i></b> receives the <kc>pickupdone</kc> reply from the <b><i>transportTrolley</i></b>, it transits 
-    in the <kc>dropout state</kc> and sends to the <b><i>SmartDevice</i></b> the <kc>loadaccept</kc> reply.
+<key2>State</key2> acceptRequest{
+    <key2>request</key2> transporttrolley <key2>-m</key2> pickup : pickup
+}<key2>Transition</key2> t0 <key2>whenReply</key2> pickupdone -> dropout
+                                                    
+<key2>State</key2> dropout{
+    <key2>replyTo</key2> storeWaste <key2>with</key2> loadaccept : loadaccept(_)
+    <key2>request</key2> transporttrolley <key2>-m</key2> dropout : dropout(TYPE)
+}<key2>Transition</key2> t0 <key2>whenReply</key2> dropoutdone -> idle                                         
+}</pre>
+    
 </div>
 <!-- USEFUL
 <table style="width:100%" border="1">
