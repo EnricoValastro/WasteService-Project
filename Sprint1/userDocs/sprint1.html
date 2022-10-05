@@ -573,7 +573,7 @@ planner22Util.doPlan()</pre>
 <key2>Reply</key2>   evalKo     : evalKo(_)</pre>
     
     L'inserimento di questo nuovo attore all'interno del sistema modifica l'architettura logica, come in figura: <br>
-    <img src="./resources/img/ArchContManager.png" alt="" style="width: 45%; height: 45%; ">
+    <img src="./resources/img/ArchLogicSprint1CM.png" alt="" style="width: 45%; height: 45%; ">
 </div>
 
 <div class="remark">
@@ -676,10 +676,18 @@ planner22Util.doPlan()</pre>
                                                     
 <key2>State</key2> dropout{
     <key2>replyTo</key2> storeWaste <key2>with</key2> loadaccept : loadaccept(_)
-    <key2>request</key2> transporttrolley <key2>-m</key2> dropout : dropout(TYPE)
+    <key2>request</key2> transporttrolley <key2>-m</key2> dropout : dropout(MATERIAL)
 }<key2>Transition</key2> t0 <key2>whenReply</key2> dropoutdone -> idle                                         
 }</pre>
     
+</div>
+
+<div class="remark">
+    <h3>Architettura Logica</h3>
+    Sulla base di quanto emerso in fase di analisi del problema è possibile ridefinire l'architettura logica della <kc>Business Core</kc> e 
+    quindi quella dell'intero sistema.<br> 
+    La nuova architettura logica è riportata di seguito: <br><br>
+    <img src="./resources/img/ArchLogicSprint1.png" alt="" style="width:60% ; height:60% ;">
 </div>
 <!-- USEFUL
 <table style="width:100%" border="1">
