@@ -1,0 +1,31 @@
+System wasteservice
+
+Request evalreq : evalreq(MAT,QUA)
+Reply evalOk : evalOk(_)
+Reply evalKo : evalKo(_)
+Dispatch update : update(MAT,QUA)
+
+
+Context ctxwasteservice ip [host="localhost" port=8055]
+
+QActor containermanager context ctxwasteservice{
+	State s0 initial {
+		
+	}Goto idle
+	
+	State idle {
+		
+	}Transition t0 whenRequest evalreq -> evaluation
+					whenMsg update -> update
+	
+	
+	State evaluation {
+		//calcoli
+		//replyTo 
+	}Goto idle
+	
+	State update {
+		
+	}Goto idle
+	
+}
