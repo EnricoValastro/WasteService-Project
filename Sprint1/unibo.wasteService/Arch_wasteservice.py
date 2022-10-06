@@ -21,4 +21,6 @@ with Diagram('wasteserviceArch', show=False, outformat='png', graph_attr=graphat
      sys = Custom('','./qakicons/system.png')
      with Cluster('ctxwasteservice', graph_attr=nodeattr):
           containermanager=Custom('containermanager','./qakicons/symActorSmall.png')
+          wasteservicehandler=Custom('wasteservicehandler','./qakicons/symActorSmall.png')
+          wasteservicecore=Custom('wasteservicecore','./qakicons/symActorSmall.png')
 diag
