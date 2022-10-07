@@ -700,7 +700,7 @@ planner22Util.doPlan()</pre>
     <h3>ContainerManager Component</h3>
     Il ContainerManager è il componente incaricato di gestire lo stato della Service Area. Verrà modellato come un attore QAk che verrà chiamato dal WasteService al bisogno,
     svincolandolo dalla responsabilità di valutare le richieste. Il ContainerManager potrà transiatare in tre stati. <br>
-    <img src="./resources/img/FSM_containerManager.png" alt="" style="width:40% ; height:40% ;">
+    <img src="./resources/img/FSM_containerManager.png" alt="" style="width:35% ; height:35% ;">
     <ul>
         <li><b>idle</b>: lo stato iniziale, in cui il ContainerManager non ha ancora ricevuto alcuna richiesta.</li>
         <li><b>evaluation</b>: in cui il ContainerManager richiama il metodo:<b> canStore(material: Material, value: Double) : Boolean</b> della classe <b>WasteServiceState.kt</b></li>
