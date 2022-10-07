@@ -5,6 +5,7 @@ Request evalreq : evalreq(MAT,QUA)
 Reply evalOk : evalOk(_)
 Reply evalKo : evalKo(_)
 Dispatch update : update(MAT,QUA)
+Dispatch exit : exit(_)
 
 //messaggi wasteService
 Request storeWaste : storeWaste(MATERIAL, TRUCKLOAD)
@@ -23,7 +24,7 @@ Reply dropoutdone : dropoutdone(_)
 Context ctxwasteservice ip [host="localhost" port=8055]
 
 QActor containermanager context ctxwasteservice{
-	State s0 initial {
+	State init initial {
 		
 	}Goto idle
 	
@@ -31,6 +32,7 @@ QActor containermanager context ctxwasteservice{
 		
 	}Transition t0 whenRequest evalreq -> evaluation
 					whenMsg update -> update
+					whenMsg exit -> end
 	
 	
 	State evaluation {
@@ -41,7 +43,9 @@ QActor containermanager context ctxwasteservice{
 	State update {
 		
 	}Goto idle
-	
+	State end {
+		
+	}
 }
 
 QActor wasteservicehandler context ctxwasteservice{

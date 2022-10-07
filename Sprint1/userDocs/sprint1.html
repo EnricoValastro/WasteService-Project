@@ -723,7 +723,7 @@ planner22Util.doPlan()</pre>
     Il codice di questo componente è consultabile in: <a href="./resources/qak/wasteService.qak">ContainerManager</a>
     <pre>
 <key2>QActor</key2>containermanager <key2>context</key2> ctxwasteservice{
-    <key2>State</key2> s0 <key2>initial</key2> {
+    <key2>State</key2> init <key2>initial</key2> {
                 ....
     }<key2>Goto</key2> idle
             
@@ -731,7 +731,7 @@ planner22Util.doPlan()</pre>
                 ....
     }<key2>Transition</key2> t0 <key2>whenRequest</key2> evalreq -> evaluation
                           <key2>whenMsg</key2> update -> update
-            
+                          <key2>whenMsg</key2> exit -> end
             
      <key2>State</key2> evaluation {
                 ....
@@ -740,6 +740,10 @@ planner22Util.doPlan()</pre>
     <key2>State</key2> update {
                 ....
     }<key2>Goto</key2> idle
+
+    <key2>State</key2> end{
+                ....
+    }
             
 }</pre>
        

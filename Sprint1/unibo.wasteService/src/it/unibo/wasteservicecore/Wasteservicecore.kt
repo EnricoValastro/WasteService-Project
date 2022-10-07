@@ -32,8 +32,8 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t05",targetState="pickup",cond=whenDispatch("doJob"))
-					transition(edgeName="t06",targetState="backHome",cond=whenReply("dropoutdone"))
+					 transition(edgeName="t06",targetState="pickup",cond=whenDispatch("doJob"))
+					transition(edgeName="t07",targetState="backHome",cond=whenReply("dropoutdone"))
 				}	 
 				state("backHome") { //this:State
 					action { //it:State
@@ -51,8 +51,8 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t07",targetState="clear",cond=whenReply("dropoutdone"))
-					transition(edgeName="t08",targetState="dropout",cond=whenReply("pickupdone"))
+					 transition(edgeName="t08",targetState="clear",cond=whenReply("dropoutdone"))
+					transition(edgeName="t09",targetState="dropout",cond=whenReply("pickupdone"))
 				}	 
 				state("clear") { //this:State
 					action { //it:State
@@ -61,7 +61,7 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t09",targetState="dropout",cond=whenReply("pickupdone"))
+					 transition(edgeName="t010",targetState="dropout",cond=whenReply("pickupdone"))
 				}	 
 				state("dropout") { //this:State
 					action { //it:State

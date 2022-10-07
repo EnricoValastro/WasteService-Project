@@ -11,12 +11,12 @@ import kotlinx.coroutines.runBlocking
 class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope ){
 
 	override fun getInitialState() : String{
-		return "s0"
+		return "init"
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		return { //this:ActionBasciFsm
-				state("s0") { //this:State
+				state("init") { //this:State
 					action { //it:State
 						//genTimer( actor, state )
 					}
@@ -34,6 +34,7 @@ class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					}	 	 
 					 transition(edgeName="t00",targetState="evaluation",cond=whenRequest("evalreq"))
 					transition(edgeName="t01",targetState="update",cond=whenDispatch("update"))
+					transition(edgeName="t02",targetState="end",cond=whenDispatch("exit"))
 				}	 
 				state("evaluation") { //this:State
 					action { //it:State
@@ -52,6 +53,14 @@ class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					sysaction { //it:State
 					}	 	 
 					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("end") { //this:State
+					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 				}	 
 			}
 		}
