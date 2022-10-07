@@ -32,7 +32,7 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t02",targetState="evalReq",cond=whenRequest("storeWaste"))
+					 transition(edgeName="t03",targetState="evalReq",cond=whenRequest("storeWaste"))
 				}	 
 				state("evalReq") { //this:State
 					action { //it:State
@@ -41,8 +41,8 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t03",targetState="acceptedRequest",cond=whenReply("evalOk"))
-					transition(edgeName="t04",targetState="rejectedRequest",cond=whenReply("evalKo"))
+					 transition(edgeName="t04",targetState="acceptedRequest",cond=whenReply("evalOk"))
+					transition(edgeName="t05",targetState="rejectedRequest",cond=whenReply("evalKo"))
 				}	 
 				state("acceptedRequest") { //this:State
 					action { //it:State
