@@ -567,10 +567,9 @@ planner22Util.doPlan()</pre>
     tra i due, consigliamo agli sviluppatori di adottare questo approccio. <br>
     In tal caso i messaggi scambiati tra il <i>WasteService</i> e il nuovo attore sarebbero:
     <pre>
-<key2>Request</key2>  evalReq    : evalReq(MAT, QUA) 
-<key2>Reply</key2>    evalOk     : evalOk(_)
-<key2>Reply</key2>    evalKo     : evalKo(_)
-<key2>Dispatch</key2> update     : update(MAT, QUA)</pre>
+<key2>Request</key2> evalReq    : evalReq(MAT, QUA) 
+<key2>Reply</key2>   evalOk     : evalOk(_)
+<key2>Reply</key2>   evalKo     : evalKo(_)</pre>
     
     L'inserimento di questo nuovo attore all'interno del sistema modifica l'architettura logica come in figura: <br>
     <img src="./resources/img/ArchLogicSprint1CM.png" alt="" style="width: 45%; height: 45%; ">
@@ -693,6 +692,19 @@ planner22Util.doPlan()</pre>
 <h2>Project</h2>
 <div class="remark">
     <h3>WasteService Component</h3>
+    Il <kc>WasteService</kc> come si può notare dall'architettura logica si trova nello stesso contesto dell'attore <kc>ContainerManager</kc>, 
+    in quando le due entità si scambieranno informazioni al fine di fornire una risposta al truck riguardo le varie richieste.
+    In fase di progetto, per rispettare il principio di singola responsabilità, si decide di implementare il WasteService in due attori differenti:
+    <ul>
+        <li>WasteService handler</li>
+        <li>WasteService core</li>
+    </ul> 
+
+    Il primo si occuperà di ricevere le richieste provenienti dal truck e di passarle al ContainerManager. La macchina a stati finiti (FSM) di questo attore è riportata di seguito: <br>
+    <img src="./resources/img/FSM_wasteServiceHandler.png" alt="" style="width:60% ; height:60% ;"> <br><br>
+    Il <kc>wasteServicehandler</kc> quando si trova nello stato di <kc>idle</kc> è in attesa di ricevere una richesta dal <kc>truck</kc>. 
+    Arrivata la richiesta, questa deve essere valutata e si transita dunque nello stato di <kc>evaluationRequest</kc>. Se la richiesta può essere accettata si transiterà 
+    nello stato di <kc>acceptRequest</kc>, altrimenti si transiterà nello stato di <kc>rejectRequest</kc>. In qualunque caso, sia dallo stato di <i>acceptRequest</i> che da quello di <i>rejectRequest</i>, si tornerà nello stato di <i>idle</i>. 
 </div>
 <div class="remark">
     <h3>TransportTrolley Component</h3>
@@ -700,8 +712,8 @@ planner22Util.doPlan()</pre>
 <div class="remark">
     <h3>ContainerManager Component</h3>
     Il ContainerManager è il componente incaricato di gestire lo stato della Service Area. Verrà modellato come un attore QAk che verrà chiamato dal WasteService al bisogno,
-    svincolandolo dalla responsabilità di valutare le richieste. Il ContainerManager potrà transiatare in tre stati. <br>
-    <img src="./resources/img/FSM_containerManager.png" alt="" style="width:35% ; height:35% ;">
+    svincolandolo dalla responsabilità di valutare le richieste. Il ContainerManager potrà transitare in tre stati. <br>
+    <img src="./resources/img/FSM_containerManager.png" alt="" style="width:40% ; height:40% ;">
     <ul>
         <li><b>idle</b>: lo stato iniziale, in cui il ContainerManager non ha ancora ricevuto alcuna richiesta.</li>
         <li><b>evaluation</b>: in cui il ContainerManager richiama il metodo:<b> canStore(material: Material, value: Double) : Boolean</b> della classe <b>WasteServiceState.kt</b></li>
