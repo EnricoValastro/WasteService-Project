@@ -702,9 +702,9 @@ planner22Util.doPlan()</pre>
     </ul> 
 
     Il primo si occuperà di ricevere le richieste provenienti dal truck e di passarle al ContainerManager. La macchina a stati finiti (FSM) di questo attore è riportata di seguito: <br>
-    <img src="./resources/img/FSM_wasteServiceHandler.png" alt="" style="width:60% ; height:60% ;"> <br><br>
+    <img src="./resources/img/FSM_wasteServicehandler.png" alt="" style="width:60% ; height:60% ;"> <br><br>
     Il <kc>wasteServicehandler</kc> quando si trova nello stato di <kc>idle</kc> è in attesa di ricevere una richesta dal <kc>truck</kc>. 
-    Arrivata la richiesta, questa deve essere valutata e si transita dunque nello stato di <kc>evaluationRequest</kc>. Se la richiesta può essere accettata si transiterà 
+    Arrivata la richiesta, questa deve essere valutata e si transita dunque nello stato di <kc>evalRequest</kc>. Se la richiesta può essere accettata si transiterà 
     nello stato di <kc>acceptRequest</kc>, altrimenti si transiterà nello stato di <kc>rejectRequest</kc>. In qualunque caso, sia dallo stato di <i>acceptRequest</i> che da quello di <i>rejectRequest</i>, si tornerà nello stato di <i>idle</i>. 
 </div>
 <div class="remark">
