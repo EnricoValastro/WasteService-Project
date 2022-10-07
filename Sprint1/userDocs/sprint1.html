@@ -567,9 +567,10 @@ planner22Util.doPlan()</pre>
     tra i due, consigliamo agli sviluppatori di adottare questo approccio. <br>
     In tal caso i messaggi scambiati tra il <i>WasteService</i> e il nuovo attore sarebbero:
     <pre>
-<key2>Request</key2> evalReq    : evalReq(MAT, QUA) 
-<key2>Reply</key2>   evalOk     : evalOk(_)
-<key2>Reply</key2>   evalKo     : evalKo(_)</pre>
+<key2>Request</key2>  evalReq    : evalReq(MAT, QUA) 
+<key2>Reply</key2>    evalOk     : evalOk(_)
+<key2>Reply</key2>    evalKo     : evalKo(_)
+<key2>Dispatch</key2> update     : update(MAT, QUA)</pre>
     
     L'inserimento di questo nuovo attore all'interno del sistema modifica l'architettura logica come in figura: <br>
     <img src="./resources/img/ArchLogicSprint1CM.png" alt="" style="width: 45%; height: 45%; ">

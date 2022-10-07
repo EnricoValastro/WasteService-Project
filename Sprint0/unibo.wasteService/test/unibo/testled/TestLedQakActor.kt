@@ -1,4 +1,5 @@
-package unibo.testled
+/*
+* package unibo.testled
 
 import it.unibo.ctxledqak.main
 import it.unibo.kactor.QakContext
@@ -99,21 +100,4 @@ class TestLedQakActor {
 
         assertEquals(obs.getNext().getTTState().toString(), "BLINKING")
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
+}*/

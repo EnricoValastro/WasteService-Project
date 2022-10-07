@@ -36,7 +36,8 @@ QActor wasteserviceactor context ctxwasteservice {
 					requestWeightToStore = payloadArg(1).toDouble()	
 					
 			#]
-					if[# boxState.canStore(requestMaterialToStore, requestWeightToStore) #]
+					/*
+					 * if[# boxState.canStore(requestMaterialToStore, requestWeightToStore) #]
 					{
 						[# boxState.updateBoxWeight(requestMaterialToStore, requestWeightToStore) #]				
 						replyTo storeWaste with loadaccept : loadaccept(_)
@@ -44,7 +45,8 @@ QActor wasteserviceactor context ctxwasteservice {
 					}
 					else{
 						replyTo storeWaste with loadrejected : loadrejected(_)
-					}
+					} 
+					* */
 			[#
 					
 				}catch(e : Exception){
@@ -56,5 +58,15 @@ QActor wasteserviceactor context ctxwasteservice {
 			
 		}
 	}
-	Goto idle
+	Goto acceptRequest if[# boxState.canStore(requestMaterialToStore, requestWeightToStore) #]
+					else rejectRequest
+	
+	State rejectRequest{
+		replyTo storeWaste with loadrejected : loadrejected(_)
+	}Goto idle
+	
+	State acceptRequest{
+		replyTo storeWaste with loadaccept : loadaccept(_)
+	}Goto idle
+
 }

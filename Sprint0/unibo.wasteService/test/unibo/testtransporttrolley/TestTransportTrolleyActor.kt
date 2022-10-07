@@ -1,4 +1,5 @@
-package unibo.testtransporttrolley
+/*
+* package unibo.testtransporttrolley
 
 import it.unibo.ctxtransporttrolley.main
 import it.unibo.kactor.QakContext
@@ -101,7 +102,6 @@ class TestTransportTrolleyActor {
         assertEquals(obs.getNext().getTTState().toString(), "IDLE")
     }
 
-
-
-
 }
+*
+* */
