@@ -20,5 +20,8 @@ with Diagram('wasteserviceArch', show=False, outformat='png', graph_attr=graphat
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
      with Cluster('ctxwasteservice', graph_attr=nodeattr):
-          wasteserviceactor=Custom('wasteserviceactor','./qakicons/symActorSmall.png')
+          wasteservice=Custom('wasteservice','./qakicons/symActorSmall.png')
+          transporttrolley=Custom('transporttrolley','./qakicons/symActorSmall.png')
+     wasteservice >> Edge(color='magenta', style='solid', xlabel='pickup', fontcolor='magenta') >> transporttrolley
+     wasteservice >> Edge(color='magenta', style='solid', xlabel='dropout', fontcolor='magenta') >> transporttrolley
 diag

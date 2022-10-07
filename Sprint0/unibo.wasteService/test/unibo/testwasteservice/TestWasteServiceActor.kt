@@ -6,11 +6,11 @@ import org.junit.Before
 import org.junit.Test
 import kotlin.Throws
 import java.lang.InterruptedException
+import unibo.actor22comm.utils.CommUtils
 import unibo.coapobs.TypedCoapTestObserver
 import unibo.comm22.coap.CoapConnection
 import unibo.comm22.interfaces.Interaction2021
 import unibo.comm22.tcp.TcpClientSupport
-import unibo.comm22.utils.CommUtils
 import wasteservice.state.Material
 import wasteservice.state.WasteServiceState
 import java.lang.Exception
@@ -94,7 +94,7 @@ class TestWasteServiceActor {
 
         var newState = obs.getNext()
         assertEquals(prevState.getCurrentBoxWeight(
-               material)+weight, newState.getCurrentBoxWeight(material) )
+                material)+weight, newState.getCurrentBoxWeight(material) )
 
     }
 
@@ -109,7 +109,6 @@ class TestWasteServiceActor {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
         assertTrue(asw.contains("loadrejected"))
         assertEquals(prevState.getCurrentBoxWeight(material), obs.getNext().getCurrentBoxWeight(material) )
 

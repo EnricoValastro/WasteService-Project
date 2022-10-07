@@ -2,4 +2,5 @@
 % wasteservice description   
 %====================================================================================
 context(ctxwasteservice, "localhost",  "TCP", "8055").
- qactor( wasteserviceactor, ctxwasteservice, "it.unibo.wasteserviceactor.Wasteserviceactor").
+ qactor( wasteservice, ctxwasteservice, "it.unibo.wasteservice.Wasteservice").
+  qactor( transporttrolley, ctxwasteservice, "it.unibo.transporttrolley.Transporttrolley").
