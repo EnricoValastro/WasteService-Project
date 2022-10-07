@@ -1,0 +1,86 @@
+System transporttrolley
+
+/* Deposit Action Message */
+Request  pickup      : pickup(_)
+Reply  	 pickupdone  : pickupdone(_)
+Dispatch dropout     : dropout(MATERIAL) // MATERIAL = PLASTIC | GLASS
+Dispatch dropoutdone : dropoutdone(_)
+
+/* BackHome Message */
+Dispatch gotohome    : gotohome(_)
+
+/* Moving Message */
+Request  moveto      : moveto(POS)       // POS = HOME | INDOOR | PLASTICBOX | GLASSBOX
+Reply    moveok	     : moveok(_)
+Reply    moveko	     : moveko(_)
+
+/* Action Message */
+Request  execaction  : execaction(ACT)   // ACT = PICKUP | DROPOUT
+Reply    execok      : execok(_)
+Reply    execko      : execko(_) 
+
+Context ctxtransporttrolley ip[host="localhost" port=8056]
+
+QActor transporttrolleycore context ctxtransporttrolley{
+	
+	[#
+		lateinit var MaterialToStore : String	
+	#]
+	
+	State init initial{
+		println("$name	|	setup")	
+		
+	}Goto idle
+	
+	State idle{
+		
+	}Transition t0 whenRequest pickup -> pickupMove
+					whenMsg dropout -> dropoutMove
+					whenMsg gotohome -> backHome
+	
+	State pickupMove{
+		request transporttrolleymover -m moveto : moveto(INDOOR)
+	}Transition t0 whenReply moveok -> pickupExec
+	
+	State pickupExec{
+		request transporttrolleyexecutor -m execaction : execaction(PICKUP)
+	}Transition t0 whenReply execok -> pickupRes
+	
+	State pickupRes{
+		replyTo pickup with pickupdone : pickupdone(_)
+	}Goto idle
+	
+	State dropoutMove{
+		onMsg(dropout : dropout(MATERIAL)){
+			[#	
+				try{
+					MaterialToStore = payloadArg(0).trim().uppercase() 
+							
+				}catch(e : Exception){
+			#]
+					//replyTo storeWaste with loadrejected : loadrejected(_)
+			[#
+				}	
+			#]	
+		}
+		//request transporttrolleymover -m moveto : moveto()
+	}
+	
+	State backHome{
+		
+	}
+}
+
+QActor transporttrolleymover context ctxtransporttrolley{
+	
+	State init initial{
+		println("$name	|	setup")	
+	}
+}
+
+QActor transporttrolleyexecutor context ctxtransporttrolley{
+	
+	State init initial{
+		println("$name	|	setup")	
+	}
+}
