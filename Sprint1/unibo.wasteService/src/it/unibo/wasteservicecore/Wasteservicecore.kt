@@ -11,12 +11,12 @@ import kotlinx.coroutines.runBlocking
 class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope ){
 
 	override fun getInitialState() : String{
-		return "s0"
+		return "init"
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		return { //this:ActionBasciFsm
-				state("s0") { //this:State
+				state("init") { //this:State
 					action { //it:State
 						//genTimer( actor, state )
 					}
@@ -32,8 +32,9 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t06",targetState="pickup",cond=whenDispatch("doJob"))
-					transition(edgeName="t07",targetState="backHome",cond=whenReply("dropoutdone"))
+					 transition(edgeName="t07",targetState="pickup",cond=whenDispatch("doJob"))
+					transition(edgeName="t08",targetState="backHome",cond=whenReply("dropoutdone"))
+					transition(edgeName="t09",targetState="end",cond=whenDispatch("exit"))
 				}	 
 				state("backHome") { //this:State
 					action { //it:State
@@ -51,8 +52,8 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t08",targetState="clear",cond=whenReply("dropoutdone"))
-					transition(edgeName="t09",targetState="dropout",cond=whenReply("pickupdone"))
+					 transition(edgeName="t010",targetState="clear",cond=whenReply("dropoutdone"))
+					transition(edgeName="t011",targetState="dropout",cond=whenReply("pickupdone"))
 				}	 
 				state("clear") { //this:State
 					action { //it:State
@@ -61,7 +62,7 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t010",targetState="dropout",cond=whenReply("pickupdone"))
+					 transition(edgeName="t012",targetState="dropout",cond=whenReply("pickupdone"))
 				}	 
 				state("dropout") { //this:State
 					action { //it:State
@@ -71,6 +72,14 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					sysaction { //it:State
 					}	 	 
 					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("end") { //this:State
+					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 				}	 
 			}
 		}

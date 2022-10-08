@@ -11,11 +11,6 @@ Dispatch exit : exit(_)
 Request storeWaste : storeWaste(MATERIAL, TRUCKLOAD)
 Dispatch doJob : doJob(_)
 
-
-/* 
-Request pickup : pickup(_)
-Request dropout : dropout(MAT)
-*/
 Reply pickupdone : pickupdone(_)
 Reply dropoutdone : dropoutdone(_)
 
@@ -43,37 +38,43 @@ QActor containermanager context ctxwasteservice{
 	State update {
 		
 	}Goto idle
+	
 	State end {
 		
 	}
 }
 
 QActor wasteservicehandler context ctxwasteservice{
-	State s0 initial{
+	State init initial{
 		
 	}Goto idle
 	
 	State idle{
 		
 	}Transition t0 whenRequest storeWaste -> evalReq
+					whenMsg exit -> end
 	
 	State evalReq{
 		
-	}Transition t0 whenReply evalOk -> acceptedRequest
-					whenReply evalKo -> rejectedRequest
+	}Transition t0 whenReply evalOk -> acceptRequest
+					whenReply evalKo -> rejectRequest
 	
-	State acceptedRequest{
+	State acceptRequest{
 		
 	}Goto idle
 	
-	State rejectedRequest{
+	State rejectRequest{
 		
 	}Goto idle
+	
+	State end{
+		
+	}
 	
 }
 
 QActor wasteservicecore context ctxwasteservice{
-	State s0 initial{
+	State init initial{
 		
 	}Goto idle
 	
@@ -81,6 +82,7 @@ QActor wasteservicecore context ctxwasteservice{
 		
 	}Transition t0 whenMsg doJob -> pickup
 					whenReply dropoutdone -> backHome
+					whenMsg exit -> end
 					
 	State backHome{
 		
@@ -98,4 +100,8 @@ QActor wasteservicecore context ctxwasteservice{
 	State dropout{
 		
 	}Goto idle
+	
+	State end{
+		
+	}
 }

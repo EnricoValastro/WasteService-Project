@@ -11,12 +11,12 @@ import kotlinx.coroutines.runBlocking
 class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope ){
 
 	override fun getInitialState() : String{
-		return "s0"
+		return "init"
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		return { //this:ActionBasciFsm
-				state("s0") { //this:State
+				state("init") { //this:State
 					action { //it:State
 						//genTimer( actor, state )
 					}
@@ -33,6 +33,7 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 					sysaction { //it:State
 					}	 	 
 					 transition(edgeName="t03",targetState="evalReq",cond=whenRequest("storeWaste"))
+					transition(edgeName="t04",targetState="end",cond=whenDispatch("exit"))
 				}	 
 				state("evalReq") { //this:State
 					action { //it:State
@@ -41,10 +42,10 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t04",targetState="acceptedRequest",cond=whenReply("evalOk"))
-					transition(edgeName="t05",targetState="rejectedRequest",cond=whenReply("evalKo"))
+					 transition(edgeName="t05",targetState="acceptRequest",cond=whenReply("evalOk"))
+					transition(edgeName="t06",targetState="rejectRequest",cond=whenReply("evalKo"))
 				}	 
-				state("acceptedRequest") { //this:State
+				state("acceptRequest") { //this:State
 					action { //it:State
 						//genTimer( actor, state )
 					}
@@ -53,7 +54,7 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 					}	 	 
 					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
 				}	 
-				state("rejectedRequest") { //this:State
+				state("rejectRequest") { //this:State
 					action { //it:State
 						//genTimer( actor, state )
 					}
@@ -61,6 +62,14 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 					sysaction { //it:State
 					}	 	 
 					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("end") { //this:State
+					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 				}	 
 			}
 		}
