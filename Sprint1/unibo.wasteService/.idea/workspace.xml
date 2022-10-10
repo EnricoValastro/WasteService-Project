@@ -5,11 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="da66c02c-91d2-47f7-b256-28ec376cd4ea" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../Sprint0/unibo.wasteService/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/../../Sprint0/unibo.wasteService/.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unibo/wasteservicecore/Wasteservicecore.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unibo/wasteservicecore/Wasteservicecore.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unibo/wasteservicehandler/Wasteservicehandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unibo/wasteservicehandler/Wasteservicehandler.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wasteService.qak" beforeDir="false" afterPath="$PROJECT_DIR$/src/wasteService.qak" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../userDocs/sprint1.html" beforeDir="false" afterPath="$PROJECT_DIR$/../userDocs/sprint1.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wasteservice.pl" beforeDir="false" afterPath="$PROJECT_DIR$/wasteservice.pl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,17 +42,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/Users/alessioreitano/Desktop/WasteService-Project/Sprint1/unibo.wasteService",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/alessioreitano/Desktop/WasteService-Project/Sprint1/unibo.wasteService&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -61,6 +63,8 @@
       <updated>1665217535954</updated>
       <workItem from="1665217537673" duration="90000" />
       <workItem from="1665217874834" duration="2282000" />
+      <workItem from="1665386152804" duration="762000" />
+      <workItem from="1665388562422" duration="707000" />
     </task>
     <servers />
   </component>

@@ -25,4 +25,8 @@ with Diagram('wasteserviceArch', show=False, outformat='png', graph_attr=graphat
           wasteservicecore=Custom('wasteservicecore','./qakicons/symActorSmall.png')
      with Cluster('ctxtransporttrolley', graph_attr=nodeattr):
           transportrolleycore=Custom('transportrolleycore(ext)','./qakicons/externalQActor.png')
+     wasteservicehandler >> Edge(color='magenta', style='solid', xlabel='evalreq', fontcolor='magenta') >> containermanager
+     wasteservicehandler >> Edge(color='blue', style='solid', xlabel='doJob', fontcolor='blue') >> wasteservicecore
+     wasteservicecore >> Edge(color='magenta', style='solid', xlabel='pickup', fontcolor='magenta') >> transportrolleycore
+     wasteservicecore >> Edge(color='blue', style='solid', xlabel='dropout', fontcolor='blue') >> transportrolleycore
 diag

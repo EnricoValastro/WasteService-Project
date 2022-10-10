@@ -15,6 +15,9 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
+		
+				lateinit var REQMATERIAL : wasteservice.state.Material 
+				var REQWEIGHT = 0.0
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
@@ -39,6 +42,13 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 				}	 
 				state("evalReq") { //this:State
 					action { //it:State
+						if( checkMsgContent( Term.createTerm("storeWaste(MATERIAL,TRUCKLOAD)"), Term.createTerm("storeWaste(MAT,QUA)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								
+											REQMATERIAL = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())
+											REQWEIGHT = payloadArg(1).toDouble()
+								request("evalreq", "evalreq($REQMATERIAL,$REQWEIGHT)" ,"containermanager" )  
+						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -49,6 +59,8 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 				}	 
 				state("acceptRequest") { //this:State
 					action { //it:State
+						answer("storeWaste", "loadaccept", "loadaccept(_)"   )  
+						forward("doJob", "doJob($REQMATERIAL,$REQWEIGHT)" ,"wasteservicecore" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -58,6 +70,7 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 				}	 
 				state("rejectRequest") { //this:State
 					action { //it:State
+						answer("storeWaste", "loadrejected", "loadrejected(_)"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -67,6 +80,7 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 				}	 
 				state("end") { //this:State
 					action { //it:State
+						terminate(1)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

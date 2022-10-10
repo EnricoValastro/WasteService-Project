@@ -15,6 +15,8 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
+		
+				lateinit var REQMATERIAL : wasteservice.state.Material 
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
@@ -49,6 +51,14 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("pickup") { //this:State
 					action { //it:State
+						if( checkMsgContent( Term.createTerm("doJob(MAT)"), Term.createTerm("doJob(MAT)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								
+											try{
+											REQMATERIAL = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())
+											}catch{}
+						}
+						request("pickup", "pickup(_)" ,"transportrolleycore" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -68,6 +78,7 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("dropout") { //this:State
 					action { //it:State
+						forward("dropout", "dropout($REQMATERIAL)" ,"transportrolleycore" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -77,6 +88,7 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("end") { //this:State
 					action { //it:State
+						terminate(1)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

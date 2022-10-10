@@ -52,6 +52,7 @@ dependencies {
     /* JSON **************************************************************************************************************** */
     // https://mvnrepository.com/artifact/org.json/json
     implementation group: 'org.json', name: 'json', version: '20220320'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
 
     /* COAP **************************************************************************************************************** */
     // https://mvnrepository.com/artifact/org.eclipse.californium/californium-core

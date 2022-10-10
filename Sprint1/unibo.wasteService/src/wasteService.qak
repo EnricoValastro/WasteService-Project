@@ -9,7 +9,12 @@ Dispatch exit : exit(_)
 
 //messaggi wasteService
 Request storeWaste : storeWaste(MATERIAL, TRUCKLOAD)
-Dispatch doJob : doJob(_)
+Reply loadaccept : loadaccept(_)
+Reply loadrejected : loadrejected(_)
+Dispatch doJob : doJob(MAT)
+
+Request pickup : pickup(_)
+Dispatch dropout : dropout(MAT)
 
 Reply pickupdone : pickupdone(_)
 Reply dropoutdone : dropoutdone(_)
@@ -17,9 +22,6 @@ Reply dropoutdone : dropoutdone(_)
 
 Context ctxwasteservice ip [host="localhost" port=8055]
 Context ctxtransporttrolley ip [host="127.0.0.1" port=8056]
-
-ExternalQActor transportrolleycore context ctxtransporttrolley
-
 
 QActor containermanager context ctxwasteservice{
 	State init initial {
@@ -47,7 +49,13 @@ QActor containermanager context ctxwasteservice{
 	}
 }
 
+ExternalQActor transportrolleycore context ctxtransporttrolley
+
 QActor wasteservicehandler context ctxwasteservice{
+	[#
+		lateinit var REQMATERIAL : wasteservice.state.Material 
+		var REQWEIGHT = 0.0
+	#]
 	State init initial{
 		println("$name	|	setup")
 	}Goto idle
@@ -58,20 +66,27 @@ QActor wasteservicehandler context ctxwasteservice{
 					whenMsg exit -> end
 	
 	State evalReq{
-		
+		onMsg (storeWaste : storeWaste (MAT, QUA)){
+		[#
+			REQMATERIAL = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())
+			REQWEIGHT = payloadArg(1).toDouble()
+		#]
+			request containermanager -m evalreq : evalreq($REQMATERIAL, $REQWEIGHT)
+		}
 	}Transition t0 whenReply evalOk -> acceptRequest
 					whenReply evalKo -> rejectRequest
 	
 	State acceptRequest{
-		
+		replyTo storeWaste with loadaccept : loadaccept(_)
+		forward wasteservicecore -m doJob: doJob($REQMATERIAL, $REQWEIGHT)		
 	}Goto idle
 	
 	State rejectRequest{
-		
+		replyTo storeWaste with loadrejected : loadrejected(_)
 	}Goto idle
 	
 	State end{
-		
+		terminate 1
 	}
 	
 }
@@ -79,6 +94,9 @@ QActor wasteservicehandler context ctxwasteservice{
  
 
 QActor wasteservicecore context ctxwasteservice{
+	[#
+		lateinit var REQMATERIAL : wasteservice.state.Material 
+	#]
 	State init initial{
 		println("$name 	| 	setup")
 	}Goto idle
@@ -94,7 +112,14 @@ QActor wasteservicecore context ctxwasteservice{
 	}Goto idle
 	
 	State pickup{
-		
+		onMsg(doJob : doJob(MAT)){
+		[#
+			try{
+			REQMATERIAL = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())
+			}catch{}
+		#]
+		}
+		request transportrolleycore -m pickup : pickup(_)
 	}Transition t0 whenReply dropoutdone -> clear
 					whenReply pickupdone -> dropout
 	
@@ -103,10 +128,10 @@ QActor wasteservicecore context ctxwasteservice{
 	}Transition t0 whenReply pickupdone -> dropout
 	
 	State dropout{
-		
+		forward transportrolleycore -m dropout : dropout($REQMATERIAL)
 	}Goto idle
 	
 	State end{
-		
+		terminate 1
 	}
 }
