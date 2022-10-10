@@ -18,6 +18,7 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
+						println("$name 	| 	setup")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -27,6 +28,7 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("idle") { //this:State
 					action { //it:State
+						println("$name 	| 	in idle")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
