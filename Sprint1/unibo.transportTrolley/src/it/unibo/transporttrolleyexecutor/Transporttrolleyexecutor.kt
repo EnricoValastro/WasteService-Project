@@ -15,10 +15,71 @@ class Transporttrolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorB
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
+		
+				lateinit var action : String	
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
 						println("$name	|	setup")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("idle") { //this:State
+					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t017",targetState="actionEval",cond=whenRequest("execaction"))
+					transition(edgeName="t018",targetState="end",cond=whenDispatch("exit"))
+				}	 
+				state("actionEval") { //this:State
+					action { //it:State
+						if( checkMsgContent( Term.createTerm("execaction(ACT)"), Term.createTerm("execaction(ACT)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+									
+												try{
+													action = payloadArg(0).trim().uppercase()
+												}catch(e : Exception){}	
+						}
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="execPickup", cond=doswitchGuarded({action.equals("PICKUP") 
+					}) )
+					transition( edgeName="goto",targetState="execDropout", cond=doswitchGuarded({! (action.equals("PICKUP") 
+					) }) )
+				}	 
+				state("execPickup") { //this:State
+					action { //it:State
+						delay(kotlin.random.Random.nextLong(3000, 10000)) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("execDropout") { //this:State
+					action { //it:State
+						delay(kotlin.random.Random.nextLong(2000, 4000)) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("end") { //this:State
+					action { //it:State
+						terminate(1)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

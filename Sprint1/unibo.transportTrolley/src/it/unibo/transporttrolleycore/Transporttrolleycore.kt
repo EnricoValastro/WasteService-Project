@@ -16,7 +16,8 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		
-				lateinit var MaterialToStore : String	
+				lateinit var MaterialToStore : String
+				lateinit var POS 			 : String
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
@@ -38,6 +39,7 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 					 transition(edgeName="t00",targetState="pickupMove",cond=whenRequest("pickup"))
 					transition(edgeName="t01",targetState="dropoutMove",cond=whenDispatch("dropout"))
 					transition(edgeName="t02",targetState="backHome",cond=whenDispatch("gotohome"))
+					transition(edgeName="t03",targetState="end",cond=whenDispatch("exit"))
 				}	 
 				state("pickupMove") { //this:State
 					action { //it:State
@@ -47,7 +49,8 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t03",targetState="pickupExec",cond=whenReply("moveok"))
+					 transition(edgeName="t04",targetState="pickupExec",cond=whenReply("moveok"))
+					transition(edgeName="t05",targetState="moveErr",cond=whenReply("moveko"))
 				}	 
 				state("pickupExec") { //this:State
 					action { //it:State
@@ -57,7 +60,8 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t04",targetState="pickupRes",cond=whenReply("execok"))
+					 transition(edgeName="t06",targetState="pickupRes",cond=whenReply("execok"))
+					transition(edgeName="t07",targetState="execErr",cond=whenReply("execko"))
 				}	 
 				state("pickupRes") { //this:State
 					action { //it:State
@@ -75,20 +79,75 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 						                        currentMsg.msgContent()) ) { //set msgArgList
 									
 												try{
-													MaterialToStore = payloadArg(0).trim().uppercase() 
-															
-												}catch(e : Exception){
-								
-												}	
+													MaterialToStore = payloadArg(0).trim().uppercase()
+													if(MaterialToStore.equals("PLASTIC")){
+														POS = "PLASTICBOX"
+													}
+													else{
+														POS = "GLASSBOX"
+													}
+												}catch(e : Exception){}	
 						}
+						request("moveto", "moveto($POS)" ,"transporttrolleymover" )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t08",targetState="dropoutExec",cond=whenReply("moveok"))
+					transition(edgeName="t09",targetState="moveErr",cond=whenReply("moveko"))
+				}	 
+				state("dropoutExec") { //this:State
+					action { //it:State
+						request("execaction", "execaction(DROPOUT)" ,"transporttrolleyexecutor" )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t010",targetState="dropoutRes",cond=whenReply("execok"))
+					transition(edgeName="t011",targetState="execErr",cond=whenReply("execko"))
+				}	 
+				state("dropoutRes") { //this:State
+					action { //it:State
+						forward("dropoutdone", "dropoutdone(_)" ,"wasteservicecore" ) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("backHome") { //this:State
+					action { //it:State
+						request("moveto", "moveto(HOME)" ,"transporttrolleymover" )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t012",targetState="idle",cond=whenReply("moveok"))
+					transition(edgeName="t013",targetState="moveErr",cond=whenReply("moveko"))
+				}	 
+				state("moveErr") { //this:State
+					action { //it:State
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
 				}	 
-				state("backHome") { //this:State
+				state("execErr") { //this:State
 					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+				}	 
+				state("end") { //this:State
+					action { //it:State
+						terminate(1)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

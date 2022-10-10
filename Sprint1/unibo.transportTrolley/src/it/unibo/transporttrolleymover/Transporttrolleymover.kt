@@ -15,15 +15,103 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
+		
+				lateinit var destination  : String
+				var xDestination : Int = 0
+				var yDestination : Int = 0
+				var PATH = ""
+				var PATHSTILLTODO = ""
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
 						println("$name	|	setup")
+						 unibo.kotlin.planner22Util.initAI()  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("idle") { //this:State
+					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t014",targetState="destinationEval",cond=whenRequest("moveto"))
+				}	 
+				state("destinationEval") { //this:State
+					action { //it:State
+						if( checkMsgContent( Term.createTerm("moveto(POS)"), Term.createTerm("moveto(POS)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+									
+												try{
+													destination = payloadArg(0).trim().uppercase()
+												
+													xDestination = utility.ServiceAreaConfig.getXDestination(destination)
+													yDestination = utility.ServiceAreaConfig.getYDestination(destination)
+													
+												}catch(e : Exception){}	
+						}
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="plan", cond=doswitch() )
+				}	 
+				state("plan") { //this:State
+					action { //it:State
+						
+									unibo.kotlin.planner22Util.setGoal(xDestination, yDestination)
+									unibo.kotlin.planner22Util.doPlan()
+									PATH = unibo.kotlin.planner22Util.get_actionSequence()?.iterator()?.asSequence()?.toList().toString()
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="execMove", cond=doswitch() )
+				}	 
+				state("execMove") { //this:State
+					action { //it:State
+						request("dopath", "dopath($PATH)" ,"pathexec" )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t015",targetState="moveOk",cond=whenReply("dopathdone"))
+					transition(edgeName="t016",targetState="moveKo",cond=whenReply("dopathfail"))
+				}	 
+				state("moveOk") { //this:State
+					action { //it:State
+						answer("moveto", "moveok", "moveok(_)"   )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("moveKo") { //this:State
+					action { //it:State
+						if( checkMsgContent( Term.createTerm("dopathfail(ARG)"), Term.createTerm("dopathfail(ARG)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+									
+												try{
+													PATHSTILLTODO = payloadArg(0)
+												}catch(e : Exception){}	
+						}
+						answer("moveto", "moveko", "moveko(_)"   )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
 				}	 
 			}
 		}

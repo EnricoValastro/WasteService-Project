@@ -1,0 +1,11 @@
+{
+    "LOCATION": {
+        "HOME": [0,0],
+        "INDOOR": [16,0],
+        "PLASTICBOX": [16, 19],
+        "GLASSBOX": [0, 19]
+    },
+    "MAXPB": 500,
+    "MAXGB": 500,
+    "DLIMIT": 40
+}
