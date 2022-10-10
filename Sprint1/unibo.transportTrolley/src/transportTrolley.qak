@@ -1,5 +1,7 @@
 System transporttrolley
 
+Dispatch exit 		 : exit(_)
+
 /* Deposit Action Message */
 Request  pickup      : pickup(_)
 Reply  	 pickupdone  : pickupdone(_)
@@ -19,32 +21,45 @@ Request  execaction  : execaction(ACT)   // ACT = PICKUP | DROPOUT
 Reply    execok      : execok(_)
 Reply    execko      : execko(_) 
 
+/* Pathexec Message */
+Request  dopath      : dopath(PATH)
+Reply    dopathdone  : dopathdone(ARG)
+Reply    dopathfail  : dopathfail(ARG)
+
 Context ctxtransporttrolley ip[host="localhost" port=8056]
+Context ctxwasteservice ip[host="127.0.0.1" port=8055]
+Context ctxbasicrobot ip[host="127.0.0.1" port=8020]
+
+ExternalQActor pathexec context ctxbasicrobot
+ExternalQActor wasteservicecore context ctxwasteservice
 
 QActor transporttrolleycore context ctxtransporttrolley{
 	
 	[#
-		lateinit var MaterialToStore : String	
+		lateinit var MaterialToStore : String
+		lateinit var POS 			 : String
 	#]
 	
 	State init initial{
 		println("$name	|	setup")	
-		
 	}Goto idle
 	
 	State idle{
-		
+	
 	}Transition t0 whenRequest pickup -> pickupMove
 					whenMsg dropout -> dropoutMove
 					whenMsg gotohome -> backHome
+					whenMsg exit -> end
 	
 	State pickupMove{
 		request transporttrolleymover -m moveto : moveto(INDOOR)
 	}Transition t0 whenReply moveok -> pickupExec
+					whenReply moveko -> moveErr
 	
 	State pickupExec{
 		request transporttrolleyexecutor -m execaction : execaction(PICKUP)
 	}Transition t0 whenReply execok -> pickupRes
+					whenReply execko -> execErr
 	
 	State pickupRes{
 		replyTo pickup with pickupdone : pickupdone(_)
@@ -54,33 +69,145 @@ QActor transporttrolleycore context ctxtransporttrolley{
 		onMsg(dropout : dropout(MATERIAL)){
 			[#	
 				try{
-					MaterialToStore = payloadArg(0).trim().uppercase() 
-							
-				}catch(e : Exception){
-			#]
-					//replyTo storeWaste with loadrejected : loadrejected(_)
-			[#
-				}	
+					MaterialToStore = payloadArg(0).trim().uppercase()
+					if(MaterialToStore.equals("PLASTIC")){
+						POS = "PLASTICBOX"
+					}
+					else{
+						POS = "GLASSBOX"
+					}
+				}catch(e : Exception){}	
 			#]	
 		}
-		//request transporttrolleymover -m moveto : moveto()
-	}
+		request transporttrolleymover -m moveto : moveto($POS)
+	}Transition t0 whenReply moveok -> dropoutExec
+					whenReply moveko -> moveErr
+	
+	State dropoutExec{
+		request transporttrolleyexecutor -m execaction : execaction(DROPOUT)
+	}Transition t0 whenReply execok -> dropoutRes
+					whenReply execko -> execErr
+	
+	State dropoutRes{
+		forward wasteservicecore -m dropoutdone : dropoutdone(_)
+	}Goto idle
 	
 	State backHome{
-		
+		request transporttrolleymover -m moveto : moveto(HOME)
+	}Transition t0 whenReply moveok -> idle
+					whenReply moveko -> moveErr
+	
+	State moveErr{
+		//Still to be implemented 
+	}
+	
+	State execErr{
+		//Still to be implemented 		
+	}
+	
+	State end{
+		terminate 1
 	}
 }
 
 QActor transporttrolleymover context ctxtransporttrolley{
 	
+	[#
+		lateinit var destination  : String
+		var xDestination : Int = 0
+		var yDestination : Int = 0
+		var PATH = ""
+		var PATHSTILLTODO = ""
+	#]
+	
 	State init initial{
-		println("$name	|	setup")	
-	}
+		println("$name	|	setup")
+		[# unibo.kotlin.planner22Util.initAI() #]
+	}Goto idle
+	
+	State idle{
+		
+	}Transition t0 whenRequest moveto -> destinationEval
+	
+	State destinationEval{
+		onMsg(moveto : moveto(POS)){
+			[#	
+				try{
+					destination = payloadArg(0).trim().uppercase()
+				
+					xDestination = utility.ServiceAreaConfig.getXDestination(destination)
+					yDestination = utility.ServiceAreaConfig.getYDestination(destination)
+					
+				}catch(e : Exception){}	
+			#]	
+		}
+	}Goto plan
+	
+	State plan{
+		[#
+			unibo.kotlin.planner22Util.setGoal(xDestination, yDestination)
+			unibo.kotlin.planner22Util.doPlan()
+			PATH = unibo.kotlin.planner22Util.get_actionSequence()?.iterator()?.asSequence()?.toList().toString()
+		#]
+	}Goto execMove
+	
+	State execMove{
+		request pathexec -m dopath : dopath($PATH)
+	}Transition t0 whenReply dopathdone -> moveOk
+					whenReply dopathfail -> moveKo
+					
+	State moveOk{
+		replyTo moveto with moveok : moveok(_)
+	}Goto idle 
+	
+	State moveKo{
+		onMsg(dopathfail : dopathfail(ARG)){
+			[#	
+				try{
+					PATHSTILLTODO = payloadArg(0)
+				}catch(e : Exception){}	
+			#]		
+		}
+		replyTo moveto with moveko : moveko(_)	
+	}Goto idle 
 }
 
 QActor transporttrolleyexecutor context ctxtransporttrolley{
 	
+	[#
+		lateinit var action : String	
+	#]
+	
 	State init initial{
 		println("$name	|	setup")	
+	}Goto idle
+	
+	State idle{
+		
+	}Transition t0 whenRequest execaction -> actionEval
+					whenMsg exit -> end
+	
+	State actionEval{
+		onMsg(execaction : execaction(ACT)){
+			[#	
+				try{
+					action = payloadArg(0).trim().uppercase()
+				}catch(e : Exception){}	
+			#]	
+		}
+	}Goto execPickup if[#action.equals("PICKUP")#]
+						else execDropout
+	
+	State execPickup{
+		[#delay(kotlin.random.Random.nextLong(3000, 10000))#]
+	}Goto idle
+	
+	State execDropout{
+		[#delay(kotlin.random.Random.nextLong(2000, 4000))#]
+	}Goto idle
+	
+	State end{
+		terminate 1 
 	}
+	
 }
