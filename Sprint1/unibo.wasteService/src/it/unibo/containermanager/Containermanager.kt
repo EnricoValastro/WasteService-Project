@@ -15,9 +15,13 @@ class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
+		
+				val boxMaxWeight = mutableMapOf<wasteservice.state.Material, Double>(wasteservice.state.Material.PLASTIC to 500.0, wasteservice.state.Material.GLASS to 500.0)
+				val boxState  = wasteservice.state.WasteServiceState(boxMaxWeight)
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
+						println("$name	|	setup")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -38,6 +42,19 @@ class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("evaluation") { //this:State
 					action { //it:State
+						if( checkMsgContent( Term.createTerm("evalreq(MAT,QUA)"), Term.createTerm("evalreq(MAT,QUA)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+									try{
+													requestMaterialToStore = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())  
+													requestWeightToStore = payloadArg(1).toDouble()		
+												}catch(e : Exception){}
+						}
+						if(  boxState.canStore(requestMaterialToStore, requestWeightToStore) 
+						 ){answer("evalreq", "evalOk", "evalOk(_)"   )  
+						}
+						else
+						 {answer("evalreq", "evalKo", "evalKo(_)"   )  
+						 }
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -47,6 +64,20 @@ class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("update") { //this:State
 					action { //it:State
+						if( checkMsgContent( Term.createTerm("update(MAT,QUA)"), Term.createTerm("update(MAT,QUA)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+									
+												try{
+													requestMaterialToStore = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())  
+													requestWeightToStore = payloadArg(1).toDouble()	
+													boxState.updateBoxWeight(requestMaterialToStore, requestWeightToStore)
+														
+												}
+								
+												catch(e : Exception){
+													//Something
+												}
+						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -56,6 +87,7 @@ class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("end") { //this:State
 					action { //it:State
+						terminate(1)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

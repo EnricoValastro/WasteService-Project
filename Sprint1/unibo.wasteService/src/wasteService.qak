@@ -19,8 +19,13 @@ Reply dropoutdone : dropoutdone(_)
 Context ctxwasteservice ip [host="localhost" port=8055]
 
 QActor containermanager context ctxwasteservice{
+	[#
+		val boxMaxWeight = mutableMapOf<wasteservice.state.Material, Double>(wasteservice.state.Material.PLASTIC to 500.0, wasteservice.state.Material.GLASS to 500.0)
+		val boxState  = wasteservice.state.WasteServiceState(boxMaxWeight)
+	#]
+	
 	State init initial {
-		
+		println("$name	|	setup")
 	}Goto idle
 	
 	State idle {
@@ -31,16 +36,43 @@ QActor containermanager context ctxwasteservice{
 	
 	
 	State evaluation {
-		//calcoli
-		//replyTo 
+		onMsg (evalreq : evalreq(MAT,QUA)){
+			[#	try{
+					requestMaterialToStore = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())  
+					requestWeightToStore = payloadArg(1).toDouble()		
+				}catch(e : Exception){}
+			#]
+		}
+			
+		if [# boxState.canStore(requestMaterialToStore, requestWeightToStore)#]{
+			replyTo evalreq with evalOk : evalOk(_)
+		}
+		else {
+			replyTo evalreq with evalKo : evalKo(_)
+		}
+		
 	}Goto idle
 	
 	State update {
-		
+		onMsg (update : update(MAT,QUA)){
+			[#	
+				try{
+					requestMaterialToStore = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())  
+					requestWeightToStore = payloadArg(1).toDouble()	
+					boxState.updateBoxWeight(requestMaterialToStore, requestWeightToStore)
+						
+				}
+			#]
+			[#
+				catch(e : Exception){
+					//Something
+				}
+			#]
+		}
 	}Goto idle
 	
 	State end {
-		
+		terminate 1
 	}
 }
 
