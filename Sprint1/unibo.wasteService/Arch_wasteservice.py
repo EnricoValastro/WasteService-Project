@@ -23,4 +23,6 @@ with Diagram('wasteserviceArch', show=False, outformat='png', graph_attr=graphat
           containermanager=Custom('containermanager','./qakicons/symActorSmall.png')
           wasteservicehandler=Custom('wasteservicehandler','./qakicons/symActorSmall.png')
           wasteservicecore=Custom('wasteservicecore','./qakicons/symActorSmall.png')
+     with Cluster('ctxtransporttrolley', graph_attr=nodeattr):
+          transportrolleycore=Custom('transportrolleycore(ext)','./qakicons/externalQActor.png')
 diag

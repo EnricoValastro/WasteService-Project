@@ -15,8 +15,11 @@ Reply pickupdone : pickupdone(_)
 Reply dropoutdone : dropoutdone(_)
 
 
-
 Context ctxwasteservice ip [host="localhost" port=8055]
+Context ctxtransporttrolley ip [host="127.0.0.1" port=8056]
+
+ExternalQActor transportrolleycore context ctxtransporttrolley
+
 
 QActor containermanager context ctxwasteservice{
 	State init initial {
@@ -46,11 +49,11 @@ QActor containermanager context ctxwasteservice{
 
 QActor wasteservicehandler context ctxwasteservice{
 	State init initial{
-		
+		println("$name	|	setup")
 	}Goto idle
 	
 	State idle{
-		
+		println("$name	|	in idle")
 	}Transition t0 whenRequest storeWaste -> evalReq
 					whenMsg exit -> end
 	
@@ -73,13 +76,15 @@ QActor wasteservicehandler context ctxwasteservice{
 	
 }
 
+ 
+
 QActor wasteservicecore context ctxwasteservice{
 	State init initial{
-		
+		println("$name 	| 	setup")
 	}Goto idle
 	
 	State idle{
-		
+		println("$name 	| 	in idle")
 	}Transition t0 whenMsg doJob -> pickup
 					whenReply dropoutdone -> backHome
 					whenMsg exit -> end

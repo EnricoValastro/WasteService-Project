@@ -693,20 +693,20 @@ planner22Util.doPlan()</pre>
 <h2>Project</h2>
 <div class="remark">
     <h3>WasteService Component</h3>
-    Il <kc>WasteService</kc> come si può notare dall'architettura logica si trova nello stesso contesto dell'attore <kc>ContainerManager</kc>, 
+    Il <kc>WasteService</kc> come si può notare dall'architettura logica si trova nello stesso contesto del componente <kc>ContainerManager</kc>, 
     in quanto le due entità si scambieranno informazioni al fine di fornire una risposta al truck riguardo le varie richieste.
-    In fase di progetto, per rispettare il principio di singola responsabilità, si decide di implementare il WasteService in due attori differenti:
+    In fase di progetto, per rispettare il principio di singola responsabilità, si decide di implementare il WasteService in due componenti differenti:
     <ul>
         <li>WasteService handler</li>
         <li>WasteService core</li>
     </ul> 
 
-    Il primo si occuperà di ricevere le richieste provenienti dal truck e di passarle al ContainerManager. La macchina a stati finiti (FSM) di questo attore è riportata di seguito: <br>
+    Il primo si occuperà di ricevere le richieste provenienti dal truck e di passarle al ContainerManager. La macchina a stati finiti (FSM) è riportata di seguito: <br>
     <img src="./resources/img/FSM_wasteServicehandler.png" alt="" style="width:60% ; height:60% ;"> <br><br>
     Il <kc>wasteServicehandler</kc> quando si trova nello stato di <kc>idle</kc> è in attesa di ricevere una richesta dal <kc>truck</kc>. 
-    Arrivata la richiesta, questa deve essere valutata e si transita dunque nello stato di <kc>evalRequest</kc>. Se la richiesta può essere accettata si transiterà 
+    Arrivata la richiesta essa deve essere valutata e quindi si transiterà nello stato di <kc>evalRequest</kc>. Se la richiesta può essere accettata si transiterà 
     nello stato di <kc>acceptRequest</kc>, altrimenti si transiterà nello stato di <kc>rejectRequest</kc>. In qualunque caso, sia dallo stato di <i>acceptRequest</i> che da quello di <i>rejectRequest</i>, si tornerà nello stato di <i>idle</i>. 
-    Il codice completo è disponibile nel file <a href="./resources/qak/wasteService.qak">wasteService.qak</a>.
+    Il codice completo dell'attore che implementa questa FSM è disponibile nel file <a href="./resources/qak/wasteService.qak">wasteService.qak</a>.
     <pre>
 <key2>QActor</key2> wasteservicehandler <key2>context</key2> ctxwasteservice{
     <key2>State</key2> init <key2>initial</key2> {
@@ -737,9 +737,9 @@ planner22Util.doPlan()</pre>
     }
 }</pre>
 
-    Il secondo attore si occuperà di ricevere un messaggio <kc>doJob</kc> dall'entità wasteService handler e 
+    Il secondo si occuperà di ricevere un messaggio <kc>doJob</kc> dall'entità wasteService handler e 
     comunicare con il transport trolley per effettuare il ritiro dei rifiuti. 
-    La macchina a stati finiti (FSM) di questo attore è riportata di seguito: <br>
+    La macchina a stati finiti (FSM) è riportata di seguito: <br>
     <img src="./resources/img/FSM_wasteServicecore.png" alt="" style="width:60% ; height:60% ;"> <br><br>
     Il <kc>wasteServicecore</kc> quando si trova nello stato di <kc>idle</kc> può ricevere due tipi di messaggi:
     <ul>
@@ -747,9 +747,10 @@ planner22Util.doPlan()</pre>
         <li><kc>droputdone</kc> dal transportTrolley</li>
     </ul>
     Nel primo caso si transiterà nello stato di <kc>pickup</kc>, mentre nel secondo nello stato di <kc>backhome</kc> in quanto non ci sono altre richieste da gestire. Dallo stato di <i>backhome</i> in qualunque momento si può tornare nello stato di <kc>idle</kc>.
-    Quando ci si trova invece nello stato di <i>pickup</i> si può ricevere un messaggio <kc>pickupdone</kc> dal transportTrolley, se si ha un'unica richiesta da gestire, e quindi si transita nello stato di <i>dropout</i>. Oppure è possibile ricevere un messaggio di <kc>droputdone</kc> 
-    relativa alla richiesta precedente e quindi ci si sposta nell stato di <i>clear</i>, nella quale la coda delle richieste viene svuotata. A quel punto, nello stato di <i>idle</i> mi arriverà una richiesta di pickupdone 
+    Quando ci si trova invece nello stato di <i>pickup</i> , se si ha un'unica richiesta da gestire, si può ricevere un messaggio <kc>pickupdone</kc> dal transportTrolley e quindi transitare nello stato di <i>dropout</i>. Oppure è possibile ricevere un messaggio di <kc>droputdone</kc> 
+    relativa alla richiesta precedente e quindi ci si sposta nell stato di <i>clear</i>, nella quale la coda delle richieste viene svuotata. A quel punto, nello stato di <i>idle</i> arriverà una richiesta di pickupdone 
     relativa alla richiesta corrente e si transiterà nello stato di <i>droput</i>. Dallo stato di <i>dropout</i> si torna forzatamente nello stato di <i>idle</i> poichè ci si rimette in ascolto di eventuali altre richieste.
+    Il codice completo dell'attore che implementa questa FSM è disponibile nel file <a href="./resources/qak/wasteService.qak">wasteService.qak</a>.
 <pre>
 <key2>QActor</key2> wasteservicecore <key2>context</key2> ctxwasteservice{
     <key2>State</key2> init <key2>initial</key2> {
