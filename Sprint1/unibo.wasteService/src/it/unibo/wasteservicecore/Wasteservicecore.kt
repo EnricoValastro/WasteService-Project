@@ -20,7 +20,9 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
-						println("$name 	| 	setup")
+						
+									utility.Banner.printBannerWasteService()
+						println("$name 	| 	starting...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -30,45 +32,39 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("idle") { //this:State
 					action { //it:State
-						println("$name 	| 	in idle")
+						println("$name 	| 	waiting...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t07",targetState="pickup",cond=whenDispatch("doJob"))
-					transition(edgeName="t08",targetState="backHome",cond=whenReply("dropoutdone"))
+					 transition(edgeName="t07",targetState="pickup",cond=whenDispatch("dojob"))
+					transition(edgeName="t08",targetState="backHome",cond=whenDispatch("dropoutdone"))
 					transition(edgeName="t09",targetState="end",cond=whenDispatch("exit"))
-				}	 
-				state("backHome") { //this:State
-					action { //it:State
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
 				}	 
 				state("pickup") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("doJob(MAT)"), Term.createTerm("doJob(MAT)"), 
+						println("$name 	| 	asking for pickup...")
+						if( checkMsgContent( Term.createTerm("dojob(MAT)"), Term.createTerm("dojob(MAT)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
 											try{
 											REQMATERIAL = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())
-											}catch{}
+											}catch(e : Exception){}
 						}
-						request("pickup", "pickup(_)" ,"transportrolleycore" )  
+						request("pickup", "pickup(_)" ,"transporttrolleycore" )  
+						println("$name 	| 	waiting for pickup done...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t010",targetState="clear",cond=whenReply("dropoutdone"))
+					 transition(edgeName="t010",targetState="clear",cond=whenDispatch("dropoutdone"))
 					transition(edgeName="t011",targetState="dropout",cond=whenReply("pickupdone"))
 				}	 
 				state("clear") { //this:State
 					action { //it:State
+						println("$name 	| 	clearing queue")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -78,7 +74,19 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("dropout") { //this:State
 					action { //it:State
-						forward("dropout", "dropout($REQMATERIAL)" ,"transportrolleycore" ) 
+						println("$name 	| 	asking for dropout")
+						forward("dropout", "dropout($REQMATERIAL)" ,"transporttrolleycore" ) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("backHome") { //this:State
+					action { //it:State
+						println("$name 	| 	sending robot to home")
+						forward("gotohome", "gotohome(_)" ,"transporttrolleycore" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -88,6 +96,8 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("end") { //this:State
 					action { //it:State
+						forward("exit", "exit(_)" ,"wasteservicehandler" ) 
+						forward("exit", "exit(_)" ,"containermanager" ) 
 						terminate(1)
 						//genTimer( actor, state )
 					}

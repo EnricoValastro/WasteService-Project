@@ -19,16 +19,22 @@ eventedgeattr = {
 with Diagram('transporttrolleyArch', show=False, outformat='png', graph_attr=graphattr) as diag:
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
+     with Cluster('ctxwasteservice', graph_attr=nodeattr):
+          wasteservicecore=Custom('wasteservicecore(ext)','./qakicons/externalQActor.png')
+     with Cluster('ctxbasicrobot', graph_attr=nodeattr):
+          basicrobot=Custom('basicrobot(ext)','./qakicons/externalQActor.png')
+          pathexec=Custom('pathexec(ext)','./qakicons/externalQActor.png')
      with Cluster('ctxtransporttrolley', graph_attr=nodeattr):
           transporttrolleycore=Custom('transporttrolleycore','./qakicons/symActorSmall.png')
           transporttrolleymover=Custom('transporttrolleymover','./qakicons/symActorSmall.png')
           transporttrolleyexecutor=Custom('transporttrolleyexecutor','./qakicons/symActorSmall.png')
-     with Cluster('ctxwasteservice', graph_attr=nodeattr):
-          wasteservicecore=Custom('wasteservicecore(ext)','./qakicons/externalQActor.png')
-     with Cluster('ctxbasicrobot', graph_attr=nodeattr):
-          pathexec=Custom('pathexec(ext)','./qakicons/externalQActor.png')
      transporttrolleycore >> Edge(color='magenta', style='solid', xlabel='moveto', fontcolor='magenta') >> transporttrolleymover
      transporttrolleycore >> Edge(color='magenta', style='solid', xlabel='execaction', fontcolor='magenta') >> transporttrolleyexecutor
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='dropoutdone', fontcolor='blue') >> wasteservicecore
+     transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> wasteservicecore
+     transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> transporttrolleycore
+     transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> transporttrolleyexecutor
+     transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> transporttrolleymover
      transporttrolleymover >> Edge(color='magenta', style='solid', xlabel='dopath', fontcolor='magenta') >> pathexec
+     transporttrolleymover >> Edge(color='blue', style='solid', xlabel='cmd', fontcolor='blue') >> basicrobot
 diag

@@ -20,7 +20,7 @@ class Transporttrolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorB
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
-						println("$name	|	setup")
+						println("$name	|	starting...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -35,8 +35,8 @@ class Transporttrolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorB
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t017",targetState="actionEval",cond=whenRequest("execaction"))
-					transition(edgeName="t018",targetState="end",cond=whenDispatch("exit"))
+					 transition(edgeName="t020",targetState="actionEval",cond=whenRequest("execaction"))
+					transition(edgeName="t021",targetState="end",cond=whenDispatch("exit"))
 				}	 
 				state("actionEval") { //this:State
 					action { //it:State
@@ -59,7 +59,9 @@ class Transporttrolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorB
 				}	 
 				state("execPickup") { //this:State
 					action { //it:State
-						delay(kotlin.random.Random.nextLong(3000, 10000)) 
+						println("$name	|	$action execution")
+						delay(kotlin.random.Random.nextLong(3000, 5000)) 
+						answer("execaction", "execok", "execok(_)"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -69,7 +71,9 @@ class Transporttrolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorB
 				}	 
 				state("execDropout") { //this:State
 					action { //it:State
+						println("$name	|	$action execution")
 						delay(kotlin.random.Random.nextLong(2000, 4000)) 
+						answer("execaction", "execok", "execok(_)"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -79,7 +83,7 @@ class Transporttrolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorB
 				}	 
 				state("end") { //this:State
 					action { //it:State
-						terminate(1)
+						terminate(0)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

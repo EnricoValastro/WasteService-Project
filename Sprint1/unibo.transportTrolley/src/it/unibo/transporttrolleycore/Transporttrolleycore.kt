@@ -18,10 +18,13 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 		
 				lateinit var MaterialToStore : String
 				lateinit var POS 			 : String
+				val tTState = transporttrolley.state.TransportTrolleyState()
+				var updateFlag = 0
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
-						println("$name	|	setup")
+						utility.Banner.transportTrolleyBanner() 
+						println("$name	|	starting...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -31,6 +34,15 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				}	 
 				state("idle") { //this:State
 					action { //it:State
+						println("$name	|	waiting...")
+						if( updateFlag == 1 
+						 ){
+										tTState.setCurrState(transporttrolley.state.CurrStateTrolley.IDLE)
+										tTState.setCurrPosition(transporttrolley.state.TTPosition.HOME)	
+										updateFlag = 0
+						}
+						updateResourceRep(tTState.toJsonString() 
+						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -43,6 +55,11 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				}	 
 				state("pickupMove") { //this:State
 					action { //it:State
+						
+									tTState.setCurrState(transporttrolley.state.CurrStateTrolley.MOVING)
+									tTState.setCurrPosition(transporttrolley.state.TTPosition.ONTHEROAD)
+						updateResourceRep(tTState.toJsonString() 
+						)
 						request("moveto", "moveto(INDOOR)" ,"transporttrolleymover" )  
 						//genTimer( actor, state )
 					}
@@ -54,6 +71,11 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				}	 
 				state("pickupExec") { //this:State
 					action { //it:State
+						
+									tTState.setCurrState(transporttrolley.state.CurrStateTrolley.PICKINGUP)
+									tTState.setCurrPosition(transporttrolley.state.TTPosition.INDOOR)
+						updateResourceRep(tTState.toJsonString() 
+						)
 						request("execaction", "execaction(PICKUP)" ,"transporttrolleyexecutor" )  
 						//genTimer( actor, state )
 					}
@@ -65,6 +87,10 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				}	 
 				state("pickupRes") { //this:State
 					action { //it:State
+						
+									tTState.setCurrState(transporttrolley.state.CurrStateTrolley.IDLE)
+						updateResourceRep(tTState.toJsonString() 
+						)
 						answer("pickup", "pickupdone", "pickupdone(_)"   )  
 						//genTimer( actor, state )
 					}
@@ -88,6 +114,11 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 													}
 												}catch(e : Exception){}	
 						}
+						
+									tTState.setCurrState(transporttrolley.state.CurrStateTrolley.MOVING)
+									tTState.setCurrPosition(transporttrolley.state.TTPosition.ONTHEROAD)
+						updateResourceRep(tTState.toJsonString() 
+						)
 						request("moveto", "moveto($POS)" ,"transporttrolleymover" )  
 						//genTimer( actor, state )
 					}
@@ -99,6 +130,11 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				}	 
 				state("dropoutExec") { //this:State
 					action { //it:State
+						
+									tTState.setCurrState(transporttrolley.state.CurrStateTrolley.DROPPINGOUT)
+									tTState.setCurrPosition(transporttrolley.state.TTPosition.valueOf(POS))
+						updateResourceRep(tTState.toJsonString() 
+						)
 						request("execaction", "execaction(DROPOUT)" ,"transporttrolleyexecutor" )  
 						//genTimer( actor, state )
 					}
@@ -110,6 +146,10 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				}	 
 				state("dropoutRes") { //this:State
 					action { //it:State
+						
+									tTState.setCurrState(transporttrolley.state.CurrStateTrolley.IDLE)
+						updateResourceRep(tTState.toJsonString() 
+						)
 						forward("dropoutdone", "dropoutdone(_)" ,"wasteservicecore" ) 
 						//genTimer( actor, state )
 					}
@@ -120,6 +160,12 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				}	 
 				state("backHome") { //this:State
 					action { //it:State
+						
+									updateFlag = 1
+									tTState.setCurrState(transporttrolley.state.CurrStateTrolley.MOVING)
+									tTState.setCurrPosition(transporttrolley.state.TTPosition.ONTHEROAD)
+						updateResourceRep(tTState.toJsonString() 
+						)
 						request("moveto", "moveto(HOME)" ,"transporttrolleymover" )  
 						//genTimer( actor, state )
 					}
@@ -131,11 +177,15 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				}	 
 				state("moveErr") { //this:State
 					action { //it:State
+						println("$name	|	something went wrong...assistance required.")
+						forward("exit", "exit(_)" ,"wasteservicecore" ) 
+						forward("exit", "exit(_)" ,"transporttrolleycore" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
 				}	 
 				state("execErr") { //this:State
 					action { //it:State
@@ -147,7 +197,9 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				}	 
 				state("end") { //this:State
 					action { //it:State
-						terminate(1)
+						forward("exit", "exit(_)" ,"transporttrolleyexecutor" ) 
+						forward("exit", "exit(_)" ,"transporttrolleymover" ) 
+						terminate(0)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

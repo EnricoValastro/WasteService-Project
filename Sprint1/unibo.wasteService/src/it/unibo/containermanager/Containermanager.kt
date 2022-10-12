@@ -16,12 +16,13 @@ class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		
-				val boxMaxWeight = mutableMapOf<wasteservice.state.Material, Double>(wasteservice.state.Material.PLASTIC to 500.0, wasteservice.state.Material.GLASS to 500.0)
-				val boxState  = wasteservice.state.WasteServiceState(boxMaxWeight)
+				val boxState  = wasteservice.state.ServiceAreaState()
+				lateinit var requestMaterialToStore : wasteservice.state.Material 
+				var requestWeightToStore : Double = 0.0	
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
-						println("$name	|	setup")
+						println("$name	|	starting...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -31,6 +32,7 @@ class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("idle") { //this:State
 					action { //it:State
+						println("$name	|	waiting...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -42,18 +44,21 @@ class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("evaluation") { //this:State
 					action { //it:State
+						println("$name	|	evaluating request")
 						if( checkMsgContent( Term.createTerm("evalreq(MAT,QUA)"), Term.createTerm("evalreq(MAT,QUA)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 									try{
 													requestMaterialToStore = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())  
 													requestWeightToStore = payloadArg(1).toDouble()		
-												}catch(e : Exception){}
+												}catch(e : Exception){
+													//TobeDone
+												}
 						}
 						if(  boxState.canStore(requestMaterialToStore, requestWeightToStore) 
-						 ){answer("evalreq", "evalOk", "evalOk(_)"   )  
+						 ){answer("evalreq", "evalok", "evalok(_)"   )  
 						}
 						else
-						 {answer("evalreq", "evalKo", "evalKo(_)"   )  
+						 {answer("evalreq", "evalko", "evalko(_)"   )  
 						 }
 						//genTimer( actor, state )
 					}
@@ -64,6 +69,7 @@ class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("update") { //this:State
 					action { //it:State
+						println("$name	|	updating container state")
 						if( checkMsgContent( Term.createTerm("update(MAT,QUA)"), Term.createTerm("update(MAT,QUA)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 									
@@ -71,13 +77,15 @@ class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 													requestMaterialToStore = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())  
 													requestWeightToStore = payloadArg(1).toDouble()	
 													boxState.updateBoxWeight(requestMaterialToStore, requestWeightToStore)
-														
 												}
+												
 								
 												catch(e : Exception){
-													//Something
+													//TobeDone
 												}
 						}
+						updateResourceRep(boxState.toJsonString() 
+						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -87,6 +95,7 @@ class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("end") { //this:State
 					action { //it:State
+						println("$name	|	bye")
 						terminate(1)
 						//genTimer( actor, state )
 					}

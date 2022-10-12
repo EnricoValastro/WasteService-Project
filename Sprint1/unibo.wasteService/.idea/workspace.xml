@@ -5,9 +5,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="da66c02c-91d2-47f7-b256-28ec376cd4ea" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../../Sprint0/unibo.wasteService/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/../../Sprint0/unibo.wasteService/.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/Arch_transporttrolley.py" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/Arch_transporttrolley.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/build2022.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/build2022.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/src/it/unibo/transporttrolleycore/Transporttrolleycore.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/src/it/unibo/transporttrolleycore/Transporttrolleycore.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/src/it/unibo/transporttrolleyexecutor/Transporttrolleyexecutor.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/src/it/unibo/transporttrolleyexecutor/Transporttrolleyexecutor.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/src/it/unibo/transporttrolleymover/Transporttrolleymover.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/src/it/unibo/transporttrolleymover/Transporttrolleymover.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/src/transportTrolley.qak" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/src/transportTrolley.qak" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/transporttrolley.pl" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/transporttrolley.pl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/wasteServiceSystemConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/wasteServiceSystemConfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.4/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.4/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.4/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.4/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Arch_wasteservice.py" beforeDir="false" afterPath="$PROJECT_DIR$/Arch_wasteservice.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build2022.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build2022.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/wasteservice/state/WasteServiceState.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unibo/containermanager/Containermanager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unibo/containermanager/Containermanager.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unibo/wasteservicecore/Wasteservicecore.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unibo/wasteservicecore/Wasteservicecore.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unibo/wasteservicehandler/Wasteservicehandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unibo/wasteservicehandler/Wasteservicehandler.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wasteService.qak" beforeDir="false" afterPath="$PROJECT_DIR$/src/wasteService.qak" afterDir="false" />
@@ -26,6 +51,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Class" />
+        <option value="Kotlin Data Class" />
         <option value="Kotlin Class" />
       </list>
     </option>
@@ -42,17 +69,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/alessioreitano/Desktop/WasteService-Project/Sprint1/unibo.wasteService&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;
-  }
-}</component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RunManager">
+    <configuration name="MainCtxwasteserviceKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="it.unibo.ctxwasteservice.MainCtxwasteserviceKt" />
+      <module name="unibo.wasteservice.main" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="unibo.wasteService" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="unibo.wasteService" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Kotlin.MainCtxwasteserviceKt" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

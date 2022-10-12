@@ -17,11 +17,13 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		
 				lateinit var REQMATERIAL : wasteservice.state.Material 
-				var REQWEIGHT = 0.0
+				var REQWEIGHT : Double = 0.0
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
-						println("$name	|	setup")
+						request("storewaste", "storewaste(GLASS,300)" ,"wasteservicehandler" )  
+						request("storewaste", "storewaste(PLASTIC,200)" ,"wasteservicehandler" )  
+						println("$name	|	starting...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -31,18 +33,18 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 				}	 
 				state("idle") { //this:State
 					action { //it:State
-						println("$name	|	in idle")
+						println("$name	|	waiting...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t03",targetState="evalReq",cond=whenRequest("storeWaste"))
+					 transition(edgeName="t03",targetState="evalReq",cond=whenRequest("storewaste"))
 					transition(edgeName="t04",targetState="end",cond=whenDispatch("exit"))
 				}	 
 				state("evalReq") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("storeWaste(MATERIAL,TRUCKLOAD)"), Term.createTerm("storeWaste(MAT,QUA)"), 
+						if( checkMsgContent( Term.createTerm("storewaste(MAT,QUA)"), Term.createTerm("storewaste(MAT,QUA)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
 											REQMATERIAL = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())
@@ -54,13 +56,15 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t05",targetState="acceptRequest",cond=whenReply("evalOk"))
-					transition(edgeName="t06",targetState="rejectRequest",cond=whenReply("evalKo"))
+					 transition(edgeName="t05",targetState="acceptRequest",cond=whenReply("evalok"))
+					transition(edgeName="t06",targetState="rejectRequest",cond=whenReply("evalko"))
 				}	 
 				state("acceptRequest") { //this:State
 					action { //it:State
-						answer("storeWaste", "loadaccept", "loadaccept(_)"   )  
-						forward("doJob", "doJob($REQMATERIAL,$REQWEIGHT)" ,"wasteservicecore" ) 
+						println("$name	|	request accepted")
+						forward("update", "update($REQMATERIAL,$REQWEIGHT)" ,"containermanager" ) 
+						answer("storewaste", "loadaccept", "loadaccept(_)"   )  
+						forward("dojob", "dojob($REQMATERIAL)" ,"wasteservicecore" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -70,7 +74,8 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 				}	 
 				state("rejectRequest") { //this:State
 					action { //it:State
-						answer("storeWaste", "loadrejected", "loadrejected(_)"   )  
+						println("$name	|	request rejected")
+						answer("storewaste", "loadrejected", "loadrejected(_)"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

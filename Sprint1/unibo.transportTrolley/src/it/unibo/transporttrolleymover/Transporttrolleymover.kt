@@ -21,10 +21,12 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 				var yDestination : Int = 0
 				var PATH = ""
 				var PATHSTILLTODO = ""
+				var attempt : Int = 0
+				var direction : String = ""
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
-						println("$name	|	setup")
+						println("$name	|	starting...")
 						 unibo.kotlin.planner22Util.initAI()  
 						//genTimer( actor, state )
 					}
@@ -41,6 +43,7 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 					sysaction { //it:State
 					}	 	 
 					 transition(edgeName="t014",targetState="destinationEval",cond=whenRequest("moveto"))
+					transition(edgeName="t015",targetState="end",cond=whenDispatch("exit"))
 				}	 
 				state("destinationEval") { //this:State
 					action { //it:State
@@ -67,7 +70,7 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 						
 									unibo.kotlin.planner22Util.setGoal(xDestination, yDestination)
 									unibo.kotlin.planner22Util.doPlan()
-									PATH = unibo.kotlin.planner22Util.get_actionSequence()?.iterator()?.asSequence()?.toList().toString()
+									PATH = unibo.kotlin.planner22Util.get_actionSequenceAsString()
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -77,17 +80,39 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 				}	 
 				state("execMove") { //this:State
 					action { //it:State
+						println("$name	|	moving to $destination")
 						request("dopath", "dopath($PATH)" ,"pathexec" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t015",targetState="moveOk",cond=whenReply("dopathdone"))
-					transition(edgeName="t016",targetState="moveKo",cond=whenReply("dopathfail"))
+					 transition(edgeName="t016",targetState="moveOk",cond=whenReply("dopathdone"))
+					transition(edgeName="t017",targetState="moveKo",cond=whenReply("dopathfail"))
 				}	 
 				state("moveOk") { //this:State
 					action { //it:State
+						 attempt = 0  
+						if(  destination == "HOME" && unibo.kotlin.planner22Util.getDirection() == "rightDir"  
+						 ){forward("cmd", "cmd(l)" ,"basicrobot" ) 
+						PATH = PATH+"l" 
+						}
+						if(  destination == "INDOOR"  
+						 ){ 
+										direction = unibo.kotlin.planner22Util.getDirection()
+										
+						if(  direction == "leftDir" 
+						 ){forward("cmd", "cmd(r)" ,"basicrobot" ) 
+						PATH = PATH+"r" 
+						}
+						if(  direction == "rightDir" 
+						 ){forward("cmd", "cmd(l)" ,"basicrobot" ) 
+						PATH = PATH+"l" 
+						}
+						}
+						println("$name	|	arrived in $destination")
+						 
+									unibo.kotlin.planner22Util.updateAfterPath(PATH) 
 						answer("moveto", "moveok", "moveok(_)"   )  
 						//genTimer( actor, state )
 					}
@@ -98,6 +123,8 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 				}	 
 				state("moveKo") { //this:State
 					action { //it:State
+						println("$name	|	MoveKo")
+						attempt++ 
 						if( checkMsgContent( Term.createTerm("dopathfail(ARG)"), Term.createTerm("dopathfail(ARG)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 									
@@ -105,13 +132,27 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 													PATHSTILLTODO = payloadArg(0)
 												}catch(e : Exception){}	
 						}
+						if( attempt==3 
+						 ){ attempt = 0  
 						answer("moveto", "moveko", "moveko(_)"   )  
+						}
+						request("dopath", "dopath($PATHSTILLTODO)" ,"pathexec" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+					 transition(edgeName="t018",targetState="moveOk",cond=whenReply("dopathdone"))
+					transition(edgeName="t019",targetState="moveKo",cond=whenReply("dopathfail"))
+				}	 
+				state("end") { //this:State
+					action { //it:State
+						terminate(0)
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 				}	 
 			}
 		}
