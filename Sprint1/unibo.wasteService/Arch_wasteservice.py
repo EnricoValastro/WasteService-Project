@@ -21,8 +21,6 @@ with Diagram('wasteserviceArch', show=False, outformat='png', graph_attr=graphat
      sys = Custom('','./qakicons/system.png')
      with Cluster('ctxtransporttrolley', graph_attr=nodeattr):
           transporttrolleycore=Custom('transporttrolleycore(ext)','./qakicons/externalQActor.png')
-     with Cluster('ctxtruck', graph_attr=nodeattr):
-          smartdevice=Custom('smartdevice(ext)','./qakicons/externalQActor.png')
      with Cluster('ctxwasteservice', graph_attr=nodeattr):
           containermanager=Custom('containermanager','./qakicons/symActorSmall.png')
           wasteservicehandler=Custom('wasteservicehandler','./qakicons/symActorSmall.png')
@@ -32,7 +30,6 @@ with Diagram('wasteserviceArch', show=False, outformat='png', graph_attr=graphat
      wasteservicehandler >> Edge(color='blue', style='solid', xlabel='update', fontcolor='blue') >> containermanager
      wasteservicehandler >> Edge(color='blue', style='solid', xlabel='dojob', fontcolor='blue') >> wasteservicecore
      wasteservicecore >> Edge(color='magenta', style='solid', xlabel='pickup', fontcolor='magenta') >> transporttrolleycore
-     wasteservicecore >> Edge(color='blue', style='solid', xlabel='leaveindoor', fontcolor='blue') >> smartdevice
      wasteservicecore >> Edge(color='blue', style='solid', xlabel='dropout', fontcolor='blue') >> transporttrolleycore
      wasteservicecore >> Edge(color='blue', style='solid', xlabel='gotohome', fontcolor='blue') >> transporttrolleycore
      wasteservicecore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> wasteservicehandler

@@ -74,7 +74,6 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("dropout") { //this:State
 					action { //it:State
-						forward("leaveindoor", "leaveindoor(_)" ,"smartdevice" ) 
 						println("$name 	| 	asking for dropout")
 						forward("dropout", "dropout($REQMATERIAL)" ,"transporttrolleycore" ) 
 						//genTimer( actor, state )
