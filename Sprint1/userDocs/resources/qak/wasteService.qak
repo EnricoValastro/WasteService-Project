@@ -1,97 +1,213 @@
 System wasteservice
 
-//messaggi containerManager
-Request evalreq : evalreq(MAT,QUA)
-Reply evalOk : evalOk(_)
-Reply evalKo : evalKo(_)
-Dispatch update : update(MAT,QUA)
+/* ShutDown Message */
+Dispatch exit 	 : exit(_)
 
-//messaggi wasteService
-Request storeWaste : storeWaste(MATERIAL, TRUCKLOAD)
-Dispatch doJob : doJob(_)
+/* ContainerManager Messages */
+Request  evalreq : evalreq(MAT,QUA) 			// MAT = PLASTIC | GLASS , QUA = Double
+Reply 	 evalok  : evalok(_)
+Reply 	 evalko  : evalko(_)
+Dispatch update  : update(MAT,QUA)
 
+/* Deposit Request Messages */
+Request  storewaste   : storewaste(MAT, QUA)
+Reply 	 loadaccept   : loadaccept(_)
+Reply 	 loadrejected : loadrejected(_)
 
-/* 
-Request pickup : pickup(_)
-Request dropout : dropout(MAT)
-*/
-Reply pickupdone : pickupdone(_)
-Reply dropoutdone : dropoutdone(_)
+/* WasteServiceCore Message */
+Dispatch dojob : dojob(MAT)
 
+/* Deposit Action Message */
+Request  pickup 	 : pickup(_)
+Reply    pickupdone  : pickupdone(_)
+Dispatch dropout     : dropout(MAT)
+Dispatch dropoutdone : dropoutdone(_)
 
+/* BackHome Message */
+Dispatch gotohome 	 : gotohome(_)
 
+Context ctxtransporttrolley ip [host="127.0.0.1" port=8056]
 Context ctxwasteservice ip [host="localhost" port=8055]
 
+ExternalQActor transporttrolleycore context ctxtransporttrolley
+
+/* *********************************************************************************************
+ * ---------------------------------------------------------------------------------------------
+ * Component addicted to manage container state
+ * ---------------------------------------------------------------------------------------------
+ **********************************************************************************************/
 QActor containermanager context ctxwasteservice{
-	State s0 initial {
-		
+	[#
+		val boxState  = wasteservice.state.ServiceAreaState()
+		lateinit var requestMaterialToStore : wasteservice.state.Material 
+		var requestWeightToStore : Double = 0.0	
+	#]
+	
+	State init initial {
+		println("$name	|	starting...")
 	}Goto idle
 	
 	State idle {
-		
+		println("$name	|	waiting...")
 	}Transition t0 whenRequest evalreq -> evaluation
-					whenMsg update -> update
-	
+					whenMsg    update  -> update
+					whenMsg    exit    -> end
 	
 	State evaluation {
-		//calcoli
-		//replyTo 
+		println("$name	|	evaluating request")
+		onMsg (evalreq : evalreq(MAT,QUA)){
+			[#	try{
+					requestMaterialToStore = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())  
+					requestWeightToStore = payloadArg(1).toDouble()		
+				}catch(e : Exception){
+					//TobeDone
+				}
+			#]
+		}
+			
+		if [# boxState.canStore(requestMaterialToStore, requestWeightToStore)#]{
+			replyTo evalreq with evalok : evalok(_)
+		}
+		else {
+			replyTo evalreq with evalko : evalko(_)
+		}
+		
 	}Goto idle
 	
 	State update {
-		
+		println("$name	|	updating container state")
+		onMsg (update : update(MAT,QUA)){
+			[#	
+				try{
+					requestMaterialToStore = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())  
+					requestWeightToStore = payloadArg(1).toDouble()	
+					boxState.updateBoxWeight(requestMaterialToStore, requestWeightToStore)
+				}
+				
+			#]
+			[#
+				catch(e : Exception){
+					//TobeDone
+				}
+			#]
+		}
+		updateResource[#boxState.toJsonString()#]
 	}Goto idle
 	
+	State end {
+		println("$name	|	bye")
+		terminate 1
+	}
 }
 
+/* *********************************************************************************************
+ * ---------------------------------------------------------------------------------------------
+ * Component addicted to handle request from truck driver 
+ * ---------------------------------------------------------------------------------------------
+ **********************************************************************************************/
 QActor wasteservicehandler context ctxwasteservice{
-	State s0 initial{
+	[#
+		lateinit var REQMATERIAL : wasteservice.state.Material 
+		var REQWEIGHT : Double = 0.0
+	#]
+	State init initial{
 		
+		/*--------------------------------------------------------------------------------------*/
+		request wasteservicehandler -m storewaste : storewaste(GLASS, 300)
+		request wasteservicehandler -m storewaste : storewaste(PLASTIC, 200)
+		/*--------------------------------------------------------------------------------------*/
+		
+		println("$name	|	starting...")
 	}Goto idle
 	
 	State idle{
-		
-	}Transition t0 whenRequest storeWaste -> evalReq
+		println("$name	|	waiting...")
+	}Transition t0 whenRequest storewaste -> evalReq
+					whenMsg    exit 	  -> end
 	
 	State evalReq{
-		
-	}Transition t0 whenReply evalOk -> acceptedRequest
-					whenReply evalKo -> rejectedRequest
 	
-	State acceptedRequest{
-		
+		onMsg (storewaste : storewaste (MAT, QUA)){
+		[#
+			REQMATERIAL = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())
+			REQWEIGHT = payloadArg(1).toDouble()
+		#]
+		request containermanager -m evalreq : evalreq($REQMATERIAL, $REQWEIGHT)
+		}
+	}Transition t0 whenReply  evalok -> acceptRequest
+					whenReply evalko -> rejectRequest
+	
+	State acceptRequest{
+		println("$name	|	request accepted")
+		forward containermanager -m update : update($REQMATERIAL, $REQWEIGHT)
+		replyTo storewaste with loadaccept : loadaccept(_)
+		forward wasteservicecore -m dojob: dojob($REQMATERIAL)		
 	}Goto idle
 	
-	State rejectedRequest{
-		
+	State rejectRequest{
+		println("$name	|	request rejected")
+		replyTo storewaste with loadrejected : loadrejected(_)
 	}Goto idle
+	
+	State end{
+		terminate 1
+	}
 	
 }
 
+/* *********************************************************************************************
+ * ---------------------------------------------------------------------------------------------
+ * Core component addicted to manage all the request exec by interacting with TT component 
+ * ---------------------------------------------------------------------------------------------
+ **********************************************************************************************/
 QActor wasteservicecore context ctxwasteservice{
-	State s0 initial{
-		
+	[#
+		lateinit var REQMATERIAL : wasteservice.state.Material 
+	#]
+	State init initial{
+		[#
+			utility.Banner.printBannerWasteService()
+		#]
+		println("$name 	| 	starting...")
 	}Goto idle
 	
 	State idle{
-		
-	}Transition t0 whenMsg doJob -> pickup
-					whenReply dropoutdone -> backHome
-					
-	State backHome{
-		
-	}Goto idle
-	
+		println("$name 	| 	waiting...")
+	}Transition t0 whenMsg 	dojob -> pickup
+					whenMsg dropoutdone -> backHome
+					whenMsg exit -> end
+			
 	State pickup{
-		
-	}Transition t0 whenReply dropoutdone -> clear
-					whenReply pickupdone -> dropout
+		println("$name 	| 	asking for pickup...")
+		onMsg(dojob : dojob(MAT)){
+		[#
+			try{
+			REQMATERIAL = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())
+			}catch(e : Exception){}
+		#]
+		}
+		request transporttrolleycore -m pickup : pickup(_)
+		println("$name 	| 	waiting for pickup done...")
+	}Transition t0 whenMsg 	  dropoutdone -> clear
+					whenReply pickupdone  -> dropout
 	
 	State clear{
-		
+		println("$name 	| 	clearing queue")
 	}Transition t0 whenReply pickupdone -> dropout
 	
 	State dropout{
-		
+		println("$name 	| 	asking for dropout")
+		forward transporttrolleycore -m dropout : dropout($REQMATERIAL)
 	}Goto idle
+	
+	State backHome{
+		println("$name 	| 	sending robot to home")
+		forward transporttrolleycore -m gotohome : gotohome(_)
+	}Goto idle
+	
+	State end{
+		forward wasteservicehandler -m exit : exit(_)
+		forward containermanager -m exit : exit(_)
+		terminate 1
+	}
 }

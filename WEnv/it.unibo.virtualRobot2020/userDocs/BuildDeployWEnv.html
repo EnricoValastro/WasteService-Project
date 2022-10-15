@@ -1,0 +1,388 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <!--
+<link rel="stylesheet" type="text/css" href="../css/issStyle1.css">
+<script type="text/javascript" src="../css/issStyle.js"></script>
+-->
+<style type="text/css">
+body
+{
+    margin-left:  30px;
+    margin-right: 30px;
+};
+
+P
+{
+    font-family: Tahoma;
+    font-size: 10pt;
+};
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+	font-size: 93%;
+}
+
+a:hover {
+    background-color: #cccccc;
+}
+
+
+hr {
+    clear: both;
+    height: 1px;
+    color: #242424;
+    background-color: transparent;
+}
+
+h1, h2, h3 {
+    color: #242424;
+    clear: left;
+    font: 100% Tahoma, Helvetica, Arial, sans-serif;
+    margin-bottom: 0.5em;
+    padding-top: 0.5em;
+	border-radius: 10px;
+	padding: 5px;
+}
+
+top {
+	width: 100%;
+}
+
+
+#i {
+    color: #ff1010;
+}
+tt{
+	font-family: "Arial";
+    font-size: 90%;
+	color: #006600;
+}
+em{
+	font-family: "Arial";
+    font-size: 80%;
+	font-weight: bold;
+	border-style:solid;
+	border-color: #abe876;
+    color: #1632cc;
+}
+bc{
+	font-family: "Arial";
+	font-size: 90%;
+	font-weight: bold;
+    color: #990000;
+	background-color: #fcf8c7;
+}
+ks{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	font-size: 90%;
+}
+kc{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #008000	;
+	font-size: 90%;
+}
+pre{
+	font-family: "Consolas";
+	font-size: 85%;
+	background-color: #f5f5f5;
+	border: 1.5px solid silver;
+	padding: 5px;
+}
+m{
+	font-family: "Helvetica";
+	line-height: 100%;
+ 	font-size: 75%;
+}
+div.body{
+	 
+    font-size: 18px;
+}
+k{
+    color: #990000;
+	font-weight: bold;
+	font-size: 90%;
+}
+h1 {
+    font-size: 150%;
+    background-color: #b2c0ff;
+	padding: 10px;
+}
+
+h2 {
+    background-color: #9ed8ff;
+    font-size: 130%;
+}
+
+h3 {
+	background-color: #e6ccff;
+    font-size: 100%;
+}
+h4 {
+    background-color: #ccffcc;
+    font-size: 100%;
+	width: 95%;
+	border-radius: 5px;
+	padding: 2px;
+}
+h5 {
+    background-color: #d5ffb0;
+    font-size: 100%;
+
+}
+div.req{
+	background-color: #d9ffb3;
+    font-size: 18px;
+	width: 700px;
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}
+div.remark{
+	background-color: #E3F2FD;
+    border: 1.5px solid #d5f2ed;
+    padding: 15px;
+    margin: 10px;
+	border-radius: 25px;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+ol, ul, li {
+  margin: 0;
+  margin-left: 10px;
+  padding: 0;
+  padding-bottom: 5px;
+}
+
+table, th, td {
+	border: 1px solid black;
+}
+
+img {
+	border: 1.5px solid #d5f2ed
+
+}
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+}
+
+div.wrapdesc{
+	width: 90%;
+	margin: auto;
+}
+
+div.imagedesc{
+	width: 85%;
+	margin: auto;
+}
+</style>
+
+<style>
+/* Popup container - can be anything you want */
+.popup {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* The actual popup */
+.popup .popuptext {
+  visibility: hidden;
+  width: 260px;
+  background-color: #F3F781;
+  color: black;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -80px;
+}
+
+/* Popup arrow */
+.popup .popuptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle this class - hide and show the popup */
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;} 
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
+}
+</style>
+
+<script>
+// When the user clicks on <div>, open the popup
+function myFunction() {
+  var popup = document.getElementById("myPopup");
+  popup.classList.toggle("show");
+}
+</script>
+    
+<head>
+   
+<title>BuildDeployWEnv</title></head>
+    
+<body>
+<div id="top">
+<h1>LabIss2021 |  Build and deploy the WEnv<font size="5"></font> </h1>
+</div>  
+
+
+<div class="body"> 
+ 
+ <h2>Building</h2>
+<ol>
+<li>Install <bc>Node.js</bc></tt>
+<li>Open a terminal on <bc>it.unibo.virtualRobot2020\node\WEnv\server</bc> and execute <pre>npm install</tt></pre></li>
+<li>In the directory <bc>it.unibo.virtualRobot2020\node\WEnv\WebGLScene</bc>  execute <pre>npm install</tt></pre></li>
+<li>In the directory  <bc>it.unibo.virtualRobot2020\node\WEnv\server\src</bc>  execute <pre>node WebpageServer.js</tt></pre></li>  
+<li>Open a browser on <pre>localhost:8090</pre></li>
+</ol>
+
+Look at <a href="../../it.unibo.virtualRobot2020/Dockerfile" target="code">Dockerfile</a>.
+ 
+<h2>The components</h2>
+
+<div class="remark">
+<kc>Login in DockerHub (get the password from a private file)</kc>
+<pre>
+type docker_password.txt | docker login --username natbodocker --password-stdin
+</pre>
+</div>
+<h3>The <a href="../../it.unibo.virtualRobot2020" target="code"> Virtual robot</a> project</h3>
+
+<pre>
+gradle build                            <kc>Create the distribution</kc>
+docker build -t virtualrobotdisi:1.0 .  <kc>Create the image using the <a href="../../it.unibo.virtualRobot2020/Dockerfile" target="web">Dockerfile</a></kc>
+
+<kc>Tag the image</kc>
+docker tag virtualrobotdisi:1.0 natbodocker/virtualrobotdisi:1.0
+
+docker run -ti -p 8090:8090 -p 8091:8091 --rm  virtualrobotdisi:1.0 /bin/sh	<kc>local test</kc>
+
+
+<kc>Register the image on <a href="https://hub.docker.com/?ref=login" target="web">DockerHub</a></kc>
+docker push natbodocker/virtualrobotdisi:1.0
+</pre>
+
+<h3>The <a href="../../it.unibo.virtualrobotclient" target="code">virtualrobotclient</a> project</h3>
+
+<pre>
+gradlew build                            <kc>Create the distribution</kc>
+docker build -t usingvirtualrobot:1.0 .  <kc>Create the image using the <a href="../../it.unibo.virtualrobotclient/Dockerfile" target="web">Dockerfile</a></kc>
+
+
+<kc>Tag the image</kc>
+docker tag usingvirtualrobot:1.0 natbodocker/usingvirtualrobot:1.0
+
+<kc>Register the image on <a href="https://hub.docker.com/?ref=login" target="web">DockerHub</a></kc>
+docker push natbodocker/usingvirtualrobot:1.0
+</pre>
+
+
+
+
+<h3>The <a href="../../it.unibo.virtualrobotcontrol" target="code">virtualrobotcontrol</a> project</h3>
+<pre>
+docker build -t virtualrobotcontrol:1.0 .  <kc>Create the image using the <a href="../../it.unibo.virtualrobotcontrol/Dockerfile" target="web">Dockerfile</a></kc>
+
+docker run -ti -p 3000:3000 --rm  virtualrobotcontrol:1.0 /bin/sh	<kc>local test</kc>
+
+
+<kc>Tag the image</kc>
+docker tag virtualrobotcontrol:1.0 natbodocker/virtualrobotcontrol:1.0
+
+<kc>Register the image on <a href="https://hub.docker.com/?ref=login" target="web">DockerHub</a></kc>
+docker push natbodocker/virtualrobotcontrol:1.0
+</pre>
+
+<!--
+<h3>The <a href="../../it.unibo.virtualrobotcontrol/docker-compose.yaml" target="web">docker-compose.yaml</a> </h3>
+<div class="remark">The <a href="../../it.unibo.virtualrobotcontrol/docker-compose.yaml" target="web">docker-compose.yaml</a> defines one servicee:
+<ul>
+<li><k>vrobotcontrol</k>;</li>
+</ul>
+</div>
+<pre>
+</pre>
+-->
+
+
+<h3>The <a href="../docker-compose.yaml" target="web">docker-compose.yaml</a> </h3>
+<div class="remark">The <a href="../docker-compose.yaml" target="code">docker-compose.yaml</a> defines two services:
+<ul>
+<li><k>wenv</k>: </li>
+<li><k>vrobotclient</k>;</li>
+</ul>
+</div>
+<pre>
+<h4>Run all</h4>
+docker-compose up -d	                    <kc>vrobotclient is not able to connect (we should retry ...) </kc>
+docker-compose run --rm vrobotclient		<kc>starts also wenv if there is dependency</kc>
+
+<h4>Run single services</h4>
+docker-compose run -d --service-ports wenv   <kc>starts wenv </kc>
+docker-compose run --rm vrobotclient		 <kc>attempts to re-create wenv if there is dependency</kc>
+docker-compose run --rm vrobotclient		 <kc>does not connect if there is NO dependency</kc>
+
+docker run --rm docker.io/natbodocker/usingvirtualrobot:1.0		<kc>does not connect</kc>
+</pre>
+
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" >
+ 
+
+</td>
+<td>
+</td>
+</tr>
+ </tbody>
+</table>
+ 
+
+<br/><br/>
+</div>
+ 
+<div style="background-color:rgba(86, 56, 253, 0.9); width:100%;text-align:center;font-size:small;color:white">
+By AN Unibo-DISI  
+</div> 
+</body>
+</html>

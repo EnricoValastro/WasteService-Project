@@ -232,11 +232,12 @@ div.imagedesc{
 <div id="top">
 <h1>LABORATORIO DI INGEGNERIA DEI SISTEMI SOFTWARE <font size="5"></font> </h1>
 </div>  
+
+<div class="body"> 
 <a href="../../Sprint0/userDocs/sprint0.html">Sprint 0</a>
 <a href="./sprint1.html">Sprint 1</a>
 <a href="../../Sprint2/userDocs/sprint2.html">Sprint 2</a>
 <a href="../../Sprint3/userDocs/sprint3.html">Sprint 3</a>
-<div class="body"> 
 <h2>Introduction</h2>
 <div class="remark">
     Progetto finale di ISS finalizzato allo sviluppo software di un impianto di smistamento dei rifiuti attraverso un robot che preleva il carico del camion e lo porta al container appropriato
@@ -323,7 +324,7 @@ div.imagedesc{
     
     Nasce quindi la problematica di come rappresentare la posizione dei punti d'interesse (<kc>HOME</kc>, <kc>INDOOR</kc>, <kc>PLASTICBOX</kc>, <kc>GLASSBOX</kc>), e del robot.
     <br><br>
-    E' possibile, anche in questo caso seguire approcci differenti:
+    E' possibile, anche in questo caso, seguire approcci differenti:
     <ol>
         <li>Utilizzare un sistema di coordinate GPS (DMS: gradi-minuti-secondi)</li>
         <li>Utilizzare un sistema di coordinate cartesiane X e Y</li>
@@ -411,7 +412,7 @@ div.imagedesc{
     <cons>-</cons> Necessità di modificare il <i>basicrobot22</i> <br>
     <cons>-</cons> Non è possibile utilizzare il software già sviluppato per pianificare(<i>unibo.planner22</i>) e eseguire il percorso(<i>unibo.pathexecutor</i>)
     <br><br>
-    <ks><b>Buondary Walk</b></ks> <br><br>
+    <ks><b>Boundary Walk</b></ks> <br><br>
     Questa soluzione consiste nel far muovore il robot lungo il perimetro della stanza fino a destinazione, 
     come mostrato in figura: <br>
     <img src="./resources/img/path3.jpg" alt=""><br><br>
@@ -447,11 +448,28 @@ planner22Util.doPlan()</pre>
     Risulta evidente assegnare al <i>WasteService</i> la responsabilità delle operazioni di deposito, in quanto esso è il destinatario 
     delle richieste di deposito provenienti dal truck. <br>
     Per quanto riguarda invece le operazioni di movimento, tale responsabilità può essere assegnato sia al <i>WasteService</i> che al <i>transportTrolley</i>.
-    Tuttavia volendo rispettare il principio di <i><b>singola responsabilità</b></i> e volendo evitare di avere un attore troppo complesso,
+    Tuttavia, volendo rispettare il principio di <a href="https://it.wikipedia.org/wiki/Principio_di_singola_responsabilit%C3%A0"><i><b>singola responsabilità</b></i></a> e volendo evitare di avere un attore troppo complesso,
     si consiglia agli sviluppatori di assegnare al <i>transportTrolley</i> la responsabilità delle operazioni di movimento. In tal modo il <i>transportTrolley</i>
     fungerà da attuatore, e nel caso in cui esso debba far uso di un <kc>planner</kc>, potrebbe essere posto su di un nodo computazionale più potente, 
-    senza causare un eccessivo <i>overhead</i> sulla rete dovuto ai messaggi di movimento.
+    senza causare un eccessivo <i>overhead</i> sulla rete dovuto ai messaggi di movimento. <br><br>
+    In ultima analisi, si potrebbe decidere di attuare un'ulteriore separazione delle responsabilità operando come segue: <br><br>
+    Attribuire al componente <i>WasteService</i> le responsabilità di: 
+    <ol>
+        <li>Accettare/Rifiutare richieste da parte del <i>truckDriver</i></li>
+        <li>Coordinare le operazioni di carico e scarico, cioè richiedere o comandare al <i>transportTrolley</i> l'esecuzione di qualche azione</li>
+    </ol>
+    Attribuire al componente <i>transportTrolley</i> le responsabilità di:
+    <ol>
+        <li>Muovere il DDR robot verso la destinazione stabilita</li>
+        <li>Eseguire le azioni di carico e scarico del materiale</li>
+    </ol>
 
+    Seguire tale approccio richiederebbe, quindi, una modifica dell'architettura logica del sistema, in quanto prevederebbe la suddivisione del <i>WasteService</i> in due componenti 
+    distinti, uno dedito alla ricezione e valutazione delle richieste di deposito e uno dedito alla coordinazione delle operazioni carico/scarico. Allo stesso modo, bisognorebbe 
+    operare una modifica nell'architettura del <i>transportTrolley</i>, in quanto sarebbe opportuno attribuire ad un componente la responsabilità delle operazioni di movimento e 
+    ad un altro la responsabilità delle operioni di carico/scarico. <br><br>
+    <ks>Seguire questa strada permetterebbe di ottenere componenti che adempiono ad una singola responsabilità e tale responsabilità sarebbe totalmente incapsulta nel componente stesso.</ks>
+    
     <h4>Interazione tra i componenti</h4>
     Per quanto riguarda  l'interazione tra i componenti possiamo, in prima battuta, affermare che essi interagiscono a scambio di messaggi.
     L'utilizzo del linguagguio <kc>QAk</kc> ci permette di tipizzare i messaggi in modo tale da avere un controllo maggiore sulle interazioni tra i componenti.
@@ -462,7 +480,7 @@ planner22Util.doPlan()</pre>
     come risulta già evidente in fase di analisi questa interazione è di tipo <kc>request-reply</kc>:
     <pre>
 <key3>// MATERIAL = PLASTIC | GLASS</key3>
-<key2>Request</key2> storeWaste   : storeWaste(MATERIAL, TRUCKLOAD)
+<key2>Request</key2> storewaste   : storewaste(MAT, QUA)
 <key2>Reply</key2>   loadaccept   : loadaccept(_)
 <key2>Reply</key2>   loadrejected : loadrejected(_)</pre>
 
@@ -502,10 +520,11 @@ planner22Util.doPlan()</pre>
 <key3>// MATERIAL = PLASTIC | GLASS</key3>
 <key2>Dispatch</key2> dropout : dropout(MATERIAL)</pre>
     
-    <h4>Stato della Service Area</h4>
+    <h4>Gestione degli stati</h4>
+    <h5>Stato della Service Area</h5>
     Affinche il <kc>WasteService</kc> possa rispondere in maniera opportuna alle richieste di deposito dei <kc>truck</kc> 
     è necessario che esso sia a conoscenza dello stato interno (peso corrente, peso massimo) dei container della <kc>Service Area</kc>. <br>
-    Nasce quindi la problematica di come rappresentare lo stato della <i>Service Area</i>, le soluzioni possibili sono: 
+    Nasce quindi la problematica di come mantenere lo stato della <i>Service Area</i>, le soluzioni possibili sono: 
     <ul>
         <li>Cablare i valori all'interno del codice del <i>WasteService</i></li>
         <li>Utilizzare una classe (Kotlin) che rappresenti lo stato della <i>Service Area</i></li>
@@ -516,10 +535,10 @@ planner22Util.doPlan()</pre>
     <pre>
 <key2>QActor</key2> wasteservice <key2>context</key2> ctxwasteservice {
     [#
-        var glassCurrWeight = 0
-        var glassMaxWeight = 500
-        var plasticCurrWeight = 0
-        var plasticMaxWeight = 500
+        var glassCurrWeight : Double 
+        var glassMaxWeight = MAXGB
+        var plasticCurrWeight : Double 
+        var plasticMaxWeight = MAXPB
     #]
     <key2>State</key2> s0 <key2>initial</key2>{...}    
 }</pre>
@@ -538,14 +557,10 @@ planner22Util.doPlan()</pre>
     PLASTIC, GLASS
 }
 
-<key>data class</key> WasteServiceState(<key>private val</key> boxMaxWeight : MutableMap < Material, Double > = 
-        Material.values().associateWith { 0.0 }.toMutableMap(),
-            <key>private val</key> boxCurrentWeight : MutableMap< Material, Double > =
-                Material.values().associateWith { 0.0 }.toMutableMap()
-) {
-    <key>fun</key> updateBoxWeight(material: Material, value : Double){...}
-    <key>fun</key> getCurrBoxWeight(material: Material) : Double {...}
-    <key>fun</key> canStore(material: Material, value: Double) : Boolean {...}
+<key>data class</key> ServiceAreaState(
+    <key>private val</key> boxMaxWeight : MutableMap < Material, Double > = Material.values().associateWith { 0.0 }.toMutableMap(),
+    <key>private val</key> boxCurrentWeight : MutableMap < Material, Double > = Material.values().associateWith { 0.0 }.toMutableMap()
+) {  
 }</pre>
     Questa soluzione risulta molto più pratica della precedente, lo stato della <i>Service Area</i> adesso è accessibile dall'esterno 
     senza sovraccaricare il <i>WasteService</i>. <br>
@@ -572,13 +587,52 @@ planner22Util.doPlan()</pre>
     tra i due, consigliamo agli sviluppatori di adottare questo approccio. <br>
     In tal caso i messaggi scambiati tra il <i>WasteService</i> e il nuovo attore sarebbero:
     <pre>
-<key2>Request</key2>  evalReq    : evalReq(MAT, QUA) 
-<key2>Reply</key2>    evalOk     : evalOk(_)
-<key2>Reply</key2>    evalKo     : evalKo(_)
+<key2>Request</key2>  evalreq    : evalreq(MAT, QUA)            <key3>// MAT = PLASTIC | GLASS</key3>
+<key2>Reply</key2>    evalok     : evalok(_)
+<key2>Reply</key2>    evalko     : evalko(_)
 <key2>Dispatch</key2> update     : update(MAT, QUA)</pre>
     
     L'inserimento di questo nuovo attore all'interno del sistema modifica l'architettura logica come in figura: <br>
     <img src="./resources/img/ArchLogicSprint1CM.png" alt="" style="width: 45%; height: 45%; ">
+
+    <br>
+    <h5>Stato del TransportTrolley</h5>
+
+    In previsione delle fasi successive del progetto, sarebbe opportuno mantenere lo stato del <i>transportTrolley</i>. In particolare occorrerebe tenere traccia della posizione 
+    del <i>transportTrolley</i> e del suo stato (inteso come stato di attività). <br>
+    Dall'<a href="../../Sprint0/userDocs/sprint0.html">analisi dei requisiti </a> è emerso che lo stato del <i>transportTrolley</i> e la sua posizione nella stanza possono essere 
+    rappresentati dai seguenti enumerativi:
+    <pre>
+<key>enum</key> <key>class</key> CurrStateTrolley { <i>IDLE</i>, <i>STOPPED</i>, <i>MOVING</i>, <i>PICKINGUP</i>, <i>DROPPINGOUT</i> }</pre>
+    <pre>
+<key>enum</key> <key>class</key> TTPosition { <i>HOME</i>, <i>INDOOR</i>, <i>PLASTICBOX</i>, <i>GLASSBOX</i> }</pre>
+
+    Sebbene quanto stabilito in fase di analisi dei requisiti sia corretto, occorre tenere presente che il <i>transportTrolley</i> potrebbe trovarsi in una posizione diffirente da 
+    quelle indicate nell'enumerativo <kc>TTPosition</kc>. In particolare, durante un'azione di movimento, il <i>transportTrolley</i> potrebbe trovarsi in una posizione 
+    intermedia tra due punti d'interesse della stanza. Per questo motivo riteniamo necessaria la seguente modifica dell'enumerativo <i>TTPosition</i>: 
+    <pre>
+<key>enum</key> <key>class</key> TTPosition { <i>HOME</i>, <i>INDOOR</i>, <i>PLASTICBOX</i>, <i>GLASSBOX</i>, <i>ONTHEROAD</i> }</pre>
+    Come nel caso precedente, le soluzioni possibili per mantenere lo stato del <i>transportTrolley</i> sono diverse. Consigliamo agli sviluppatori di adottare la soluzione che 
+    prevede di mantenere lo stato in una classe in modo che esso sia accessibile da terze parti, come riportato di seguito: 
+    <pre>
+<key>enum class</key> CurrStateTrolley {
+    IDLE, STOPPED, MOVING, PICKINGUP, DROPPINGOUT
+}
+<key>enum class</key> TTPosition{
+    HOME, INDOOR, PLASTICBOX, GLASSBOX, ONTHEROAD
+}
+<key>data class</key> TransportTrolleyState(
+        <key>private var</key> currState : CurrStateTrolley = CurrStateTrolley.IDLE,
+        <key>private var</key> currPosition : TTPosition = TTPosition.HOME
+){
+    <key>fun</key> setCurrState(state : CurrStateTrolley) {...}
+    <key>fun</key> setCurrPosition(position : TTPosition) {...}
+    <key>fun</key> getCurrState() : CurrStateTrolley {...}
+    <key>fun</key> getCurrPosition() : TTPosition {...}
+}</pre>
+
+    Il codice completo di questa classe è consultabile in <a href="./resources/kotlin/TransportTrolleyState.kt">TransportTrolleyState.kt</a>
+    
 </div>
 
 <div class="remark">
@@ -587,15 +641,15 @@ planner22Util.doPlan()</pre>
     <kc>transport trolley</kc> deve ritornare alla posizione <kc>HOME</kc>. Tale requisito apre diverse problematiche. 
     <h4>Gestione back to Home</h4>
     Bisogna comprendere a quale componente sia più opportuno affidare la responsabilità del rientro alla posizione <i>HOME</i>.
-    In <a href="#actManager">precedenza</a> si è stabilito che sarebbe opportuno assegnare al <kc>WasteService</kc> la gestione delle attività del <kc>DDR robot</kc> 
-    mentre al <i>transportTrolley</i> la gestione delle movenze. <br><br>
+    In <a href="#actManager">precedenza</a> si è stabilito che sarebbe opportuno assegnare al <kc>WasteService</kc> la responsabilità di gestire le attività del <kc>DDR robot</kc> 
+    mentre al <i>transportTrolley</i> la responsabilità di gestire le movenze e l'esecuzione delle attività. <br><br>
     Bisogna quindi comprendere sotto quale di queste due categorie ricada il requisito <kc>back to Home</kc>, si tratta di un'azione o semplicemente di 
     una movenza? <br><br>
     Il requisito <i>back to Home</i> può essere visto come una movenza del robot, cioè come un'azione che sposta il <i>DDR robot</i> dalla sua posizone attuale fino alla posizone <i>HOME</i>.
     Tuttavia poichè tale movenza è condizionata dal soddisfacimento di un requisito (assenza di nuove richieste nel sistema) essa può essere considerata 
     come una attività che il <i>DDR robot</i> deve svolgere quando si verificano determinate condizioni. <br>
     Inoltre la condizione che deve essere verificata per eseguire il <i>back to Home</i> è l'assenza di nuove richieste nel sistema, e poichè le richieste 
-    sono gestite dal <i>WasteService</i> è opportuno che sia lui ad essere incaricato della gestione di tale compito. <br>
+    sono gestite dal <i>WasteService</i> è opportuno che sia questo componente a coordinare l'esecuzione di tale compito. <br>
 
     <h4>Interazione tra i componenti</h4>
     Una volta compreso che il <i>WasteService</i> gestisce il <i>back to Home</i>, bisogna comprendere che tipo di interazione avvenga tra 
@@ -631,17 +685,16 @@ planner22Util.doPlan()</pre>
 <key2>Dispatch</key2> dropoutdone : dropoutdone(_)</pre>
     Alla ricezione di tale messaggio il <i>WasteService</i> potrebbe trovarsi in due possibili stati:
     <ol>
-        <li><b>idle</b>: in attesa di una richiesta da parte del <i>truck</i> o di un messaggio dal <i>transportTrolley</i></li>
-        <li><b>requestEvaluation</b>: in cui valuta se accettare o rifiutare una nuova richiesta da parte del <i>truck</i></li>
+        <li> Uno stato in cui attende una richiesta da parte del <i>truck</i> o un messaggio dal <i>transportTrolley</i></li>
+        <li> Uno stato in cui valuta se accettare o rifiutare una nuova richiesta da parte del <i>truck</i></li>
     </ol>
-    Nel primo caso, il <i>WasteService</i> preleva immediatamente il messaggio dalla coda e transita allo stato <kc>backHome</kc>, in cui 
-    invia al <i>transportTrolley</i> il messaggio <kc>gotohome</kc>. <br><br>
-    
-    Nel secondo caso il messaggio <kc>dropoutdone</kc> viene inserito in coda e non processato. Il <i>WasteService</i> conclude la 
-    valutazione della richiesta e se questa viene rifiutata invia al <i>truck</i> il messaggio <kc>loadrejected</kc>, transita 
-    allo stato <i>idle</i>, preleva dalla coda il messaggio <i>dropoutdone</i> e lo processa come nel caso precedente.
-    In caso contrario, se la richiesta è accettata, il <i>WasteService</i> invia al <i>transportTrolley</i> il messaggio <kc>pickup</kc>, preleva dalla coda
-    il messaggio <i>dropoutdone</i>, lo scarta e si mette in attessa della risposta <kc>pickupdone</kc>.
+    <div id="clear">
+        La gestione del messaggio <kc>dropoutdone</kc> dipende quindi dallo stato in cui si trova il <i>WasteService</i> al momento della sua ricezione. Infatti, nel caso in cui 
+        il <i>WasteService</i> accetti una nuova richiesta del <i>truck</i>, sarebbe opportuno eliminare il messaggio <i>dropoutdone</i> dalla coda dei messaggi per evitare 
+        la presenza di messaggi duplicati nel sistema. <br>
+        Sarebbe opportuno che i progettisti prendessere in esame tale problematica e cercassero di evitare la presenza di messaggi duplicati nel sistema. Una possibile soluzione 
+        potrebbe essere quella di prevedere uno stato di "pulizia", in cui il <i>WasteService</i> transita per eliminare il messaggio <i>dropoutdone</i> che deve essere ignorato.
+    </div>
     
 </div>
 
@@ -668,19 +721,35 @@ planner22Util.doPlan()</pre>
         <li>Utilizzare un nuovo messaggio</li>
     </ul>
     La prima soluzione consiste nel ritardare l'invio del messaggio <i>loadaccept</i> fino a quando il <i>WasteService</i> non riceve il messaggio
-    <i>pickupdone</i>. <br>
+    <kc>pickupdone</kc>. <br>
     La seconda soluzione, invece, prevede di inviare immediatamente il messaggio <i>loadaccept</i> e inviare un nuovo messaggio, non appena 
     il <i>WasteService</i> riceve il <i>pickupdone</i>, per mandare via il <i>truck</i>. <br>
-    Sebbene le due soluzioni siano molto simili, la prima ci permette di risparmiare l'invio di un messaggio sulla rete diminuendo 
-    quindi il carico di rete (<kc>overhead</kc>). Si consiglia pertanto agli sviluppatori di utilizzare tale soluzione. <br>
-    Per meglio comprenderne il funzionamento di seguito viene riportato un frammento di codice del <i>WasteService</i>:
+    Le due soluzioni siano molto simili, la prima permette di risparmiare l'invio di un messaggio sulla rete diminuendo 
+    quindi il carico di rete (<kc>overhead</kc>), d'altra parte la seconda potrebbe essere più opportuna per differenziare le due fasi ed evitare al <i>truck drivere</i> 
+    una lunga attesa prima di sapere se il cario è stato accettato o meno. <br>
+    Per meglio comprendere le due soluzioni si mostrano, partendo dal primo caso, i due possibili prototipi d'interazione:
     <pre>
 <key2>State</key2> acceptRequest{
     <key2>request</key2> transporttrolley <key2>-m</key2> pickup : pickup
 }<key2>Transition</key2> t0 <key2>whenReply</key2> pickupdone -> dropout
                                                     
 <key2>State</key2> dropout{
-    <key2>replyTo</key2> storeWaste <key2>with</key2> loadaccept : loadaccept(_)
+    <key2>replyTo</key2> storewaste <key2>with</key2> loadaccept : loadaccept(_)
+    <key2>request</key2> transporttrolley <key2>-m</key2> dropout : dropout(MATERIAL)
+}<key2>Transition</key2> t0 <key2>whenReply</key2> dropoutdone -> idle                                         
+}</pre>
+Nel secondo caso è necassario utilizzare un nuovo messaggio per mandare via il <i>truck</i>, il messaggio in questione potrebbe essere il seguente:
+<pre>
+<key2>Dispatch</key2> leaveindoor : leaveindoor(_)</pre>
+Il prototipo d'interazione sarebbe il seguente:
+    <pre>
+<key2>State</key2> acceptRequest{
+    <key2>replyTo</key2> storewaste <key2>with</key2> loadaccept : loadaccept(_)
+    <key2>request</key2> transporttrolley <key2>-m</key2> pickup : pickup
+}<key2>Transition</key2> t0 <key2>whenReply</key2> pickupdone -> dropout
+                                                    
+<key2>State</key2> dropout{
+    <key2>forward</key2> smartdevice <key2>-m</key2> leaveindoor : leaveindoor(_)
     <key2>request</key2> transporttrolley <key2>-m</key2> dropout : dropout(MATERIAL)
 }<key2>Transition</key2> t0 <key2>whenReply</key2> dropoutdone -> idle                                         
 }</pre>
@@ -695,23 +764,39 @@ planner22Util.doPlan()</pre>
     <img src="./resources/img/ArchLogicSprint1.png" alt="" style="width:60% ; height:60% ;">
 </div>
 
+<h2>Sprint1 - Review</h2>
+<div class="remark">
+</div>
+
 <h2>Project</h2>
 <div class="remark">
     <h3>WasteService Component</h3>
-    Il <kc>WasteService</kc> come si può notare dall'architettura logica si trova nello stesso contesto del componente <kc>ContainerManager</kc>, 
-    in quanto le due entità si scambieranno informazioni al fine di fornire una risposta al truck riguardo le varie richieste.
-    In fase di progetto, per rispettare il principio di singola responsabilità, si decide di implementare il WasteService in due componenti differenti:
+    Come suggerito dagli analisti, è stato deciso di progettare il <kc>WasteService</kc> come due componenti separati, uno dedito alla ricezione e valutazione delle richieste 
+    da parte del <i>truck</i>, l'altro dedito al coordinamente delle azioni di carico e scarico del <i>transportTrolley</i>.<br>
+    Il <i>WasteService</i> viene quindi diviso nei due componenti:
     <ul>
-        <li>WasteService handler</li>
-        <li>WasteService core</li>
+        <li><b>WasteServiceHandler</b></li>
+        <li><b>WasteServiceCore</b></li>
     </ul> 
 
-    Il primo si occuperà di ricevere le richieste provenienti dal truck e di passarle al ContainerManager. La macchina a stati finiti (FSM) è riportata di seguito: <br>
-    <img src="./resources/img/FSM_wasteServicehandler.png" alt="" style="width:60% ; height:60% ;"> <br><br>
-    Il <kc>wasteServicehandler</kc> quando si trova nello stato di <kc>idle</kc> è in attesa di ricevere una richesta dal <kc>truck</kc>. 
-    Arrivata la richiesta essa deve essere valutata e quindi si transiterà nello stato di <kc>evalRequest</kc>. Se la richiesta può essere accettata si transiterà 
-    nello stato di <kc>acceptRequest</kc>, altrimenti si transiterà nello stato di <kc>rejectRequest</kc>. In qualunque caso, sia dallo stato di <i>acceptRequest</i> che da quello di <i>rejectRequest</i>, si tornerà nello stato di <i>idle</i>. 
-    Il codice completo dell'attore che implementa questa FSM è disponibile nel file <a href="./resources/qak/wasteService.qak">wasteService.qak</a>.
+    <h4>WasteServiceHandler</h4>
+    Questo componente è progettato come un <ks>Handler</ks>, si occupa di ricevere le richieste <kc>storewaste</kc> e rispondere al mittente con una <kc>loadaccept</kc> o con 
+    una <kc>loadrejected</kc>. Per valutare se la richiesta può essere accetta o meno il <i>WasteServiceHandler</i> si avvale del componente <kc>ContainerManager</kc>.<br>
+    Dopo aver valutato la richiesta, in caso di esito positivo, il <i>WasteServiceHandler</i> comuncia al componente <kc>WasteServiceCore</kc> che deve iniziare il processo di deposito, tramite 
+    il seguente messaggio:
+    <pre>
+<key2>Dispatch</key2> dojob : dojob(MAT)        <key3>// MAT = PLASTIC | GLASS</key3></pre>
+    La figura seguente riporta lo schema d'interazione dei componenti: <br><br>
+    <img src="./resources/img/InteractionSchemaWSH.png" alt="" style="width: 45%; height: 45%;">
+<br><br>
+    Il componente verrà implementato come una <ks>coroutines Kotlin</ks>. In particolare, faremo uso del metalinguaggio QAk che ci permetterà di semplificare il lavoro di sviluppo.
+    Di seguito viene riportato il progetto della macchina a stati finiti del <i>WasteServiceHandler</i> e la sua implementazione tramite linguaggio QAk:<br>
+    <img src="./resources/img/FSMwasteServiceHandler.png" alt="" style="width:45% ; height:45% ;"> <br><br>
+    Quando si trova nello stato <b><i>idle</i></b> il <i>WasteServiceHandler</i> rimane in attesa di una richesta (<kc>storewaste</kc>) da parte del <kc>truck</kc> o di un messagio di fine (<kc>exit</kc>). 
+    Non appena arriva la richiesta, il <i>WasteServiceHandler</i> inizia la valutazione transitando nello stato di <b><i>evalRequest</i></b>, in cui interroga il 
+    <i>ContainerManager</i>. Se la risposta è positiva il <i>WasteServiceHandler</i> accetta la richiesta del <i>truck</i> transitando 
+    nello stato <b><i>acceptRequest</i></b>, altrimenti transita nello stato <b><i>rejectRequest</i></b>. <br>
+    
     <pre>
 <key2>QActor</key2> wasteservicehandler <key2>context</key2> ctxwasteservice{
     <key2>State</key2> init <key2>initial</key2> {
@@ -738,24 +823,32 @@ planner22Util.doPlan()</pre>
     }<key2>Goto</key2> idle
 
     <key2>State</key2> end {
-        ....
+        <key2>terminate</key2> 1
     }
 }</pre>
+    Il codice completo è consultabile nel file <a href="./resources/qak/wasteService.qak">wasteService.qak</a>. 
 
-    Il secondo si occuperà di ricevere un messaggio <kc>doJob</kc> dall'entità wasteService handler e 
-    comunicare con il transport trolley per effettuare il ritiro dei rifiuti. 
-    La macchina a stati finiti (FSM) è riportata di seguito: <br>
-    <img src="./resources/img/FSM_wasteServicecore.png" alt="" style="width:60% ; height:60% ;"> <br><br>
-    Il <kc>wasteServicecore</kc> quando si trova nello stato di <kc>idle</kc> può ricevere due tipi di messaggi:
-    <ul>
-        <li><kc>doJob</kc> dal WasteServicehandler</li>
-        <li><kc>droputdone</kc> dal transportTrolley</li>
-    </ul>
-    Nel primo caso si transiterà nello stato di <kc>pickup</kc>, mentre nel secondo nello stato di <kc>backhome</kc> in quanto non ci sono altre richieste da gestire. Dallo stato di <i>backhome</i> in qualunque momento si può tornare nello stato di <kc>idle</kc>.
-    Quando ci si trova invece nello stato di <i>pickup</i> , se si ha un'unica richiesta da gestire, si può ricevere un messaggio <kc>pickupdone</kc> dal transportTrolley e quindi transitare nello stato di <i>dropout</i>. Oppure è possibile ricevere un messaggio di <kc>droputdone</kc> 
-    relativa alla richiesta precedente e quindi ci si sposta nell stato di <i>clear</i>, nella quale la coda delle richieste viene svuotata. A quel punto, nello stato di <i>idle</i> arriverà una richiesta di pickupdone 
-    relativa alla richiesta corrente e si transiterà nello stato di <i>droput</i>. Dallo stato di <i>dropout</i> si torna forzatamente nello stato di <i>idle</i> poichè ci si rimette in ascolto di eventuali altre richieste.
-    Il codice completo dell'attore che implementa questa FSM è disponibile nel file <a href="./resources/qak/wasteService.qak">wasteService.qak</a>.
+    <h4>WasteServiceCore</h4>
+    Questo componente è progettato come un <ks>Dispatcher</ks> di messaggi, quando riceve un messaggio <kc>dojob</kc> dal <kc>WasteServiceHandler</kc> avvia una catena di interazioni con 
+    il <kc>transportTrolley</kc> al fine di portare a conclusione l'operazione di prelievo e deposito. Al termine dell'azione di <kc>pickup</kc>, il <i>WasteServiceCore</i> 
+    invia un messaggio al <i>truck</i> per comunicargli di lasciare l'<kc>INDOOR</kc>. <br>
+    La figura seguente riporta lo schema d'interazione dei componenti: <br><br>
+    <img src="./resources/img/InteractionSchemaWSC.png" alt="" style="width: 45%; height: 45%;">
+    <br><br>
+    Come nel caso precedente il componente verrà implementato come una una <ks>coroutines Kotlin</ks> utilizzando il metalinguaggio QAk.
+    Di seguito viene riportato il progetto della macchina a stati finiti e la sua implementazione in linguaggio QAk.<br><br>
+    <img src="./resources/img/FSMwasteServiceCore.png" alt="" style="width:45% ; height:45% ;"> <br><br>
+    Nello stato <i><b>idle</b></i> il <i>WasteServiceCore</i> attende l'arrivo di un messaggio <kc>dropoutdone</kc> da parte del <i>transportTrolley</i> 
+    o <br>di un messaggio <kc>dojob</kc> da parte del <i>WasteServiceHandler</i>.
+    Nel primo caso il componente transita nello stato <i><b>backhome</b></i> ed invia al <i>transportTrolley</i> il messaggio <kc>gotohome</kc>, ritorna quindi in <i><b>idle</b></i>. <br>
+    Nel secondo caso il componente transita nello stato <b><i>pickup</i></b> in cui richiede al <i>transportTrolley</i> l'esecuzione di una <kc>pickup</kc>, rimanendo in attessa 
+    di una conferma di operazione avvenuta (<kc>pickupdone</kc>). Una volta ricevuta la conferma da parte del <i>transportTrolley</i>, il <i>WasteServiceCore</i> transita allo stato 
+    <i><b>dropout</b></i> in cui notifica al <i>truck</i> di liberare l'INDOOR e successivamente invia al <i>transportTrolley</i> un messaggio <kc>dropout</kc>, ritorna quindi allo 
+    stato <b><i>idle</i></b>. Si noti che, come <a href="#clear">suggerito</a> dagli analisti, dallo stato <i><b>pickup</b></i> si transita allo stato 
+    <i><b>clear</b></i> nel caso in cui arrivi un messaggio <kc>dropoutdone</kc> relativo ad una <i>dropout</i> precedente.
+    
+    
+   
 <pre>
 <key2>QActor</key2> wasteservicecore <key2>context</key2> ctxwasteservice{
     <key2>State</key2> init <key2>initial</key2> {
@@ -786,24 +879,49 @@ planner22Util.doPlan()</pre>
     }<key2>Transition</key2> t0 <key2>whenReply</key2> pickupdone -> dropout        
 
     <key2>State</key2> end {
-        ....
+        <key2>terminate</key2> 1
     }
 }</pre>
+    Il codice completo è disponibile in <a href="./resources/qak/wasteService.qak">wasteService.qak</a>.
+
+    <h4>Architettura Logica</h4>
+    La divisione del componente <kc>WasteService</kc> in due componenti distinti <kc>WasteServiceHandler</kc> e <kc>WasteServiceCore</kc>, comporta una sensibile modifica all'architettura 
+    logica del sistema, che assume la forma seguente: <br><br>
+    <img src="./resources/img/ArchLogicSprint1WSH_C.png" alt="" style="width:45% ; height:45% ;"> 
+
 </div>
-<div class="remark">
-    <h3>TransportTrolley Component</h3>
-</div>
+
 <div class="remark">
     <h3>ContainerManager Component</h3>
-    Il ContainerManager è il componente incaricato di gestire lo stato della Service Area. Verrà modellato come un componente che verrà chiamato dal WasteService al bisogno,
-    svincolandolo dalla responsabilità di valutare le richieste. Il ContainerManager potrà transitare in tre stati. <br>
-    <img src="./resources/img/FSM_containerManager.png" alt="" style="width:40% ; height:40% ;">
-    <ul>
-        <li><b>idle</b>: lo stato iniziale, in cui il ContainerManager non ha ancora ricevuto alcuna richiesta.</li>
-        <li><b>evaluation</b>: in cui il ContainerManager richiama il metodo:<b> canStore(material: Material, value: Double) : Boolean</b> della classe <b>WasteServiceState.kt</b></li>
-        <li><b>update</b>: lo stato in cui il ContainerManager aggiorna le risorse.</li>
-    Quando al WasteService arriva una storeWaste, manda un messaggio al ContainerManager per sapere se c'è spazio per il nuovo carico. Se c'è spazio, il ContainerManager risponde con un messaggio di evalOk, altrimenti con un messaggio di evalKo. <br>
-    Il codice dell'attore QaK che implementa questa FSM é consultabile in: <a href="./resources/qak/wasteService.qak">ContainerManager</a>
+    Il <kc>ContainerManager</kc> è il componente incaricato di gestire lo stato della <kc>Service Area</kc> e valutare le richieste per conto del <kc>WasteServiceHandler</kc>. <br>
+    La stato della <i>Service Area</i> è mantenuto in una <ks>data class Kotlin</ks> che espone la seguente interafaccia:
+    <pre>
+<key>enum</key> <key>class</key> Material {
+    PLASTIC, GLASS
+}
+
+<key>data class</key> ServiceAreState(
+    <key>private val</key> boxMaxWeight : MutableMap < Material, Double > = Material.values().associateWith { 0.0 }.toMutableMap(),
+    <key>private val</key> boxCurrentWeight : MutableMap < Material, Double > = Material.values().associateWith { 0.0 }.toMutableMap()
+) {
+    <key>fun</key> updateBoxWeight(material: Material, value : Double)
+    <key>fun</key> getCurrBoxWeight(material: Material) : Double 
+    <key>fun</key> canStore(material: Material, value: Double) : Boolean 
+    <key>fun</key> getMaxBoxWeight(material: Material) : Double
+}</pre>
+    La <kc>ServiceAreaState</kc>, il cui codice è consultabile <a href="./resources/kotlin/ServiceAreaState.kt">qui</a>, offre inoltre i metodi per effetutare la serializzazione e la deserializzazione dell'oggetto:
+    <pre>
+<key>fun</key> toJsonString() : String
+<key>companion object</key>{
+    <key>fun</key> fromJsonString(str : String) : ServiceAreaState
+}</pre>
+    Che rispettivamente, ritornano la rappresentazione <ks>JSON</ks> dell'oggetto e l'oggetto della classa ricostruito a partire dalla sua rappresentazione <i>JSON</i>. <br>
+    Per quanto riguarda il <i>ContainerManager</i>, sarà implementato come uba <ks>coroutines Kotlin</ks> utilizzando il metalinguaggio QAk. Di seguito sono riportati il progetto 
+    della macchina a stati finiti e la sua implementazione in QAk. <br><br>
+    <img src="./resources/img/FSMcontainerManager.png" alt="" style="width:45% ; height:45% ;">
+    <br><br>
+
+    Il codice dell'attore QAk che implementa questa FSM é consultabile in: <a href="./resources/qak/wasteService.qak">wasteService.qak</a>
     <pre>
 <key2>QActor</key2>containermanager <key2>context</key2> ctxwasteservice{
     <key2>State</key2> init <key2>initial</key2> {
@@ -827,11 +945,115 @@ planner22Util.doPlan()</pre>
     <key2>State</key2> end{
                 ....
     }
-            
 }</pre>
-       
+    
+    L'infrastruttura QAk ci permette, tra le altre cose, di sviluppare componenti (coroutines Kotlin) definiti in modo da essere delle risorse <ks>CoAP</ks> osservabili. <br>
+    Tale agevolazione ci permette, in maniera semplice, di predisporre il componente al soddisfacimento di esigenze future.
+    In particolare, nelle fasi successive del progetto, sarà necessario conoscere lo stato dei container della <i>Service Area</i>, per tale motivo il <i>ContainerManager</i> 
+    sarà progettato in modo da poter notificare agli interessati i cambiamenti all'interno della <i>Service Area</i>. <br>
+    Per fare questo sarà sufficente che il <i>ContainerManager</i> esegua il seguente comando:
+    <pre>
+[# val boxState  = wasteservice.state.ServiceAreaState() #]
+<key2>updateResource</key2>[#boxState.toJsonString()#]</pre>
+Questo comando inviera al <ks>server CoAP</ks> la stringa <i>JSON</i> che rappresenta l'oggetto di classe <i>ServiceAreaState</i>
 </div>
 
+<div class="remark">
+    <h3>TransportTrolley Component</h3>
+    Anche in questo caso si è scelto di seguire la strada consigliata dagli analisti. Pertanto, il <kc>transportTrolley</kc> è stato progettato come due componenti separati, 
+    uno dedito all'esecuzione delle azioni di movimento, l'altro dedito all'esecuzioni delle azioni di carico e scarico. Tuttavia, si è reso necessario l'introduzione di un terzo 
+    componente, che prenda in carico le richieste provenienti dal <kc>WasteServiceHandler</kc> e faccia da <i>orchestratore</i> per gli altri componenti. <br>
+    Il <i>transportTrolley</i> è stato quindi diviso in tre componenti:
+    <ul>
+        <li><b>TransportTrolleyCore</b></li>
+        <li><b>TransportTrolleyMover</b></li>
+        <li><b>TransportTrolleyExecutor</b></li>
+    </ul>
+
+    <h4>TransportTrolleyCore</h4>
+    Questo componente è progettato sulle basi del pattern <ks>Mediator</ks>, si occupa di ricevere richieste e messaggi dal <kc>WasteServiceCore</kc> e coordina gli altri
+    componenti (<kc>TransportTrolleyMover</kc>, <kc>TransportTrolleyExecutor</kc>) per soddisfare le richieste. <br>
+    La figura seguente riporta lo schema di interazione dei componenti: <br><br>
+    <img src="./resources/img/InteractionSchemaTTC.png" alt="" style="width:45% ; height:45% ;">
+    <br><br>
+
+    Anche questo componente verrà implementato come una <ks>coroutine Kotlin</ks> utilizzando il metalinguaggio QAk. Di seguito sono riportati il progetto della macchina 
+    a stati finiti e la sua implementazione in QAk. <br><br>
+    <img src="./resources/img/FSMtransportTrolleyCore.png" alt="" style="width:45% ; height:45% ;"><br><br>
+    Nello stato <i><b>idle</b></i> il <i>TransportTrolleyCore</i> rimane in attesa di un comando (<kc>pickup</kc>/<kc>dropout</kc>/<kc>gotohome</kc>) da parte del <i>WasteServiceCore</i>. <br>
+    Nel caso in cui arrivi il messaggio <kc>gotohome</kc>, il <i>TransportTrolleyCore</i> transita allo stato <i><b>bakcHome</b></i>, in cui richiede al <i>TransportTrolleyMover</i> di muovere il robot 
+    verso la posizione <kc>HOME</kc>, ritorna quindi allo stato <i><b>idle</b></i>. <br>
+    Nel caso in cui arrivi il messaggio <kc>pickup</kc>, il <i>TransportTrolleyCore</i> transita allo stato <i><b>pickupMove</b></i>, in cui richiede al <i>TransportTrolleyMover</i> di muovere il robot
+    verso l'<kc>INDOOR</kc> e rimane in attesa di un messaggio di conferma o errore da parte del <i>TransportTrolleyMover</i>. Se arriva una conferma allora il 
+    <i>TransportTrolleyCore</i> transita allo stato <i><b>pickupExec</b></i>, in cui chiede al <i>TransportTrolleyExecutor</i> di eseguire un'azione di carico, attende dunque 
+    una conferma o un messaggio di errore dallo stesso. Se arriva una conferma il componente transita allo stato <b><i>pickupRes</i></b> in cui invia una <kc>pickupdone</kc> al 
+    <i>WasteServiceCore</i>, rientra quindi allo stato <i><b>idle</b></i>.<br>
+    Nel caso in cui arrivi il messaggio <kc>dropout</kc>, l'iter da seguire è lo stesso del caso precedente l'unica differenza sta nelle destinazioni verso cui bisogna muovere 
+    il robot e nelle azioni da eseguire. <br>
+    Nel caso in cui un'azione di movimento o l'esecuzione di un'azione di carico/scarico generino un errore, sono stati previsti due stati in cui tale errore verrà gestito.
+    Il <i>TransportTrolleyCore</i> transita allo stato <i><b>moveErr</b></i> per gestire un errore di movimento. L'esecuzione di un movimento, genera errori solo nel caso 
+    in cui il robot fisico incontri qualche ostacolo sul suo percorso. Poi che da requisiti sappiamo che l'ambiente in cui opera il robot è privo di ostacoli, 
+    abbiamo deciso di gestire l'errore come segue: dopo aver ricevuto un messaggio di errore dal robot, il <i>TransportTrolleyMover</i> tenterà di completare il percorso 
+    per tre volte, se fallisce per tre volte consecutivamente invierà al <i>TransportTrolleyCore</i> il messaggio <kc>moveKo</kc>, quest'ultimo transiterà nello stato di errore 
+    sopracitato e richiederà assistenza. <br>
+    Per quanto ricguarda gli errori dovuti all'esecuzione di un'azione essi non sono gestiti in quanto il committente ha specificato che le azioni possono essere 
+    simulate con dei <ks>delay</ks>, pertanto risultano infallibili. <br> 
+
+    <pre>
+<key2>State</key2> init initial{
+}<key2>Goto</key2> idle
+
+<key2>State</key2> idle{
+}<key2>Transition</key2> t0 <key2>whenRequest</key2> pickup -> pickupMove
+                <key2>whenMsg</key2> dropout -> dropoutMove
+                <key2>whenMsg</key2> gotohome -> backHome
+                <key2>whenMsg</key2> exit -> end
+
+<key2>State</key2> pickupMove{
+}<key2>Transition</key2> t0 <key2>whenReply</key2> moveok -> pickupExec
+                <key2>whenReply</key2> moveko -> moveErr
+
+<key2>State</key2> pickupExec{
+}<key2>Transition</key2> t0 <key2>whenReply</key2> execok -> pickupRes
+                <key2>whenReply</key2> execko -> execErr
+
+<key2>State</key2> pickupRes{
+}<key2>Goto</key2> idle
+
+<key2>State</key2> dropoutMove{
+}<key2>Transition</key2> t0 <key2>whenReply</key2> moveok -> dropoutExec
+                <key2>whenReply</key2> moveko -> moveErr
+
+<key2>State</key2> dropoutExec{
+}<key2>Transition</key2> t0 <key2>whenReply</key2> execok -> dropoutRes
+                <key2>whenReply</key2> execko -> execErr
+
+<key2>State</key2> dropoutRes{
+}<key2>Goto</key2> idle
+
+<key2>State</key2> backHome{
+}<key2>Transition</key2> t0 <key2>whenReply</key2> moveok -> idle
+                <key2>whenReply</key2> moveko -> moveErr
+
+<key2>State</key2> moveErr{
+}<key2>Goto</key2> idle 
+
+<key2>State</key2> execErr{
+    <key3>//Still to be implemented</key3>
+}
+
+<key2>State</key2> end{
+    terminate 0
+}</pre>
+
+Il codice completo è consultabile in <a href="./resources/qak/transportTrolley.qak">transportTrolley.qak</a>
+
+<h4>TransportTrolleyMover</h4>
+Questo componente è progettato come un attuatore, il suo unico compito è quello di muovere il robot. Per fare ciò, fa uso di un planner (<a href="./resources/kotlin/planner22Util2.kt">planner22Util.kt</a>), 
+che calcola il percorso verso una data destinazione, e di un executor (<a href="./resources/qak/basicrobot.qak">basicrobot.qak</a>) che esegue il percorso calcolato.
+La seguente figura riporta lo schema d'interazione dei componenti: <br><br>
+<img src="./resources/img/InteractionSchemaTTM.png" alt="" style="width:45% ; height:45% ;">
+</div>
 	      	
 <br/><br/> 	
 

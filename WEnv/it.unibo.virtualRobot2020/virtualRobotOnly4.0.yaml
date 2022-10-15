@@ -1,0 +1,17 @@
+version: '3'
+services:
+  wenv:
+    image: docker.io/natbodocker/virtualrobotdisi:4.0
+    ports:
+      - 8090:8090
+      - 8091:8091
+
+## -------------------------------------------------------------
+## TODO See https://docs.docker.com/compose/startup-order/
+## Compose does not wait until a container is “ready” (whatever that means for your particular application)
+## - only until it’s running. There’s a good reason for this.
+## The best solution is to perform this check in your application code,
+## -------------------------------------------------------------
+## docker-compose up -d
+## docker-compose down
+## docker-compose run --service-ports wenv    starts wenv

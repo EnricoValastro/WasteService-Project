@@ -13,6 +13,7 @@ Dispatch update  : update(MAT,QUA)
 Request  storewaste   : storewaste(MAT, QUA)
 Reply 	 loadaccept   : loadaccept(_)
 Reply 	 loadrejected : loadrejected(_)
+Dispatch leaveindoor  : leaveindoor(_)
 
 /* WasteServiceCore Message */
 Dispatch dojob : dojob(MAT)
@@ -27,9 +28,11 @@ Dispatch dropoutdone : dropoutdone(_)
 Dispatch gotohome 	 : gotohome(_)
 
 Context ctxtransporttrolley ip [host="127.0.0.1" port=8056]
+Context ctxtruck ip [host="127.0.0.1" port=8066]
 Context ctxwasteservice ip [host="localhost" port=8055]
 
 ExternalQActor transporttrolleycore context ctxtransporttrolley
+ExternalQActor smartdevice context ctxtruck
 
 /* *********************************************************************************************
  * ---------------------------------------------------------------------------------------------
@@ -196,6 +199,7 @@ QActor wasteservicecore context ctxwasteservice{
 	}Transition t0 whenReply pickupdone -> dropout
 	
 	State dropout{
+		forward smartdevice -m leaveindoor : leaveindoor(_)
 		println("$name 	| 	asking for dropout")
 		forward transporttrolleycore -m dropout : dropout($REQMATERIAL)
 	}Goto idle
