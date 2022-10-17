@@ -5,38 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="da66c02c-91d2-47f7-b256-28ec376cd4ea" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../../.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Sicilyplanner22/src/unibo/kotlin/planner22Util.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Sicilyplanner22/src/unibo/kotlin/planner22Util.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/7.4.2/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/7.4.2/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/7.4.2/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/7.4.2/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/Arch_transporttrolley.py" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/Arch_transporttrolley.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/build2022.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/build2022.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/src/it/unibo/transporttrolleycore/Transporttrolleycore.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/src/it/unibo/transporttrolleycore/Transporttrolleycore.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/src/it/unibo/transporttrolleyexecutor/Transporttrolleyexecutor.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/src/it/unibo/transporttrolleyexecutor/Transporttrolleyexecutor.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/resources/utility/ServiceAreaConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/resources/utility/ServiceAreaDestinationConfig.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/src/it/unibo/transporttrolleymover/Transporttrolleymover.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/src/it/unibo/transporttrolleymover/Transporttrolleymover.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/src/transportTrolley.qak" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/src/transportTrolley.qak" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/transporttrolley.pl" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/transporttrolley.pl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/wasteServiceSystemConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/wasteServiceSystemConfig.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.4/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.4/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.4/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.4/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Arch_wasteservice.py" beforeDir="false" afterPath="$PROJECT_DIR$/Arch_wasteservice.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build2022.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build2022.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/wasteservice/state/WasteServiceState.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unibo/containermanager/Containermanager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unibo/containermanager/Containermanager.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unibo/wasteservicecore/Wasteservicecore.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unibo/wasteservicecore/Wasteservicecore.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unibo/wasteservicehandler/Wasteservicehandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unibo/wasteservicehandler/Wasteservicehandler.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wasteService.qak" beforeDir="false" afterPath="$PROJECT_DIR$/src/wasteService.qak" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wasteservice.pl" beforeDir="false" afterPath="$PROJECT_DIR$/wasteservice.pl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../userDocs/resources/kotlin/planner22Util2.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../userDocs/resources/kotlin/planner22Util2.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../userDocs/sprint1.html" beforeDir="false" afterPath="$PROJECT_DIR$/../userDocs/sprint1.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

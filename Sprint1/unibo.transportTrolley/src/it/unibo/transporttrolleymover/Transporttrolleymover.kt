@@ -53,8 +53,8 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 												try{
 													destination = payloadArg(0).trim().uppercase()
 												
-													xDestination = utility.ServiceAreaConfig.getXDestination(destination)
-													yDestination = utility.ServiceAreaConfig.getYDestination(destination)
+													xDestination = utility.ServiceAreaDestinationConfig.getXDestination(destination)
+													yDestination = utility.ServiceAreaDestinationConfig.getYDestination(destination)
 													
 												}catch(e : Exception){}	
 						}

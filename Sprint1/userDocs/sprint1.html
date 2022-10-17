@@ -923,7 +923,7 @@ Il prototipo d'interazione sarebbe il seguente:
 
     Il codice dell'attore QAk che implementa questa FSM é consultabile in: <a href="./resources/qak/wasteService.qak">wasteService.qak</a>
     <pre>
-<key2>QActor</key2>containermanager <key2>context</key2> ctxwasteservice{
+<key2>QActor</key2> containermanager <key2>context</key2> ctxwasteservice{
     <key2>State</key2> init <key2>initial</key2> {
                 ....
     }<key2>Goto</key2> idle
@@ -1000,61 +1000,214 @@ Questo comando inviera al <ks>server CoAP</ks> la stringa <i>JSON</i> che rappre
     simulate con dei <ks>delay</ks>, pertanto risultano infallibili. <br> 
 
     <pre>
-<key2>State</key2> init initial{
-}<key2>Goto</key2> idle
+<key2>QActor</key2> transporttrolleycore <key2>context</key2> ctxtransporttrolley{
+    <key2>State</key2> init initial{
+    }<key2>Goto</key2> idle
 
-<key2>State</key2> idle{
-}<key2>Transition</key2> t0 <key2>whenRequest</key2> pickup -> pickupMove
-                <key2>whenMsg</key2> dropout -> dropoutMove
-                <key2>whenMsg</key2> gotohome -> backHome
-                <key2>whenMsg</key2> exit -> end
+    <key2>State</key2> idle{
+    }<key2>Transition</key2> t0 <key2>whenRequest</key2> pickup -> pickupMove
+                    <key2>whenMsg</key2> dropout -> dropoutMove
+                    <key2>whenMsg</key2> gotohome -> backHome
+                    <key2>whenMsg</key2> exit -> end
 
-<key2>State</key2> pickupMove{
-}<key2>Transition</key2> t0 <key2>whenReply</key2> moveok -> pickupExec
-                <key2>whenReply</key2> moveko -> moveErr
+    <key2>State</key2> pickupMove{
+    }<key2>Transition</key2> t0 <key2>whenReply</key2> moveok -> pickupExec
+                    <key2>whenReply</key2> moveko -> moveErr
 
-<key2>State</key2> pickupExec{
-}<key2>Transition</key2> t0 <key2>whenReply</key2> execok -> pickupRes
-                <key2>whenReply</key2> execko -> execErr
+    <key2>State</key2> pickupExec{
+    }<key2>Transition</key2> t0 <key2>whenReply</key2> execok -> pickupRes
+                    <key2>whenReply</key2> execko -> execErr
 
-<key2>State</key2> pickupRes{
-}<key2>Goto</key2> idle
+    <key2>State</key2> pickupRes{
+    }<key2>Goto</key2> idle
 
-<key2>State</key2> dropoutMove{
-}<key2>Transition</key2> t0 <key2>whenReply</key2> moveok -> dropoutExec
-                <key2>whenReply</key2> moveko -> moveErr
+    <key2>State</key2> dropoutMove{
+    }<key2>Transition</key2> t0 <key2>whenReply</key2> moveok -> dropoutExec
+                    <key2>whenReply</key2> moveko -> moveErr
 
-<key2>State</key2> dropoutExec{
-}<key2>Transition</key2> t0 <key2>whenReply</key2> execok -> dropoutRes
-                <key2>whenReply</key2> execko -> execErr
+    <key2>State</key2> dropoutExec{
+    }<key2>Transition</key2> t0 <key2>whenReply</key2> execok -> dropoutRes
+                    <key2>whenReply</key2> execko -> execErr
 
-<key2>State</key2> dropoutRes{
-}<key2>Goto</key2> idle
+    <key2>State</key2> dropoutRes{
+    }<key2>Goto</key2> idle
 
-<key2>State</key2> backHome{
-}<key2>Transition</key2> t0 <key2>whenReply</key2> moveok -> idle
-                <key2>whenReply</key2> moveko -> moveErr
+    <key2>State</key2> backHome{
+    }<key2>Transition</key2> t0 <key2>whenReply</key2> moveok -> idle
+                    <key2>whenReply</key2> moveko -> moveErr
 
-<key2>State</key2> moveErr{
-}<key2>Goto</key2> idle 
+    <key2>State</key2> moveErr{
+    }<key2>Goto</key2> idle 
 
-<key2>State</key2> execErr{
-    <key3>//Still to be implemented</key3>
-}
+    <key2>State</key2> execErr{
+        <key3>//Still to be implemented</key3>
+    }
 
-<key2>State</key2> end{
-    terminate 0
+    <key2>State</key2> end{
+        terminate 0
+    }
 }</pre>
 
+    Il codice completo è consultabile in <a href="./resources/qak/transportTrolley.qak">transportTrolley.qak</a>
+
+    <h4>TransportTrolleyMover</h4>
+    Questo componente è progettato come un <ks>attuatore</ks>, il suo unico compito è quello di muovere il robot. Per fare ciò, fa uso di un planner (<a href="./resources/kotlin/planner22Util2.kt">planner22Util.kt</a>), 
+    che calcola il percorso verso una data destinazione, e di un executor (<a href="./resources/qak/basicrobot.qak">basicrobot.qak</a> - <kc>pathexec</kc>) che esegue il percorso calcolato.
+    La seguente figura riporta lo schema d'interazione dei componenti: <br><br>
+    <img src="./resources/img/InteractionSchemaTTM.png" alt="" style="width:45% ; height:45% ;"> <br><br>
+    Anche questo componente viene implementato facendo uso del metalinguaggio QAk, di seguito sono riportati la sua <ks>FSM</ks> e il codice QAk che la implementa. <br><br>
+    <img src="./resources/img/FSMtransportTrolleyMover.png" alt="" style="width:45% ; height:45% ;"> <br><br>
+    Nello stato <i><b>idle</b></i> il componente resta in attesa di un messaggio <kc>moveto</kc>, all'arrivo di questo messaggio transita nello stato <i><b>destinationEval</b></i>, 
+    in cui, in base al payload del messaggio, comprende la destinazione verso cui deve muoversi il robot e facendo uso di una utility Kotlin anche le coordinate della destinazione.
+    L'utility in questione è consultabile in <a href="./resources/kotlin/ServiceAreaConfig.kt">ServiceAreaConfig.kt</a>.<br>
+    Il componente transita quindi allo stato <i><b>plan</b></i>, in cui servendosi dell'utility Kotlin <a href="./resources/kotlin/planner22Util2.kt">planner22Util.kt</a>, calcola 
+    il percorso verso la destinazione. <br>
+    Si transita quindi allo stato <i><b>moveExec</b></i> in cui il componente comunica al <kc>pathExec</kc> il path da eseguire. Successivamente attende una risposta positiva o negativa dal 
+    <i>pathExec</i>. In caso di esito positivo transita allo stato <i><b>moveOk</b></i>, in cui risponde al <i>TransportTrolleyCore</i> con un messaggio di conferma. Nel caso in cui 
+    l'esito sia negativo il componente transita allo stato <i><b>moveko</b></i> in cui riprova per un massimo di tre volte ad eseguire il percorso, se per tre volte consecutive fallisce, invia un messaggio di errore che mette fine 
+    all'esecuzione dell'intero sistema.
+
+    <pre>
+<key2>QActor</key2> transporttrolleymover <key2>context</key2> ctxtransporttrolley{
+    <key2>State</key2> init <key2>initial</key2>{
+        [# unibo.kotlin.planner22Util.initAI() #]
+    }<key2>Goto</key2> idle
+    
+    <key2>State</key2> idle{
+    }<key2>Transition</key2> t0 <key2>whenRequest</key2> moveto -> destinationEval
+                    <key2>whenMsg</key2> exit -> end
+    
+    <key2>State</key2> destinationEval{
+    }<key2>Goto</key2> plan
+    
+    <key2>State</key2> plan{
+        [#
+            unibo.kotlin.planner22Util.setGoal(xDestination, yDestination)
+            unibo.kotlin.planner22Util.doPlan()
+            PATH = unibo.kotlin.planner22Util.get_actionSequenceAsString()
+        #]
+    }<key2>Goto</key2> execMove
+    
+    <key2>State</key2> execMove{
+    }<key2>Transition</key2> t0 <key2>whenReply</key2> dopathdone -> moveOk
+                    <key2>whenReply</key2> dopathfail -> moveKo
+                    
+    <key2>State</key2> moveOk{
+    }<key2>Goto</key2> idle 
+    
+    <key2>State</key2> moveKo{
+    }<key2>Transition</key2> t0 whenReply dopathdone -> moveOk
+                    <key2>whenReply</key2> dopathfail -> moveKo 
+                    
+    <key2>State</key2> end{
+        <key2>terminate</key2> 0
+    }
+}</pre>
 Il codice completo è consultabile in <a href="./resources/qak/transportTrolley.qak">transportTrolley.qak</a>
 
-<h4>TransportTrolleyMover</h4>
-Questo componente è progettato come un <ks>attuatore</ks>, il suo unico compito è quello di muovere il robot. Per fare ciò, fa uso di un planner (<a href="./resources/kotlin/planner22Util2.kt">planner22Util.kt</a>), 
-che calcola il percorso verso una data destinazione, e di un executor (<a href="./resources/qak/basicrobot.qak">basicrobot.qak</a>) che esegue il percorso calcolato.
-La seguente figura riporta lo schema d'interazione dei componenti: <br><br>
-<img src="./resources/img/InteractionSchemaTTM.png" alt="" style="width:45% ; height:45% ;">
+<h4>TransportTrolleyExecutor</h4>
+Come nel caso precedente, questo componente è stato progettato per essere un <ks>attuatore</ks>. Il suo unico compito è quello di servire le richieste <kc>execaction</kc> provenienti dal 
+<kc>TransportTrolleyCore</kc>. Il componente simula le azioni di carico/scarico tramite un <ks>delay</ks> variabile: <br>
+<pre>
+delay(kotlin.random.Random.nextLong(from : <key>Long</key>, until : <key>Long</key>))</pre>
+La figura seguente riporta lo schema d'interazione dei componenti: <br><br>
+<img src="./resources/img/InteractionSchemaTTE.png" alt="" style="width:45% ; height:45% ;"> <br><br>
+
+Dal momento che questo componente esegue solo un <i>delay</i>, si potrebbe pensare di implementarlo come una utility che il <i>TransportTrolleyCore</i> richiama al momento del bisogno.
+Tuttavia, questo tipo d'interazione bloccherebbe il flusso di esecuzione del <i>TransportTrolleyCore</i> fino alla fine del <i>delay</i>. Per tale motivo si sceglie di 
+implementare questo componente come un attore QAk che permette un tipo di interazione <ks>sincrona non bloccante</ks>. Inoltre, procedendo in questo modo, si lascia una 
+"strada" aperta, nel caso in cui in futuro il componente debba essere esteso con altre funzionalità. <br>
+Di seguito vengono riportati il progetto della macchina a stati finiti e il codice QAk che la implementa:
+    
+<img src="./resources/img/FSMtransportTrolleyExe.png" alt="" style="width:45% ; height:45% ;"> <br><br>
+Nello stato <i><b>idle</b></i> il componente resta in attesa di un messaggio <kc>execaction</kc>, all'arrivo di questo messaggio transita nello stato <i><b>actionEval</b></i>, 
+in cui, in base al payload del messaggio, comprende l'azione da eseguire. Transita quindi allo stato <i><b>execPickup</b></i> o <i><b>execDropout</b></i> e simula l'esecuzione tramite un <i>delay</i>. <br>
+Il componente quindi risponde al <i>TransportTrolleyCore</i> con un messaggio di conferma. Ritorna quindi allo stato <i><b>idle</b></i>. 
+<pre>
+<key2>QActor</key2> transporttrolleyexecutor <key2>context</key2> ctxtransporttrolley{
+
+    <key2>State</key2> init <key2>initial</key2>{
+    }<key2>Goto</key2> idle
+    
+    <key2>State</key2> idle{
+    }<key2>Transition</key2> t0 <key2>whenRequest</key2> execaction -> actionEval
+                    <key2>whenMsg</key2> exit -> end
+    
+    <key2>State</key2> actionEval{
+    }<key2>Goto</key2> execPickup <key2>if</key2>[#action.equals("PICKUP")#]
+                        <key2>else</key2> execDropout
+    
+    <key2>State</key2> execPickup{
+    }<key2>Goto</key2> idle
+    
+    <key2>State</key2> execDropout{
+    }<key2>Goto</key2> idle
+    
+    <key2>State</key2> end{
+        <key2>terminate</key2> 0
+    }
+}</pre>
+    Il codice completo è consultabile in <a href="./resources/qak/transportTrolley.qak">transportTrolley.qak</a>
+
 </div>
-	      	
+
+<div class="remark">
+    <h3>Architettura Logica</h3>
+    La divisione del componente <kc>TransportTrolley</kc> in tre componenti distinti <kc>TransportTrolleyCore</kc>, <kc>TransportTrolleyMover</kc> e <kc>TransportTrolleyExecutor</kc>, e 
+    le precedenti modfiche apportate al componente <kc>WasteService</kc>, comportano un sensibile cambiamento all'architettura logica del sistema, che assume la forma seguente: <br><br>
+    <img src="./resources/img/ArchLogicSprint1New.png" alt="" style="width:55% ; height:55% ;">
+</div>
+
+<div class="remark">
+    <h3>Planner22Util</h3>
+    L'utilizzo del <i>planner22Util</i> per calcolare il percorso verso una destinazione, ha richiesto l'esensione delle sue funzionalità. <br>
+    Le problematiche sorte consistevano nell'aggiornamento della mappa interna al planner, più nello specifico è stato necessario aggiornare la posizione corrente del robot 
+    dopo ogni <i>path</i> portato a termine e non. <br> In questo modo, al successivo utilizzo del <i>planner22Util</i> il calcolo del percorso avviene partendo dalla posizione 
+    attuale del robot e non dalla posizione <i>(0, 0)</i>. Le estensioni apportate sono riportate di seguito e il codice completo è consultabile in <a href="./resources/kotlin/planner22Util2.kt">planner22Util.qak</a>:
+    <pre>
+@JvmStatic <key>fun</key> updateAfterPath(path : String){       <key3>// Funzione per aggiornare la posizione dopo dopathdone</key3>
+    <key>var</key> mypath = path
+    <key>while</key> (!mypath.equals(<key3>""</key3>)){
+        var mov = <key3>""</key3> + mypath[<key>0</key>]
+        mypath = mypath.substring(<key>1</key>)
+        updateMap(mov,<key3>""</key3>)
+    }
+}</pre>
+    <pre>
+@JvmStatic <key>fun</key> updateAfterFail( path: String ){      <key3>// Funzione per aggiornare la posizione dopo dopathfail</key3>
+    <key>var</key> mypath = get_actionSequenceAsString()
+    <key>while</key> (!mypath.equals(path)){
+        var mov = <key3>""</key3> + mypath[<key>0</key>]
+        mypath = mypath.substring(<key>1</key>)
+        updateMap(mov,<key3>""</key3>)
+    }
+}</pre>
+    Affinche il <kc>TransportTrolleyMover</kc> sia in grado di utilizzare correttamente il <i>planner22Util</i>, occorre che esso sia a conoscenza delle coordinate cartesiane 
+    delle possibili destinazioni. Come consigliato dagli analisti, le informazione sulla configurazione della <kc>Service Area</kc> sono mantenute in un file di configurazione 
+    <a href="./resources/json/wasteServiceSystemConfig.json">wasteServiceSystemConfig.json</a>. Per permettere al <i>TransportTrolleyMover</i> di accedere a tali informazioni 
+    è stata creata un <i>utility kotlin</i> che legge il file di configurazione e restituisce le coordinate cartesiane di una destinazione data in input. Il codice è consultabile 
+    in <a href="./resources/kotlin/ServiceAreaDestinationConfig.kt">ServiceAreaDestinationConfig.kt</a>
+    <pre>
+<key>companion object</key> {
+    <key>val</key> config = File("wasteServiceSystemConfig.json").readText(StandardCharsets.UTF_8)
+    <key>val</key> JsonObject = JSONObject(config)
+    <key>val</key> LocJsonObj = JSONObject(JsonObject.get("LOCATION").toString())
+
+    <key>fun</key> getXDestination(pos : String) : Int{
+        <key>return</key> LocJsonObj.getJSONArray(pos).get(0).toString().toInt()
+    }
+    <key>fun</key> getYDestination(pos : String) : Int{
+        <key>return</key> LocJsonObj.getJSONArray(pos).get(1).toString().toInt()
+    }
+}
+    </pre>
+</div>
+
+<h2>Test Plan</h2>
+<div class="remark">
+    Coming soon...
+</div>
+
 <br/><br/> 	
 
 <div style="background-color:rgba(60, 131, 186, 0.9); width:50%;text-align:center;color:white; margin-left: 25%; border-radius: 25px;" >

@@ -208,8 +208,8 @@ QActor transporttrolleymover context ctxtransporttrolley{
 				try{
 					destination = payloadArg(0).trim().uppercase()
 				
-					xDestination = utility.ServiceAreaConfig.getXDestination(destination)
-					yDestination = utility.ServiceAreaConfig.getYDestination(destination)
+					xDestination = utility.ServiceAreaDestinationConfig.getXDestination(destination)
+					yDestination = utility.ServiceAreaDestinationConfig.getYDestination(destination)
 					
 				}catch(e : Exception){}	
 			#]	

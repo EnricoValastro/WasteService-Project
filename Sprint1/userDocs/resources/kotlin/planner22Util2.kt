@@ -175,9 +175,9 @@ object planner22Util {
 	}
 
 /*
- * ------------------------------------------------
- * For VaReSi project
- * ------------------------------------------------
+ * ---------------------------------------------------
+ * For WasteService-project VALASTRO-SIMONITTO-REITANO
+ * ---------------------------------------------------
 */
 
 	@JvmStatic fun get_actionSequenceAsString():String{ //funzione per tornare il path in stringa
