@@ -69,7 +69,7 @@ object planner22Util {
                 val robotState = state as RobotState
 				(robotState.x == x && robotState.y == y)
             }
-			showMap()
+			//showMap()
          } catch (e: Exception) {
              //e.printStackTrace()
      		}
@@ -175,9 +175,9 @@ object planner22Util {
 	}
 
 /*
- * ------------------------------------------------
- * For VaReSi project
- * ------------------------------------------------
+ * ---------------------------------------------------
+ * For WasteService-project VALASTRO-SIMONITTO-REITANO
+ * ---------------------------------------------------
 */
 
 	@JvmStatic fun get_actionSequenceAsString():String{ //funzione per tornare il path in stringa
