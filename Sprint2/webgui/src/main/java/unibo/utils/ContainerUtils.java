@@ -41,7 +41,7 @@ public class ContainerUtils {
         return (CoapConnection) conn;
     }
 
-   /* public static void sendMsg() {
+    public static void sendMsg() {
         try {
             IApplMessage msg = CommUtils.buildDispatch("webgui", "getDatatoG", "getDatatoG(_)", "containermanager");
             ColorsOut.outappl("ContainerUtils | sendMsg msg:" + msg + " conn=" + conn, ColorsOut.BLUE);
@@ -50,5 +50,5 @@ public class ContainerUtils {
         } catch (Exception e) {
             ColorsOut.outerr("ContainerUtils | sendMsg on:" + conn + " ERROR:" + e.getMessage());
         }
-    }*/
+    }
 }

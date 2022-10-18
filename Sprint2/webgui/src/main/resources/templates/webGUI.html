@@ -15,27 +15,25 @@
 
 <form action="update" method="post" class="p-4">
     <!-- the form-data is sent to the path specified in the action attribute -->
-    <input type="text" size="20" id="configurespec" name="ipaddr" th:value="${containertip}">
+    <input type="text" size="20" id="configurespec" name="ipaddr" th:value="${ipaddr}">
     <input type="submit" value="Connect" id="button_C">
 </form>
 
-<div class="col-4 text-danger">
+<div class="col-5 text-danger">
     <b><span th:text="${containertip}">not connected</span></b>
 </div>
-
 <div id="messageArea"  class="messageAreaStyle"></div>
 <div class="container-fluid">
     <div class="card iss-bg-robotarea text-dark">
-   <!--     <div class="card-header px-1">Robot:</div> -->
-        <div class="card-content px-1">
-                <span id="Display" >
-              <!--    <i class="bi bi-robot"></i>  State transport trolley: <p id="statett" style="display:inline">loading...</p><br><br> -->
-              <!--      Current position: <p id="position" style="display:inline">...</p><br><br> -->
-                    Capacity plastic box: <span text="${plastic}" id="plasticprog">...</span>
-                <!--    Capacity glass box: <p id="gb" style="display:inline">...</p><br><br> -->
 
-                </span>
+        <div id="glassSpan" class="divSpan">
+            <span text="${glass}" id="glassprog">...</span>
         </div>
+
+        <div id="plasticSpan" class="divSpan">
+            <span text="${glass}" id="plasticprog">...</span>
+        </div>
+
     </div>
 </div>
 <!--Footer-->
@@ -54,6 +52,7 @@
 <script src="sockjs.min.js"></script>
 <script src="ioutils.js"></script>
 <script src="wsminimal.js"></script>
+<script src="app.js"></script>
 <script>connect()</script>  <!-- connect definita in wsminimal-->
 </body>
 </html>

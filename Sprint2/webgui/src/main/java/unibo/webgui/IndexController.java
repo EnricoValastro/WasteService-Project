@@ -23,6 +23,9 @@ public class IndexController {
     @Value("${container.plastic}")
     String plastic;
 
+    @Value("${container.glass}")
+    String glass;
+
     protected String buildThePage(Model viewmodel){
         setConfigParams(viewmodel);
         return mainPage;
@@ -30,6 +33,7 @@ public class IndexController {
     protected void setConfigParams(Model viewmodel) {
         viewmodel.addAttribute("containertip", containertip);
         viewmodel.addAttribute("plastic", plastic);
+        viewmodel.addAttribute("glass", glass);
 
     }
 
@@ -44,8 +48,8 @@ public class IndexController {
         viewmodel.addAttribute("containertip", containertip);
         ContainerUtils.connectWithContainerUsingTcp(ipaddr);
         CoapConnection conn = ContainerUtils.connectWithContainerUsingCoap(ipaddr);
-      //  ContainerUtils.sendMsg();
         conn.observeResource(new ContainerCoapObserver());
+        ContainerUtils.sendMsg();
         return buildThePage(viewmodel);
     }
 

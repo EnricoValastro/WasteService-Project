@@ -22,18 +22,22 @@ wsminimal.js
         }
         socket = new WebSocket(addr);
 
-        socket.onopen = function (event) {
+        /*socket.onopen = function (event) {
             //console.log("Connected to " + addr);
             setMessageToWindow(infoDisplay,"Connected to " + addr);
-        };
+        };*/
 
         socket.onmessage = function (event) {
-            //alert(`Got Message: ${event.data}`);
             msg = event.data;
-            //alert(`Got Message: ${msg}`);
             console.log("ws-status:" + msg);
-            if( msg.includes("path") ) setMessageToWindow(pathexecDisplay,msg);
-            else setMessageToWindow(robotDisplay,msg); //""+`${event.data}`*/
+
+            let container = JSON.parse(msg)
+            let plastic = container.boxCurrentWeight['PLASTIC'];
+            let glass = container.boxCurrentWeight['GLASS'];
+
+            setMessageToWindow(plasticprog, plastic.toString());
+            setMessageToWindow(glassprog,glass.toString());
+
          };
     }//connect
 
