@@ -116,8 +116,8 @@ QActor wasteservicehandler context ctxwasteservice{
 	State init initial{
 		
 		/*--------------------------------------------------------------------------------------*/
-		request wasteservicehandler -m storewaste : storewaste(GLASS, 300)
-		request wasteservicehandler -m storewaste : storewaste(PLASTIC, 200)
+		//request wasteservicehandler -m storewaste : storewaste(GLASS, 300)
+		//request wasteservicehandler -m storewaste : storewaste(PLASTIC, 200)
 		/*--------------------------------------------------------------------------------------*/
 		
 		println("$name	|	starting...")
