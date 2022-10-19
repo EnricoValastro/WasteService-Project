@@ -5,28 +5,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="da66c02c-91d2-47f7-b256-28ec376cd4ea" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../Sicilyplanner22/src/unibo/kotlin/planner22Util.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Sicilyplanner22/src/unibo/kotlin/planner22Util.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/7.4.2/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/7.4.2/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/7.4.2/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/7.4.2/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/7.4.2/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/7.4.2/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/7.4.2/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/7.4.2/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.basicrobot22/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/dependencies-accessors/dependencies-accessors.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/dependencies-accessors/dependencies-accessors.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.idea/.name" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/resources/utility/ServiceAreaConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/resources/utility/ServiceAreaDestinationConfig.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/src/it/unibo/transporttrolleymover/Transporttrolleymover.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/src/it/unibo/transporttrolleymover/Transporttrolleymover.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/src/transportTrolley.qak" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/src/transportTrolley.qak" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.4/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.4/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.4/dependencies-accessors/dependencies-accessors.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.4/dependencies-accessors/dependencies-accessors.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.4/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.4/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.4/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.4/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.4/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.4/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.4/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.4/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../userDocs/resources/kotlin/planner22Util2.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../userDocs/resources/kotlin/planner22Util2.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../userDocs/sprint1.html" beforeDir="false" afterPath="$PROJECT_DIR$/../userDocs/sprint1.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,18 +56,48 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2FqRGqV9T6a9YcgrMp104gXcSCe" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-  </component>
-  <component name="RunManager">
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/Users/enricovalastro/Desktop/WasteService-Project/Sprint1/unibo.wasteService",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0"
+  }
+}]]></component>
+  <component name="RunManager" selected="Gradle.TestProva">
+    <configuration name="TestProva" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;TestProva&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
     <configuration name="MainCtxwasteserviceKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="it.unibo.ctxwasteservice.MainCtxwasteserviceKt" />
       <module name="unibo.wasteservice.main" />
@@ -88,6 +120,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.TestProva" />
         <item itemvalue="Kotlin.MainCtxwasteserviceKt" />
       </list>
     </recent_temporary>
@@ -104,6 +137,8 @@
       <workItem from="1665217874834" duration="2282000" />
       <workItem from="1665386152804" duration="762000" />
       <workItem from="1665388562422" duration="707000" />
+      <workItem from="1666185035180" duration="233000" />
+      <workItem from="1666185548884" duration="1296000" />
     </task>
     <servers />
   </component>
