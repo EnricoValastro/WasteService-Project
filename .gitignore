@@ -1,7 +1,4 @@
 **/.DS_Store
-Sprint1/unibo.basicrobot22/.gradle/
-Sprint1/unibo.basicrobot22/.idea/
-Sprint1/unibo.transportTrolley/.gradle/
-Sprint1/unibo.transportTrolley/.idea/
-Sprint1/unibo.wasteService/.gradle/
-Sprint1/unibo.wasteService/.idea/
+*.lock
+*.bin
+*.idea

@@ -19,13 +19,11 @@ import kotlin.test.assertTrue
 class TestWasteServiceHandler {
 
     private lateinit var conn: Interaction2021
-    private lateinit var obs: TypedCoapTestObserver<ServiceAreaState>   //Un observer di tipo ServiceAreaState
     private var setup = false
 
-    @BeforeClass
+    @Before
     fun testSetup(){
         if(!setup){
-            println(setup)
             println("TestWasteServiceHandler    |   setup...")
 
             startMockCtx()
@@ -49,21 +47,13 @@ class TestWasteServiceHandler {
             } catch (e: Exception) {
                 println("TestWasteServiceHandler    |   connection failed...")
             }
-            //startObs("localhost:8055")
-
-            //obs.getNext()
-
             setup = true
-            println(setup)
-        }else{
-            //obs.clearHistory()
         }
     }
 
     fun startMockCtx(){
         println("TestWasteServiceHandler    |   launching mockCtx...")
         val mockCtxScope = CoroutineScope(CoroutineName("CtxScope"))
-        //while(true){
         mockCtxScope.launch {
             val selectorManager = SelectorManager(Dispatchers.IO)
             val serverSocket    = aSocket(selectorManager).tcp().bind("127.0.0.1", 8056)
@@ -76,32 +66,6 @@ class TestWasteServiceHandler {
                 socket.close()
             }
         }
-        //}
-
-    }
-
-
-    fun startObs(addr: String?) {
-        println("TestWasteServiceHandler    |   starting observer...")
-        val setupOk = ArrayBlockingQueue<Boolean>(1)
-        object : Thread() {
-            override fun run() {
-                obs = TypedCoapTestObserver{
-                    wasteservice.state.ServiceAreaState.fromJsonString(it)
-                }
-                val ctx = "ctxwasteservice"
-                val act = "wasteservicehandler"
-                val path = "$ctx/$act"
-                val coapConn = CoapConnection(addr, path)
-                coapConn.observeResource(obs)
-                try {
-                    setupOk.put(true)
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                }
-            }
-        }.start()
-        setupOk.take()
     }
 
     @Test
@@ -116,6 +80,7 @@ class TestWasteServiceHandler {
         }
         assertTrue { answ.contains("loadaccept") }
     }
+
     @Test
     fun testLoadReject(){
         println("TestWasteServiceHandler    |   testLoadReject...")
@@ -126,10 +91,7 @@ class TestWasteServiceHandler {
         } catch (e: Exception) {
             println("TestWasteServiceHandler    |   request failed...")
         }
-        assertTrue { answ.contains("loadreject") }
+        assertTrue { answ.contains("loadrejected") }
     }
-
-
-
 
 }
