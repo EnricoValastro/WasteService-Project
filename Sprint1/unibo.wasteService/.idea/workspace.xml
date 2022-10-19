@@ -11,7 +11,9 @@
       <change beforePath="$PROJECT_DIR$/.gradle/7.4/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.4/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/TestWasteServiceHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/test/TestWasteServiceHandler.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unibo/containermanager/Containermanager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unibo/containermanager/Containermanager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/wasteService.qak" beforeDir="false" afterPath="$PROJECT_DIR$/src/wasteService.qak" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/unibo/coapobs/TypeCoapTestObserver.kt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,7 +69,30 @@
     &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;
   }
 }</component>
-  <component name="RunManager" selected="Gradle.TestWasteServiceHandler">
+  <component name="RunManager" selected="Gradle.TestContainerManager">
+    <configuration name="TestContainerManager" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;TestContainerManager&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
     <configuration name="TestProva" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -136,6 +161,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.TestContainerManager" />
         <item itemvalue="Gradle.TestWasteServiceHandler" />
         <item itemvalue="Gradle.TestProva" />
         <item itemvalue="Kotlin.MainCtxwasteserviceKt" />

@@ -23,6 +23,8 @@ class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				state("init") { //this:State
 					action { //it:State
 						println("$name	|	starting...")
+						updateResourceRep(boxState.toJsonString() 
+						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

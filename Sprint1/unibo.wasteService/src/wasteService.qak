@@ -48,6 +48,7 @@ QActor containermanager context ctxwasteservice{
 	
 	State init initial {
 		println("$name	|	starting...")
+		updateResource[#boxState.toJsonString()#]
 	}Goto idle
 	
 	State idle {
