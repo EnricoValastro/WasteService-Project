@@ -21,8 +21,6 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
-						request("storewaste", "storewaste(GLASS,300)" ,"wasteservicehandler" )  
-						request("storewaste", "storewaste(PLASTIC,200)" ,"wasteservicehandler" )  
 						println("$name	|	starting...")
 						//genTimer( actor, state )
 					}

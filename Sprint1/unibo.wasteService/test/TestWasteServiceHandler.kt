@@ -5,6 +5,7 @@ import it.unibo.ctxwasteservice.main
 import it.unibo.kactor.QakContext.Companion.getActor
 import kotlinx.coroutines.*
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 import unibo.coapobs.TypedCoapTestObserver
 import unibo.comm22.coap.CoapConnection
@@ -21,9 +22,10 @@ class TestWasteServiceHandler {
     private lateinit var obs: TypedCoapTestObserver<ServiceAreaState>   //Un observer di tipo ServiceAreaState
     private var setup = false
 
-    @Before
+    @BeforeClass
     fun testSetup(){
         if(!setup){
+            println(setup)
             println("TestWasteServiceHandler    |   setup...")
 
             startMockCtx()
@@ -47,11 +49,14 @@ class TestWasteServiceHandler {
             } catch (e: Exception) {
                 println("TestWasteServiceHandler    |   connection failed...")
             }
-            startObs("localhost:8055")
-            obs.getNext()
+            //startObs("localhost:8055")
+
+            //obs.getNext()
+
             setup = true
+            println(setup)
         }else{
-            obs.clearHistory()
+            //obs.clearHistory()
         }
     }
 
@@ -74,6 +79,7 @@ class TestWasteServiceHandler {
         //}
 
     }
+
 
     fun startObs(addr: String?) {
         println("TestWasteServiceHandler    |   starting observer...")
@@ -110,7 +116,18 @@ class TestWasteServiceHandler {
         }
         assertTrue { answ.contains("loadaccept") }
     }
-
+    @Test
+    fun testLoadReject(){
+        println("TestWasteServiceHandler    |   testLoadReject...")
+        var answ = ""
+        var storeWaste = "msg(storewaste, request, testunit, wasteservicehandler, storewaste(PLASTIC, 600),1)"
+        try {
+            answ = conn.request(storeWaste)
+        } catch (e: Exception) {
+            println("TestWasteServiceHandler    |   request failed...")
+        }
+        assertTrue { answ.contains("loadreject") }
+    }
 
 
 
