@@ -17,16 +17,31 @@ import java.util.concurrent.ArrayBlockingQueue
 import kotlin.test.assertTrue
 
 class TestWasteServiceHandler {
-
-    private lateinit var conn: Interaction2021
-    private var setup = false
-
+    companion object{
+        private var setup = false
+        private lateinit var conn: Interaction2021
+        @BeforeClass
+        @JvmStatic
+        fun startMockCtx(){
+            println("TestContainerManager    |   launching mockCtx...")
+            val mockCtxScope = CoroutineScope(CoroutineName("CtxScope"))
+            mockCtxScope.launch {
+                val selectorManager = SelectorManager(Dispatchers.IO)
+                val serverSocket    = aSocket(selectorManager).tcp().bind("127.0.0.1", 8056)
+                val socket = serverSocket.accept()
+                val receiveChannel = socket.openReadChannel()
+                try {
+                    val name = receiveChannel.readUTF8Line()
+                } catch (e: Throwable) {
+                    socket.close()
+                }
+            }
+        }
+    }
     @Before
     fun testSetup(){
         if(!setup){
             println("TestWasteServiceHandler    |   setup...")
-
-            startMockCtx()
 
             println("TestWasteServiceHandler    |   launching ctxwasteservice...")
             object : Thread(){
@@ -50,24 +65,6 @@ class TestWasteServiceHandler {
             setup = true
         }
     }
-
-    fun startMockCtx(){
-        println("TestWasteServiceHandler    |   launching mockCtx...")
-        val mockCtxScope = CoroutineScope(CoroutineName("CtxScope"))
-        mockCtxScope.launch {
-            val selectorManager = SelectorManager(Dispatchers.IO)
-            val serverSocket    = aSocket(selectorManager).tcp().bind("127.0.0.1", 8056)
-            val socket = serverSocket.accept()
-            println("Accepted $socket")
-            val receiveChannel = socket.openReadChannel()
-            try {
-                val name = receiveChannel.readUTF8Line()
-            } catch (e: Throwable) {
-                socket.close()
-            }
-        }
-    }
-
     @Test
     fun testLoadAccept(){
         println("TestWasteServiceHandler    |   testLoadAccept...")
@@ -80,7 +77,6 @@ class TestWasteServiceHandler {
         }
         assertTrue { answ.contains("loadaccept") }
     }
-
     @Test
     fun testLoadReject(){
         println("TestWasteServiceHandler    |   testLoadReject...")

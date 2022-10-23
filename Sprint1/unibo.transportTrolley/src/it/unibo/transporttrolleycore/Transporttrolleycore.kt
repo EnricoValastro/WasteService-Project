@@ -24,7 +24,9 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				state("init") { //this:State
 					action { //it:State
 						utility.Banner.transportTrolleyBanner() 
-						println("$name	|	starting...")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.CYAN) 
+						updateResourceRep(tTState.toJsonString() 
+						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -34,15 +36,7 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				}	 
 				state("idle") { //this:State
 					action { //it:State
-						println("$name	|	waiting...")
-						if( updateFlag == 1 
-						 ){
-										tTState.setCurrState(transporttrolley.state.CurrStateTrolley.IDLE)
-										tTState.setCurrPosition(transporttrolley.state.TTPosition.HOME)	
-										updateFlag = 0
-						}
-						updateResourceRep(tTState.toJsonString() 
-						)
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.CYAN) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -55,12 +49,12 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				}	 
 				state("pickupMove") { //this:State
 					action { //it:State
+						request("moveto", "moveto(INDOOR)" ,"transporttrolleymover" )  
 						
 									tTState.setCurrState(transporttrolley.state.CurrStateTrolley.MOVING)
 									tTState.setCurrPosition(transporttrolley.state.TTPosition.ONTHEROAD)
 						updateResourceRep(tTState.toJsonString() 
 						)
-						request("moveto", "moveto(INDOOR)" ,"transporttrolleymover" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -71,12 +65,12 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				}	 
 				state("pickupExec") { //this:State
 					action { //it:State
+						request("execaction", "execaction(PICKUP)" ,"transporttrolleyexecutor" )  
 						
 									tTState.setCurrState(transporttrolley.state.CurrStateTrolley.PICKINGUP)
 									tTState.setCurrPosition(transporttrolley.state.TTPosition.INDOOR)
 						updateResourceRep(tTState.toJsonString() 
 						)
-						request("execaction", "execaction(PICKUP)" ,"transporttrolleyexecutor" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -114,12 +108,12 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 													}
 												}catch(e : Exception){}	
 						}
+						request("moveto", "moveto($POS)" ,"transporttrolleymover" )  
 						
 									tTState.setCurrState(transporttrolley.state.CurrStateTrolley.MOVING)
 									tTState.setCurrPosition(transporttrolley.state.TTPosition.ONTHEROAD)
 						updateResourceRep(tTState.toJsonString() 
 						)
-						request("moveto", "moveto($POS)" ,"transporttrolleymover" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -146,11 +140,11 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				}	 
 				state("dropoutRes") { //this:State
 					action { //it:State
+						emit("dropoutdone", "dropoutdone" ) 
 						
 									tTState.setCurrState(transporttrolley.state.CurrStateTrolley.IDLE)
 						updateResourceRep(tTState.toJsonString() 
 						)
-						forward("dropoutdone", "dropoutdone(_)" ,"wasteservicecore" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -161,7 +155,6 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				state("backHome") { //this:State
 					action { //it:State
 						
-									updateFlag = 1
 									tTState.setCurrState(transporttrolley.state.CurrStateTrolley.MOVING)
 									tTState.setCurrPosition(transporttrolley.state.TTPosition.ONTHEROAD)
 						updateResourceRep(tTState.toJsonString() 
@@ -172,12 +165,26 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t012",targetState="idle",cond=whenReply("moveok"))
+					 transition(edgeName="t012",targetState="backHomeRes",cond=whenReply("moveok"))
 					transition(edgeName="t013",targetState="moveErr",cond=whenReply("moveko"))
+				}	 
+				state("backHomeRes") { //this:State
+					action { //it:State
+						
+									tTState.setCurrState(transporttrolley.state.CurrStateTrolley.IDLE)
+									tTState.setCurrPosition(transporttrolley.state.TTPosition.HOME)	
+						updateResourceRep(tTState.toJsonString() 
+						)
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
 				}	 
 				state("moveErr") { //this:State
 					action { //it:State
-						println("$name	|	something went wrong...assistance required.")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	something went wrong...assistance required.", unibo.comm22.utils.ColorsOut.CYAN) 
 						forward("exit", "exit(_)" ,"wasteservicecore" ) 
 						forward("exit", "exit(_)" ,"transporttrolleycore" ) 
 						//genTimer( actor, state )

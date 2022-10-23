@@ -16,17 +16,20 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		
+				
 				lateinit var destination  : String
 				var xDestination : Int = 0
 				var yDestination : Int = 0
+				var dir : String = "" 
 				var PATH = ""
 				var PATHSTILLTODO = ""
 				var attempt : Int = 0
 				var direction : String = ""
+				var someToFix : Boolean = false
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
-						println("$name	|	starting...")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.CYAN) 
 						 unibo.kotlin.planner22Util.initAI()  
 						//genTimer( actor, state )
 					}
@@ -37,6 +40,8 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 				}	 
 				state("idle") { //this:State
 					action { //it:State
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.CYAN) 
+						someToFix = false 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -55,7 +60,7 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 												
 													xDestination = utility.ServiceAreaDestinationConfig.getXDestination(destination)
 													yDestination = utility.ServiceAreaDestinationConfig.getYDestination(destination)
-													
+													dir 		 = utility.ServiceAreaDestinationConfig.getPlannerDirection(destination)
 												}catch(e : Exception){}	
 						}
 						//genTimer( actor, state )
@@ -71,6 +76,7 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 									unibo.kotlin.planner22Util.setGoal(xDestination, yDestination)
 									unibo.kotlin.planner22Util.doPlan()
 									PATH = unibo.kotlin.planner22Util.get_actionSequenceAsString()
+									unibo.comm22.utils.ColorsOut.outappl("$name	|	moving to $destination", unibo.comm22.utils.ColorsOut.CYAN)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -80,40 +86,49 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 				}	 
 				state("execMove") { //this:State
 					action { //it:State
-						println("$name	|	moving to $destination")
 						request("dopath", "dopath($PATH)" ,"pathexec" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t016",targetState="moveOk",cond=whenReply("dopathdone"))
+					 transition(edgeName="t016",targetState="lookForFix",cond=whenReply("dopathdone"))
 					transition(edgeName="t017",targetState="moveKo",cond=whenReply("dopathfail"))
+				}	 
+				state("lookForFix") { //this:State
+					action { //it:State
+						 unibo.kotlin.planner22Util.updateAfterPath(PATH)  
+						 someToFix = false  
+						if(  unibo.kotlin.planner22Util.getDirection() != dir  
+						 ){ someToFix = true  
+						}
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="fixDir", cond=doswitchGuarded({ someToFix  
+					}) )
+					transition( edgeName="goto",targetState="moveOk", cond=doswitchGuarded({! ( someToFix  
+					) }) )
+				}	 
+				state("fixDir") { //this:State
+					action { //it:State
+						 
+									PATH = utility.DirectionFixer.getPathForFixDir(unibo.kotlin.planner22Util.getDirection(), dir) 
+								 	unibo.comm22.utils.ColorsOut.outappl("$name	|	fixing direction", unibo.comm22.utils.ColorsOut.CYAN)
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="execMove", cond=doswitch() )
 				}	 
 				state("moveOk") { //this:State
 					action { //it:State
 						 attempt = 0  
-						if(  destination == "HOME" && unibo.kotlin.planner22Util.getDirection() == "rightDir"  
-						 ){forward("cmd", "cmd(l)" ,"basicrobot" ) 
-						PATH = PATH+"l" 
-						}
-						if(  destination == "INDOOR"  
-						 ){ 
-										direction = unibo.kotlin.planner22Util.getDirection()
-										
-						if(  direction == "leftDir" 
-						 ){forward("cmd", "cmd(r)" ,"basicrobot" ) 
-						PATH = PATH+"r" 
-						}
-						if(  direction == "rightDir" 
-						 ){forward("cmd", "cmd(l)" ,"basicrobot" ) 
-						PATH = PATH+"l" 
-						}
-						}
-						println("$name	|	arrived in $destination")
-						 
-									unibo.kotlin.planner22Util.updateAfterPath(PATH) 
-						answer("moveto", "moveok", "moveok(_)"   )  
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	arrived in $destination", unibo.comm22.utils.ColorsOut.CYAN) 
+						answer("moveto", "moveok", "moveok"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -123,7 +138,7 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 				}	 
 				state("moveKo") { //this:State
 					action { //it:State
-						println("$name	|	MoveKo")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	moveKo", unibo.comm22.utils.ColorsOut.CYAN) 
 						attempt++ 
 						if( checkMsgContent( Term.createTerm("dopathfail(ARG)"), Term.createTerm("dopathfail(ARG)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
@@ -136,13 +151,15 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 						 ){ attempt = 0  
 						answer("moveto", "moveko", "moveko(_)"   )  
 						}
-						request("dopath", "dopath($PATHSTILLTODO)" ,"pathexec" )  
+						else
+						 {request("dopath", "dopath($PATHSTILLTODO)" ,"pathexec" )  
+						 }
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t018",targetState="moveOk",cond=whenReply("dopathdone"))
+					 transition(edgeName="t018",targetState="lookForFix",cond=whenReply("dopathdone"))
 					transition(edgeName="t019",targetState="moveKo",cond=whenReply("dopathfail"))
 				}	 
 				state("end") { //this:State

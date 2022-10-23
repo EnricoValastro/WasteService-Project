@@ -30,11 +30,10 @@ with Diagram('transporttrolleyArch', show=False, outformat='png', graph_attr=gra
           transporttrolleyexecutor=Custom('transporttrolleyexecutor','./qakicons/symActorSmall.png')
      transporttrolleycore >> Edge(color='magenta', style='solid', xlabel='moveto', fontcolor='magenta') >> transporttrolleymover
      transporttrolleycore >> Edge(color='magenta', style='solid', xlabel='execaction', fontcolor='magenta') >> transporttrolleyexecutor
-     transporttrolleycore >> Edge(color='blue', style='solid', xlabel='dropoutdone', fontcolor='blue') >> wasteservicecore
+     transporttrolleycore >> Edge( xlabel='dropoutdone', **eventedgeattr, fontcolor='red') >> sys
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> wasteservicecore
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> transporttrolleycore
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> transporttrolleyexecutor
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> transporttrolleymover
      transporttrolleymover >> Edge(color='magenta', style='solid', xlabel='dopath', fontcolor='magenta') >> pathexec
-     transporttrolleymover >> Edge(color='blue', style='solid', xlabel='cmd', fontcolor='blue') >> basicrobot
 diag

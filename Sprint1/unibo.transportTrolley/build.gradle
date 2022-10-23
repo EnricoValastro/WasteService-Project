@@ -45,6 +45,10 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core-jvm
     implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core-jvm', version: "$kotlinVersion"
 
+    /* KTOR *******************************************************************************************************************/
+    //https://ktor.io/docs/servers-raw-sockets.html#add_dependencies
+    implementation "io.ktor:ktor-network:$ktor_version"
+
     /*  MQTT *************************************************************************************************************** */
     // https://mvnrepository.com/artifact/org.eclipse.paho/org.eclipse.paho.client.mqttv3
     implementation group: 'org.eclipse.paho', name: 'org.eclipse.paho.client.mqttv3', version: '1.2.5'
