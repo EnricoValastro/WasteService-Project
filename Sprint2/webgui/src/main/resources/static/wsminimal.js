@@ -31,8 +31,8 @@ wsminimal.js
             msg = event.data;
             console.log("ws-status:" + msg);
 
-            let container = JSON.parse(msg)
-            let plastic = container['boxCurrentWeight']['PLASTIC']
+            let container = JSON.parse(msg);
+            let plastic = container['boxCurrentWeight']['PLASTIC'];
             let glass = container['boxCurrentWeight']['GLASS'];
 
             setMessageToWindow(plasticprog, plastic.toString());

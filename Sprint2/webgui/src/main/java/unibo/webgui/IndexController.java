@@ -34,7 +34,6 @@ public class IndexController {
         viewmodel.addAttribute("containertip", containertip);
         viewmodel.addAttribute("plastic", plastic);
         viewmodel.addAttribute("glass", glass);
-
     }
 
     @GetMapping("/")
