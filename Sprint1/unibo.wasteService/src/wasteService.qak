@@ -22,7 +22,7 @@ Dispatch dojob : dojob(MAT)
 Request  pickup 	 : pickup(_)
 Reply    pickupdone  : pickupdone(_)
 Dispatch dropout     : dropout(MAT)
-Dispatch dropoutdone : dropoutdone(_)
+Event	 dropoutdone : dropoutdone(_)
 
 /* BackHome Message */
 Dispatch gotohome 	 : gotohome(_)
@@ -39,6 +39,8 @@ ExternalQActor transporttrolleycore context ctxtransporttrolley
  * Component addicted to manage container state
  * ---------------------------------------------------------------------------------------------
  **********************************************************************************************/
+
+
 QActor containermanager context ctxwasteservice{
 	[#
 		val boxState  = wasteservice.state.ServiceAreaState()
@@ -104,24 +106,25 @@ QActor containermanager context ctxwasteservice{
 	}
 }
 
+
 /* *********************************************************************************************
  * ---------------------------------------------------------------------------------------------
  * Component addicted to handle request from truck driver 
  * ---------------------------------------------------------------------------------------------
  **********************************************************************************************/
+
+
 QActor wasteservicehandler context ctxwasteservice{
 	[#
 		lateinit var REQMATERIAL : wasteservice.state.Material 
 		var REQWEIGHT : Double = 0.0
 	#]
 	State init initial{
-		
-		/*--------------------------------------------------------------------------------------*/
-		//request wasteservicehandler -m storewaste : storewaste(GLASS, 300)
-		//request wasteservicehandler -m storewaste : storewaste(PLASTIC, 200)
-		/*--------------------------------------------------------------------------------------*/
-		
 		println("$name	|	starting...")
+		
+		request wasteservicehandler -m storewaste : storewaste(GLASS, 300)
+		//request wasteservicehandler -m storewaste : storewaste(PLASTIC, 200)
+		
 	}Goto idle
 	
 	State idle{
@@ -150,6 +153,7 @@ QActor wasteservicehandler context ctxwasteservice{
 	
 	State rejectRequest{
 		println("$name	|	request rejected")
+		forward containermanager -m update : update($REQMATERIAL, 0)
 		replyTo storewaste with loadrejected : loadrejected(_)
 	}Goto idle
 	
@@ -159,28 +163,33 @@ QActor wasteservicehandler context ctxwasteservice{
 	
 }
 
+
 /* *********************************************************************************************
  * ---------------------------------------------------------------------------------------------
  * Core component addicted to manage all the request exec by interacting with TT component 
  * ---------------------------------------------------------------------------------------------
  **********************************************************************************************/
+
+
 QActor wasteservicecore context ctxwasteservice{
+	
 	[#
 		lateinit var REQMATERIAL : wasteservice.state.Material 
 	#]
+	
 	State init initial{
 		[#
 			utility.Banner.printBannerWasteService()
 		#]
 		println("$name 	| 	starting...")
 	}Goto idle
-	
+
 	State idle{
 		println("$name 	| 	waiting...")
-	}Transition t0 whenMsg 	dojob -> pickup
-					whenMsg dropoutdone -> backHome
-					whenMsg exit -> end
-			
+	}Transition t0 whenMsg 	  dojob -> pickup
+					whenEvent dropoutdone -> backHome
+					whenMsg   exit -> end
+
 	State pickup{
 		println("$name 	| 	asking for pickup...")
 		onMsg(dojob : dojob(MAT)){
@@ -192,13 +201,8 @@ QActor wasteservicecore context ctxwasteservice{
 		}
 		request transporttrolleycore -m pickup : pickup(_)
 		println("$name 	| 	waiting for pickup done...")
-	}Transition t0 whenMsg 	  dropoutdone -> clear
-					whenReply pickupdone  -> dropout
-	
-	State clear{
-		println("$name 	| 	clearing queue")
-	}Transition t0 whenReply pickupdone -> dropout
-	
+	}Transition t0 whenReply pickupdone  -> dropout 
+					
 	State dropout{
 		//forward smartdevice -m leaveindoor : leaveindoor(_)
 		println("$name 	| 	asking for dropout")

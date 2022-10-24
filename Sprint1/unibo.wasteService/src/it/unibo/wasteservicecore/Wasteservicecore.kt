@@ -39,7 +39,7 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					sysaction { //it:State
 					}	 	 
 					 transition(edgeName="t07",targetState="pickup",cond=whenDispatch("dojob"))
-					transition(edgeName="t08",targetState="backHome",cond=whenDispatch("dropoutdone"))
+					transition(edgeName="t08",targetState="backHome",cond=whenEvent("dropoutdone"))
 					transition(edgeName="t09",targetState="end",cond=whenDispatch("exit"))
 				}	 
 				state("pickup") { //this:State
@@ -59,18 +59,7 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t010",targetState="clear",cond=whenDispatch("dropoutdone"))
-					transition(edgeName="t011",targetState="dropout",cond=whenReply("pickupdone"))
-				}	 
-				state("clear") { //this:State
-					action { //it:State
-						println("$name 	| 	clearing queue")
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t012",targetState="dropout",cond=whenReply("pickupdone"))
+					 transition(edgeName="t010",targetState="dropout",cond=whenReply("pickupdone"))
 				}	 
 				state("dropout") { //this:State
 					action { //it:State

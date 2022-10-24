@@ -20,7 +20,7 @@ class Transporttrolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorB
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
-						println("$name	|	starting...")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.CYAN) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -30,6 +30,7 @@ class Transporttrolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorB
 				}	 
 				state("idle") { //this:State
 					action { //it:State
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.CYAN) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -59,7 +60,7 @@ class Transporttrolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorB
 				}	 
 				state("execPickup") { //this:State
 					action { //it:State
-						println("$name	|	$action execution")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	$action execution", unibo.comm22.utils.ColorsOut.CYAN) 
 						delay(kotlin.random.Random.nextLong(3000, 5000)) 
 						answer("execaction", "execok", "execok(_)"   )  
 						//genTimer( actor, state )
@@ -71,7 +72,7 @@ class Transporttrolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorB
 				}	 
 				state("execDropout") { //this:State
 					action { //it:State
-						println("$name	|	$action execution")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	$action execution", unibo.comm22.utils.ColorsOut.CYAN) 
 						delay(kotlin.random.Random.nextLong(2000, 4000)) 
 						answer("execaction", "execok", "execok(_)"   )  
 						//genTimer( actor, state )
