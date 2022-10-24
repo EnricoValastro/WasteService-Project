@@ -247,7 +247,7 @@ div.imagedesc{
 <a href="../../Sprint3/userDocs/sprint3.html">Sprint 3</a>
 <h2>Introduction</h2>
 <div class="remark">
-    Progetto finale di ISS finalizzato allo sviluppo software di un impianto di smistamento dei rifiuti attraverso un robot che preleva il carico del camion e lo porta al container appropriato
+    Progetto finale di ISS finalizzato allo sviluppo software di un impianto di smistamento dei rifiuti attraverso un robot che preleva il carico del camion e lo porta al container appropriato.
  </div>
  
 <h2>Requirements</h2>
@@ -265,9 +265,9 @@ div.imagedesc{
             <li>
                 <a href="#depAct"><b>Deposit Action</b></a>
                 <ul>
-                    <li>Come spostare il <kc>transport trolley</kc> a destinazione.</li>
-                    <li>Come interagiscono i componenti del sistema.</li>
-                    <li>Come gestire lo stato della<kc>Service Area</kc>.</li>
+                    <li>Come spostare il <kc>transport trolley</kc> a destinazione</li>
+                    <li>Come interagiscono i componenti del sistema</li>
+                    <li>Come gestire lo stato della <kc>Service Area</kc></li>
                 </ul>
             </li>
             <li>
@@ -308,7 +308,7 @@ div.imagedesc{
         <li>Utilizzare un file di configurazione</li>
     </ol>
     Dal momento che il software debba essere capace di funzionare correttamente in <kc>Service areas</kc> di qualsiasi dimensioni, 
-    la soluzione <b>n.1</b> risulta poco riutilizzabile e quindi inadatta, inquanto un cambiamento di <i>Service Area</i> richiederebbe un 
+    la soluzione <b>n.1</b> risulta poco riutilizzabile e quindi inadatta, in quanto un cambiamento di <i>Service Area</i> richiederebbe un 
     cambiamento nel codice dell'applicazione con conseguente <i>rebuild</i> dell'applicazione stessa. <br>
     Per tale motivo consigliamo di utilizzare un <ks>file di configurazione</ks> che può essere facilmente modificato senza richiedere 
     cambiamenti di codice. Il file di configurazione è consultabile in <a href="./resources/json/wasteServiceSystemConfig.json">wasteServiceSystemConfig.json</a>
@@ -471,10 +471,10 @@ planner22Util.doPlan()</pre>
     </ol>
 
     Seguire tale approccio richiederebbe, quindi, una modifica dell'architettura logica del sistema, in quanto prevederebbe la suddivisione del <i>WasteService</i> in due componenti 
-    distinti, uno dedito alla ricezione e valutazione delle richieste di deposito e uno dedito alla coordinazione delle operazioni carico/scarico. Allo stesso modo, bisognorebbe 
+    distinti, uno dedito alla ricezione e valutazione delle richieste di deposito e uno dedito alla coordinazione delle operazioni carico/scarico. Allo stesso modo, bisognerebbe 
     operare una modifica nell'architettura del <i>transportTrolley</i>, in quanto sarebbe opportuno attribuire ad un componente la responsabilità delle operazioni di movimento e 
-    ad un altro la responsabilità delle operioni di carico/scarico. <br><br>
-    <ks>Seguire questa strada permetterebbe di ottenere componenti che adempiono ad una singola responsabilità e tale responsabilità sarebbe totalmente incapsulta nel componente stesso.</ks>
+    ad un altro la responsabilità delle operazioni di carico/scarico. <br><br>
+    <ks>Seguire questa strada permetterebbe di ottenere componenti che adempiono ad una singola responsabilità e tale responsabilità sarebbe totalmente incapsulata nel componente stesso.</ks>
     
     <h4>Interazione tra i componenti</h4>
     Per quanto riguarda  l'interazione tra i componenti possiamo, in prima battuta, affermare che essi interagiscono a scambio di messaggi.
@@ -482,8 +482,8 @@ planner22Util.doPlan()</pre>
     Nasce quindi il problema di individuare il tipo di messaggio per ogni interazione:
 
     <h5>Deposit request</h5>
-    Come detto in precedenza, il <kc>WasteService</kc> è il destinatario delle richieste di deposito provenienti dal <kc>truck</kc>, 
-    come risulta già evidente in fase di analisi questa interazione è di tipo <kc>request-reply</kc>:
+    Come detto in precedenza, il <kc>WasteService</kc> è il destinatario delle richieste di deposito provenienti dal <kc>truck</kc>.
+    Come risulta già evidente in fase di analisi questa interazione è di tipo <kc>request-reply</kc>:
     <pre>
 <key3>// MATERIAL = PLASTIC | GLASS</key3>
 <key2>Request</key2> storewaste   : storewaste(MAT, QUA)
@@ -530,7 +530,7 @@ planner22Util.doPlan()</pre>
     <h5>Stato della Service Area</h5>
     Affinche il <kc>WasteService</kc> possa rispondere in maniera opportuna alle richieste di deposito dei <kc>truck</kc> 
     è necessario che esso sia a conoscenza dello stato interno (peso corrente, peso massimo) dei container della <kc>Service Area</kc>. <br>
-    Nasce quindi la problematica di come mantenere lo stato della <i>Service Area</i>, le soluzioni possibili sono: 
+    Nasce quindi la problematica di come mantenere lo stato della <i>Service Area</i>. Le soluzioni possibili sono: 
     <ul>
         <li>Cablare i valori all'interno del codice del <i>WasteService</i></li>
         <li>Utilizzare una classe (Kotlin) che rappresenti lo stato della <i>Service Area</i></li>
@@ -725,8 +725,8 @@ planner22Util.doPlan()</pre>
     La seconda soluzione, invece, prevede di inviare immediatamente il messaggio <i>loadaccept</i> e inviare un nuovo messaggio, non appena 
     il <i>WasteService</i> riceve il <i>pickupdone</i>, per mandare via il <i>truck</i>. <br>
     Le due soluzioni siano molto simili, la prima permette di risparmiare l'invio di un messaggio sulla rete diminuendo 
-    quindi il carico di rete (<kc>overhead</kc>), d'altra parte la seconda potrebbe essere più opportuna per differenziare le due fasi ed evitare al <i>truck drivere</i> 
-    una lunga attesa prima di sapere se il cario è stato accettato o meno. <br>
+    quindi il carico di rete (<kc>overhead</kc>), d'altra parte la seconda potrebbe essere più opportuna per differenziare le due fasi ed evitare al <i>truck drive</i> 
+    una lunga attesa prima di sapere se il carico è stato accettato o meno. <br>
     Per meglio comprendere le due soluzioni si mostrano, partendo dal primo caso, i due possibili prototipi d'interazione:
     <pre>
 <key2>State</key2> acceptRequest{
@@ -782,7 +782,7 @@ Il prototipo d'interazione sarebbe il seguente:
     <h4>WasteServiceHandler</h4>
     Questo componente è progettato come un <ks>Handler</ks>, si occupa di ricevere le richieste <kc>storewaste</kc> e rispondere al mittente con una <kc>loadaccept</kc> o con 
     una <kc>loadrejected</kc>. Per valutare se la richiesta può essere accetta o meno il <i>WasteServiceHandler</i> si avvale del componente <kc>ContainerManager</kc>.<br>
-    Dopo aver valutato la richiesta, in caso di esito positivo, il <i>WasteServiceHandler</i> comuncia al componente <kc>WasteServiceCore</kc> che deve iniziare il processo di deposito, tramite 
+    Dopo aver valutato la richiesta, in caso di esito positivo, il <i>WasteServiceHandler</i> comunica al componente <kc>WasteServiceCore</kc> che deve iniziare il processo di deposito, tramite 
     il seguente messaggio:
     <pre>
 <key2>Dispatch</key2> dojob : dojob(MAT)        <key3>// MAT = PLASTIC | GLASS</key3></pre>
@@ -837,8 +837,7 @@ Il prototipo d'interazione sarebbe il seguente:
     Come nel caso precedente il componente verrà implementato come una una <ks>coroutines Kotlin</ks> utilizzando il metalinguaggio QAk.
     Di seguito viene riportato il progetto della macchina a stati finiti e la sua implementazione in linguaggio QAk.<br><br>
     <img src="./resources/img/FSMwasteServiceCore.png" alt="" style="width:50% ; height:50% ;"> <br><br>
-    Nello stato <i><b>idle</b></i> il <i>WasteServiceCore</i> è in ascolto di un evento <kc>dropoutdone</kc> da parte del <i>transportTrolley</i> 
-    o <br>di un messaggio <kc>dojob</kc> da parte del <i>WasteServiceHandler</i>.
+    Nello stato <i><b>idle</b></i> il <i>WasteServiceCore</i> è in ascolto di un evento <kc>dropoutdone</kc> da parte del <i>transportTrolley</i> o <br>di un messaggio <kc>dojob</kc> da parte del <i>WasteServiceHandler</i>.
     Nel primo caso il componente transita nello stato <i><b>backhome</b></i> ed invia al <i>transportTrolley</i> il messaggio <kc>gotohome</kc>, ritorna quindi in <i><b>idle</b></i>. <br>
     Nel secondo caso il componente transita nello stato <b><i>pickup</i></b> in cui richiede al <i>transportTrolley</i> l'esecuzione di una <kc>pickup</kc>, rimanendo in attessa 
     di una conferma di operazione avvenuta (<kc>pickupdone</kc>). Una volta ricevuta la conferma da parte del <i>transportTrolley</i>, il <i>WasteServiceCore</i> transita allo stato 
@@ -908,7 +907,7 @@ Il prototipo d'interazione sarebbe il seguente:
     <key>fun</key> fromJsonString(str : String) : ServiceAreaState
 }</pre>
     Che rispettivamente, ritornano la rappresentazione <ks>JSON</ks> dell'oggetto e l'oggetto della classe ricostruito a partire dalla sua rappresentazione <i>JSON</i>. <br>
-    Per quanto riguarda il <i>ContainerManager</i>, sarà implementato come uba <ks>coroutines Kotlin</ks> utilizzando il metalinguaggio QAk. Di seguito sono riportati il progetto 
+    Per quanto riguarda il <i>ContainerManager</i>, sarà implementato come una <ks>coroutines Kotlin</ks> utilizzando il metalinguaggio QAk. Di seguito sono riportati il progetto 
     della macchina a stati finiti e la sua implementazione in QAk. <br><br>
     <img src="./resources/img/FSMcontainerManager.png" alt="" style="width:50% ; height:50% ;">
     <br><br>
@@ -989,7 +988,7 @@ Questo comando inviera al <ks>server CoAP</ks> la stringa <i>JSON</i> che rappre
     abbiamo deciso di gestire l'errore come segue: dopo aver ricevuto un messaggio di errore dal robot, il <i>TransportTrolleyMover</i> tenterà di completare il percorso 
     per tre volte, se fallisce per tre volte consecutivamente invierà al <i>TransportTrolleyCore</i> il messaggio <kc>moveKo</kc>, quest'ultimo transiterà nello stato di errore 
     sopracitato e richiederà assistenza. <br>
-    Per quanto ricguarda gli errori dovuti all'esecuzione di un'azione essi non sono gestiti in quanto il committente ha specificato che le azioni possono essere 
+    Per quanto riguarda gli errori dovuti all'esecuzione di un'azione essi non sono gestiti in quanto il committente ha specificato che le azioni possono essere 
     simulate con dei <ks>delay</ks>, pertanto risultano infallibili. <br> 
 
     <pre>
@@ -1177,7 +1176,7 @@ Il componente quindi risponde al <i>TransportTrolleyCore</i> con un messaggio di
 
 <div class="remark">
     <h3>Planner22Util</h3>
-    L'utilizzo del <i>planner22Util</i> per calcolare il percorso verso una destinazione, ha richiesto l'esensione delle sue funzionalità. <br>
+    L'utilizzo del <i>planner22Util</i> per calcolare il percorso verso una destinazione, ha richiesto l'estensione delle sue funzionalità. <br>
     Le problematiche sorte consistevano nell'aggiornamento della mappa interna al planner, più nello specifico è stato necessario aggiornare la posizione corrente del robot 
     dopo ogni <i>path</i> portato a termine e non. <br> In questo modo, al successivo utilizzo del <i>planner22Util</i> il calcolo del percorso avviene partendo dalla posizione 
     attuale del robot e non dalla posizione <i>(0, 0)</i>. Le estensioni apportate sono riportate di seguito e il codice completo è consultabile in <a href="./resources/kotlin/planner22Util2.kt">planner22Util.qak</a>:
