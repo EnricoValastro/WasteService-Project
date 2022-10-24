@@ -36,11 +36,9 @@ class TestTransportTrolleyCore {
             mockCtx("basicrobot", 8020, ) {
                 if(it.msgId() == "dopath"){
                     conn.forward("msg(dopathdone, reply, testunit, transporttrolleymover, dopathdone(OK) ,1)")
-                    println("\t\t\treplied with dopathdone")
                 }
             }
             mockCtx("wasteservice",8055)
-
         }
     }
 
@@ -103,10 +101,8 @@ class TestTransportTrolleyCore {
         var asw = ""
 
         var pickup = "msg(pickup, request, testunit, transporttrolleycore, pickup(_) ,1)"
-        var dopathdone = "msg(dopathdone, reply, testunit, transporttrolleymover, dopathdone(OK) ,1)"
 
         try {
-            conn.forward(dopathdone)
             asw = conn.request(pickup)
         } catch (e: Exception) {
             ColorsOut.outappl("TestTransportTrolleyCore	|	 some err in request: $e", MAGENTA)
@@ -129,20 +125,14 @@ class TestTransportTrolleyCore {
         assertEquals("IDLE", newState.getCurrState().toString())
 
     }
-
-
-
-
     @Test
     @Throws(InterruptedException::class)
     fun test2Dropout(){
         ColorsOut.outappl("TestTransportTrolleyCore	|	testDropout...", MAGENTA)
 
         var dropout = "msg(dropout, dispatch, testunit, transporttrolleycore, dropout(PLASTIC) ,1)"
-        var dopathdone = "msg(dopathdone, reply, testunit, transporttrolleymover, dopathdone(OK) ,1)"
 
         try{
-            conn.reply(dopathdone)
             conn.forward(dropout)
         } catch (e: Exception) {
             ColorsOut.outappl("TestTransportTrolleyCore	|	 some err in request: $e", MAGENTA)
@@ -164,19 +154,14 @@ class TestTransportTrolleyCore {
         assertEquals("IDLE", newState.getCurrState().toString())
 
     }
-
-
-
     @Test
     @Throws(InterruptedException::class)
     fun test3BackHome(){
         ColorsOut.outappl("TestTransportTrolleyCore	|	testBackHome...", MAGENTA)
 
         var gotohome = "msg(gotohome, dispatch, testunit, transporttrolleycore, gotohome(_) ,1)"
-       // var dopathdone = "msg(dopathdone, reply, testunit, transporttrolleymover, dopathdone(OK) ,1)"
 
         try{
-            //conn.forward(dopathdone)
             conn.forward(gotohome)
         } catch (e: Exception) {
             println("TestTransportTrolleyCore	|	 some err in request: $e")

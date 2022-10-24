@@ -7,13 +7,16 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import mockctx.mockCtx
 import org.junit.Before
 import org.junit.BeforeClass
+import org.junit.FixMethodOrder
 import org.junit.Test
 import unibo.coapobs.TypedCoapTestObserver
 import unibo.comm22.coap.CoapConnection
 import unibo.comm22.interfaces.Interaction2021
 import unibo.comm22.tcp.TcpClientSupport
+import unibo.comm22.utils.ColorsOut
 import unibo.comm22.utils.CommUtils
 import wasteservice.state.Material
 import wasteservice.state.ServiceAreaState
@@ -22,6 +25,7 @@ import java.util.concurrent.ArrayBlockingQueue
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@FixMethodOrder(org.junit.runners.MethodSorters.NAME_ASCENDING)
 class TestContainerManager {
     companion object{
         private var setup = false
@@ -31,26 +35,15 @@ class TestContainerManager {
         @BeforeClass
         @JvmStatic
         fun startMockCtx(){
-            println("TestContainerManager    |   launching mockCtx...")
-            val mockCtxScope = CoroutineScope(CoroutineName("CtxScope"))
-            mockCtxScope.launch {
-                val selectorManager = SelectorManager(Dispatchers.IO)
-                val serverSocket    = aSocket(selectorManager).tcp().bind("127.0.0.1", 8056)
-                val socket = serverSocket.accept()
-                val receiveChannel = socket.openReadChannel()
-                try {
-                    val name = receiveChannel.readUTF8Line()
-                } catch (e: Throwable) {
-                    socket.close()
-                }
-            }
+            ColorsOut.outappl("TestContainerManager   |   launching mockCtx...", ColorsOut.MAGENTA)
+            mockCtx("transporttrolley", 8056)
         }
     }
 
     @Before
     fun setUp(){
         if(!setup) {
-            println("TestContainerManager	|	setup...")
+            ColorsOut.outappl("TestContainerManager   |   setup...", ColorsOut.MAGENTA)
 
             object : Thread() {
                 override fun run() {
@@ -59,14 +52,15 @@ class TestContainerManager {
             }.start()
             var wSHandler = QakContext.getActor("wasteservicehandler")
             while (wSHandler == null) {
-                println("TestContainerManager	|	waiting for application starts...")
+                ColorsOut.outappl("TestContainerManager   |   waiting for application starts...", ColorsOut.MAGENTA)
                 CommUtils.delay(200)
                 wSHandler = QakContext.getActor("wasteservicehandler")
             }
             try {
                 conn = TcpClientSupport.connect("localhost", 8055, 5)
             } catch (e: Exception) {
-                println("TestContainerManager	|	TCP connection failed...")
+                ColorsOut.outappl("TestContainerManager   |   TCP connection failed...", ColorsOut.MAGENTA)
+
             }
             startObs("localhost:8055")
             obs.getNext()
@@ -101,8 +95,8 @@ class TestContainerManager {
 
     @Test
     @Throws(InterruptedException::class)
-    fun testUpdateOnSingleRequestAccepted() {
-        println("TestContainerManager	|	testing single request accepted...")
+    fun test1UpdateOnSingleRequestAccepted() {
+        ColorsOut.outappl("TestContainerManager   |   testing single request accepted...", ColorsOut.MAGENTA)
 
         var asw = ""
         val prevState =obs.currentTypedState!!
@@ -112,7 +106,7 @@ class TestContainerManager {
         try {
             asw = conn.request(storeWaste)
         } catch (e: Exception) {
-            println("TestContainerManager	|	 some err in request: $e")
+            ColorsOut.outappl("TestContainerManager   |   some err in request: $e", ColorsOut.MAGENTA)
         }
         assertTrue(asw.contains("loadaccept"))
 
@@ -125,8 +119,8 @@ class TestContainerManager {
 
     @Test
     @Throws(InterruptedException::class)
-    fun testUpdateOnMultipleRequestAccepted() {
-        println("TestContainerManager	|	testing multiple request accepted...")
+    fun test2UpdateOnMultipleRequestAccepted() {
+        ColorsOut.outappl("TestContainerManager   |   testing multiple request accepted...", ColorsOut.MAGENTA)
 
         var asw = ""
         var prevState =obs.currentTypedState!!
@@ -136,7 +130,7 @@ class TestContainerManager {
         try {
             asw = conn.request(storeWaste)
         } catch (e: Exception) {
-            println("TestContainerManager	|	 some err in request: $e")
+            ColorsOut.outappl("TestContainerManager   |   some err in request: $e", ColorsOut.MAGENTA)
         }
         assertTrue(asw.contains("loadaccept"))
 
@@ -152,7 +146,7 @@ class TestContainerManager {
         try {
             asw = conn.request(storeWaste)
         } catch (e: Exception) {
-            println("TestContainerManager	|	 some err in request: $e")
+            ColorsOut.outappl("TestContainerManager   |   some err in request: $e", ColorsOut.MAGENTA)
         }
         assertTrue(asw.contains("loadaccept"))
 
@@ -165,8 +159,8 @@ class TestContainerManager {
 
     @Test
     @Throws(InterruptedException::class)
-    fun testUpdateOnSingleRequestRejected() {
-        println("TestContainerManager	|	testing single request rejected...")
+    fun test3UpdateOnSingleRequestRejected() {
+        ColorsOut.outappl("TestContainerManager   |   testing single request rejected...", ColorsOut.MAGENTA)
 
         var asw = ""
         var prevState =obs.currentTypedState!!
@@ -176,9 +170,9 @@ class TestContainerManager {
         try {
             asw = conn.request(storeWaste)
         } catch (e: Exception) {
-            println("TestContainerManager	|	 some err in request: $e")
+            ColorsOut.outappl("TestContainerManager   |   some err in request: $e", ColorsOut.MAGENTA)
         }
-        assertTrue(asw.contains("loadreject"))
+        assertTrue(asw.contains("loadrejected"))
         var newState = obs.getNext()
 
         assertEquals(prevState.getCurrentBoxWeight(Material.GLASS), newState.getCurrentBoxWeight(Material.GLASS) )
@@ -188,8 +182,8 @@ class TestContainerManager {
 
     @Test
     @Throws(InterruptedException::class)
-    fun testUpdateOnMultipleRequestRejected() {
-        println("TestContainerManager	|	testing multiple requests rejected...")
+    fun test4UpdateOnMultipleRequestRejected() {
+        ColorsOut.outappl("TestContainerManager   |   testing multiple requests rejected...", ColorsOut.MAGENTA)
 
         var asw = ""
         var prevState =obs.currentTypedState!!
@@ -199,7 +193,7 @@ class TestContainerManager {
         try {
             asw = conn.request(storeWaste)
         } catch (e: Exception) {
-            println("TestContainerManager	|	 some err in request: $e")
+            ColorsOut.outappl("TestContainerManager   |   some err in request: $e", ColorsOut.MAGENTA)
         }
         assertTrue(asw.contains("loadaccept"))
 
@@ -214,9 +208,9 @@ class TestContainerManager {
         try {
             asw = conn.request(storeWaste)
         } catch (e: Exception) {
-            println("TestContainerManager	|	 some err in request: $e")
+            ColorsOut.outappl("TestContainerManager   |   some err in request: $e", ColorsOut.MAGENTA)
         }
-        assertTrue(asw.contains("loadrejected"))
+        assertTrue(asw.contains("loadreject"))
 
         newState = obs.getNext()
 
