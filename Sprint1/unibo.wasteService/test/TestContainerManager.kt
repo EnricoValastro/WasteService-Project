@@ -34,7 +34,7 @@ class TestContainerManager {
 
         @BeforeClass
         @JvmStatic
-        fun startMockCtx(){
+        fun startMockCtx() {
             ColorsOut.outappl("TestContainerManager   |   launching mockCtx...", ColorsOut.MAGENTA)
             mockCtx("transporttrolley", 8056)
         }

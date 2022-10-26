@@ -21,7 +21,7 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
-						println("$name	|	starting...")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.CYAN) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -31,7 +31,7 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 				}	 
 				state("idle") { //this:State
 					action { //it:State
-						println("$name	|	waiting...")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.CYAN) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -59,7 +59,7 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 				}	 
 				state("acceptRequest") { //this:State
 					action { //it:State
-						println("$name	|	request accepted")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	request accepted", unibo.comm22.utils.ColorsOut.CYAN) 
 						forward("update", "update($REQMATERIAL,$REQWEIGHT)" ,"containermanager" ) 
 						answer("storewaste", "loadaccept", "loadaccept(_)"   )  
 						forward("dojob", "dojob($REQMATERIAL)" ,"wasteservicecore" ) 
@@ -72,7 +72,7 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 				}	 
 				state("rejectRequest") { //this:State
 					action { //it:State
-						println("$name	|	request rejected")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	request rejected", unibo.comm22.utils.ColorsOut.CYAN) 
 						forward("update", "update($REQMATERIAL,0)" ,"containermanager" ) 
 						answer("storewaste", "loadrejected", "loadrejected(_)"   )  
 						//genTimer( actor, state )
@@ -84,7 +84,7 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 				}	 
 				state("end") { //this:State
 					action { //it:State
-						terminate(1)
+						terminate(0)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

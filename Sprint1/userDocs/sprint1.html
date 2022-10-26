@@ -156,12 +156,20 @@ h3 {
 	background-color: #e6ccff;
     font-size: 100%;
 }
+h3.test{
+    background-color: #42b966;
+    font-size: 100%;
+}
 h4 {
     background-color: #6dd4f4b5;
     font-size: 100%;
 	width: 100%;
 	border-radius: 5px;
 	padding: 2px;
+}
+h4.test{
+    background-color: #5ee887;
+    font-size: 100%;
 }
 h5 {
     background-color: #91df4d;
@@ -246,9 +254,7 @@ div.imagedesc{
 <a href="../../Sprint2/userDocs/sprint2.html">Sprint 2</a>
 <a href="../../Sprint3/userDocs/sprint3.html">Sprint 3</a>
 <h2>Introduction</h2>
-<div class="remark">
-    Progetto finale di ISS finalizzato allo sviluppo software di un impianto di smistamento dei rifiuti attraverso un robot che preleva il carico del camion e lo porta al container appropriato.
- </div>
+
  
 <h2>Requirements</h2>
 <div class="remark">
@@ -285,7 +291,14 @@ div.imagedesc{
                 </ul>
             </li>
         </ul>
-        
+
+    Il team si occuperà di portare avanti le varie fasi dello sprint in parallelo. In particolare, dopo una fase di analisi del problema condotta in maniera collettiva procederemo come segue:
+    <ul>
+        <li><img src="../../Sprint0/userDocs/resouces/images/AlessioReitano.jpeg" alt="" width="2.5%" height="3%">Alessio Reitano: Progetto e sviluppo e test del <kc>WasteServiceHandler</kc> e dello <kc>SmartDevice</kc></li>
+        <li><img src="../../Sprint0/userDocs/resouces/images/AnnamariaSimonitto.jpg" alt="" width="2.4%" height="2.4%">Annamaria Simonitto: Progetto e sviluppo e test del <kc>WasteServiceCore</kc> e del <kc>ContainerManager</kc></li>
+        <li><img src="../../Sprint0/userDocs/resouces/images/EnricoValastro.jpeg" alt="" width="2.5%" height="2.5%">Enrico Valastro: Progetto e sviluppo e test del <kc>TransportTrolleyCore</kc>, <kc>TransportTrolleyExecutor</kc> e <kc>TransportTrolleyMover</kc></li>
+    </ul>
+    
 </div>
 
 <h2>Problem analysis</h2>
@@ -527,7 +540,7 @@ planner22Util.doPlan()</pre>
 <key2>Dispatch</key2> dropout : dropout(MATERIAL)</pre>
     
     <h4>Gestione degli stati</h4>
-    <h5>Stato della Service Area</h5>
+    <div id="res1"><h5>Stato della Service Area</h5></div>
     Affinche il <kc>WasteService</kc> possa rispondere in maniera opportuna alle richieste di deposito dei <kc>truck</kc> 
     è necessario che esso sia a conoscenza dello stato interno (peso corrente, peso massimo) dei container della <kc>Service Area</kc>. <br>
     Nasce quindi la problematica di come mantenere lo stato della <i>Service Area</i>. Le soluzioni possibili sono: 
@@ -602,8 +615,7 @@ planner22Util.doPlan()</pre>
     <img src="./resources/img/ArchLogicSprint1CM.png" alt="" style="width: 45%; height: 45%; ">
 
     <br>
-    <h5>Stato del TransportTrolley</h5>
-
+    <div id="res2"><h5>Stato del TransportTrolley</h5></div>
     In previsione delle fasi successive del progetto, sarebbe opportuno mantenere lo stato del <i>transportTrolley</i>. In particolare occorrerebe tenere traccia della posizione 
     del <i>transportTrolley</i> e del suo stato (inteso come stato di attività). <br>
     Dall'<a href="../../Sprint0/userDocs/sprint0.html">analisi dei requisiti </a> è emerso che lo stato del <i>transportTrolley</i> e la sua posizione nella stanza possono essere 
@@ -764,9 +776,7 @@ Il prototipo d'interazione sarebbe il seguente:
     <img src="./resources/img/ArchLogicSprint1.png" alt="" style="width:60% ; height:60% ;">
 </div>
 
-<h2>Sprint1 - Review</h2>
-<div class="remark">
-</div>
+
 
 <h2>Project</h2>
 <div class="remark">
@@ -1228,7 +1238,169 @@ Il componente quindi risponde al <i>TransportTrolleyCore</i> con un messaggio di
 
 <h2>Test Plan</h2>
 <div class="remarkTest">
-    Coming soon...
+
+    Al fine di verificare il corretto funzionamento del sistema, sono state sviluppate le classi di test: 
+    <a href="./resources/kotlin/TestContainerManager.kt">TestContainerManager.kt</a>, <a href="./resources/kotlin/TestWasteServiceHandler.kt">TestWasteServiceHandler.kt</a>, 
+    <a href="./resources/kotlin/TestTransportTrolleyCore.kt">TestTransportTrolleyCore.kt</a>. <br>
+    Il test plan, sfrutta la caratteristica degli attori QAk di essere delle risorse CoAP osservabili, per verificare il corretto cambiamento di stato delle risorse. In particolare, 
+    ogni test raccoglie tutti i cambiamenti di stato delle risorse e verifica che questi siano conformi a quanto previsto. <br> <br>
+
+    Poichè il sistema è stato sviluppato in maniera distribuita, i componenti presenti in un nodo dipendono da componenti presenti in altri nodi (<ks>Contesti</ks>). 
+    Per questo motivo, è stato necessario per ogni test, creare dei <ks>MockCtx</ks> che simulano il comportamento dei componenti remoti. <br>
+    I <i>MockCtx</i> sono delle <ks>coroutine kotlin</ks>, che utilizzando la libreria <a href="https://ktor.io">ktor</a> aprono una socket all'indirizzo e porta del contesto simulato. 
+    Per ogni connessione accettata dal <i>MockCtx</i> viene creato un <ks>MockCtxWorker</ks>, esso è una coroutine che sta in ascolto di messaggi indirizzati alla socket.
+
+    <pre>
+<key>class</key> MockCtx( 
+        <key>val</key> ctxName : String,
+        <key>val</key> port : Int,
+        <key>private val</key> onMessage: (ApplMessage)  -> Unit = {}
+        ) {
+
+}</pre>
+
+<pre>
+<key>class</key> MockCtxWorker (
+        <key>val</key> clientSock: Socket,
+        <key>val</key> ctxName: String,
+        <key>val</key> scope: CoroutineScope,
+        <key>val</key> onMessage: (ApplMessage) -> Unit = {}
+        ) {
+
+}</pre>
+
+    Al momento della creazione del <i>MockCtx</i> è possibile utilizzare una <ks>lambda function</ks> per specificare il comportamento del <i>MockCtxWorker</i> quando riceve un messaggio. <br>
+    Il codice delle classi è consultabile in <a href="./resources/kotlin/MockCtx.kt">MockCtx.kt</a>, <a href="./resources/kotlin/MockCtxWorker.kt">MockCtxWorker.kt</a>   <br><br>
+    
+    Come detto in precedenza, per poter verificare il corretto aggiornamento delle risorse, faremo uso del pattern <ks>observer</ks>. Per tale motivo abbiamo sviluppato una classe 
+    che permette di creare un "osservatore tipizzato". La classe <a href="./resources/kotlin/TypedCoapTestObserver.kt">TypedCoapTestObserver.kt</a> ha come parametro un <ks>lambda function</ks>, 
+    al momento della creazione dell'osservatore, gli si passa la funzione di deserializzazione della risorsa osservata. <br>
+    
+    <pre>
+<key>class</key> TypedCoapTestObserver < T >(
+    <key>private val</key> mapper : (String) -> T
+) : CoapTestObserver() {
+
+    <key>var</key> currentTypedState : T? = <key>null</key>
+    <key>private val</key> stateHistory = ArrayBlockingQueue < T >()
+
+    <key>override fun</key> onLoad(response : CoapResponse) {
+
+    }
+
+    <key>fun</key> getNext() : T {
+        
+    }
+
+    <key>fun</key> clearHistory() {
+
+    }
+}</pre>
+    
+    <h3 class="test">Test WasteService</h3>
+
+    Per quanto riguarda il nodo in cui sono presenti il <kc>WasteServiceCore</kc>, <kc>WasteServiceHandler</kc> e il <kc>ContainerManager</kc>, abbiamo ritenuto opportuno 
+    disporre un test plan per i seguenti componenti.
+
+    <h5>Test WasteServiceHandler</h5>
+    Sostanzialmente, il test consiste nel somministrare al <kc>WasteServiceHandler</kc> una serie di richieste (<kc>storewaste</kc>) e verificare, tramite la risposta ricevuta, 
+    che esse siano correttamente respinte o accettate. I test eseguiti sono i seguenti:
+    <ul>
+        <li><b>testLoadAccept</b> :</li> Consiste nell'inviare al <kc>WasteServiceHandler</kc> una richiesta che deve essere accettata e verificare di aver ricevuto la risposta <kc>loadaccept</kc>.
+        <li><b>testLoadReject</b> :</li> Consiste nell'inviare al <kc>WasteServiceHandler</kc> una richiesta che deve essere rifiutata e verificare di aver ricevuto la risposta <kc>loadrejected</kc>.
+        
+    </ul>
+
+    <br><br>
+    Il codice del test è consultabile in: <a href="./resources/kotlin/TestWasteServiceHandler.kt">TestWasteServiceHandler.kt</a>
+
+    <h5>Test ContainerManager</h5>
+
+    Per testare questo componente si somministrano una serie di richieste al <kc>WasteServiceHandler</kc> e si verifica che le <a href="#res1">risorse</a> gestite dal <kc>ContainerManager</kc> siano correttamente aggiornate. 
+    Questo approccio ci permette di verificare, in maniera implicita, che il <i>WasteServiceHandler</i> e il <i>ContainerManager</i> comunichino in maniera corretta.
+    <ul>
+        <li><b>test1UpdateOnSingleRequestAccepted</b> :</li> 
+        Il test consiste nel somministrare al <i>WasteServiceHandler</i> un'unica richiesta, che deve essere accettata, e verificare che la risorsa sia aggiornata correttamente.
+        <pre>
+<key>var</key> storeWaste = <key3>"msg(storewaste, request, testunit, wasteservicehandler, storewaste(GLASS, 50),1)"</key3>
+<key>assertEquals</key>(prevState.getCurrentBoxWeight(Material.GLASS)+50.0, newState.getCurrentBoxWeight(Material.GLASS) )
+<key>assertEquals</key>(prevState.getCurrentBoxWeight(Material.PLASTIC), newState.getCurrentBoxWeight(Material.PLASTIC))</pre>
+        <li><b>test2UpdateOnMultipleRequestAccepted</b> :</li>
+        Il test consiste nel somministrare al <i>WasteServiceHandler</i> due richieste, che devono essere accettata, e verificare che la risorsa sia aggiornata correttamente.
+        <pre>
+<key>var</key> storeWaste = <key3>"msg(storewaste, request, testunit, wasteservicehandler, storewaste(GLASS, 60),1)"</key3>
+<key>var</key> storeWaste = <key3>"msg(storewaste, request, testunit, wasteservicehandler, storewaste(GLASS, 10),1)"</key3>
+<key>assertEquals</key>(prevState.getCurrentBoxWeight(Material.GLASS)+60.0, newState.getCurrentBoxWeight(Material.GLASS) )
+<key>assertEquals</key>(prevState.getCurrentBoxWeight(Material.PLASTIC), newState.getCurrentBoxWeight(Material.PLASTIC))
+<key>assertEquals</key>(prevState.getCurrentBoxWeight(Material.GLASS)+10.0, newState.getCurrentBoxWeight(Material.GLASS) )
+<key>assertEquals</key>(prevState.getCurrentBoxWeight(Material.PLASTIC), newState.getCurrentBoxWeight(Material.PLASTIC))</pre>
+        <li><b>test3UpdateOnSingleRequestRejected</b> :</li>
+        Il test consiste nel somministrare al <i>WasteServiceHandler</i> un'unica richiesta, che deve essere rifiutata, e verificare che la risorsa non sia stata modificata.
+        <pre>
+<key>var</key> storeWaste = <key3>"msg(storewaste, request, testunit, wasteservicehandler, storewaste(GLASS, 1000),1)"</key3>
+<key>assertEquals</key>(prevState.getCurrentBoxWeight(Material.GLASS), newState.getCurrentBoxWeight(Material.GLASS) )
+<key>assertEquals</key>(prevState.getCurrentBoxWeight(Material.PLASTIC), newState.getCurrentBoxWeight(Material.PLASTIC))</pre>
+
+        <li><b>test4UpdateOnMultipleRequestRejected</b> :</li>
+        Il test consiste nel somministrare al <i>WasteServiceHandler</i> due richieste, di cui la prima deve essere accettata e la seconda rifiutata, e verificare che la risorsa sia aggiornata correttamente.
+        <pre>
+<key>var</key> storeWaste = <key3>"msg(storewaste, request, testunit, wasteservicehandler, storewaste(GLASS, 100),1)"</key3>
+<key>var</key> storeWaste = <key3>"msg(storewaste, request, testunit, wasteservicehandler, storewaste(GLASS, 500),1)"</key3>
+<key>assertEquals</key>(prevState.getCurrentBoxWeight(Material.GLASS)+100.0, newState.getCurrentBoxWeight(Material.GLASS) )
+<key>assertEquals</key>(prevState.getCurrentBoxWeight(Material.PLASTIC), newState.getCurrentBoxWeight(Material.PLASTIC))
+<key>assertEquals</key>(prevState.getCurrentBoxWeight(Material.GLASS), newState.getCurrentBoxWeight(Material.GLASS) )
+<key>assertEquals</key>(prevState.getCurrentBoxWeight(Material.PLASTIC), newState.getCurrentBoxWeight(Material.PLASTIC))</pre>
+
+    </ul>
+    
+    Il codice del test è consultabile in: <a href="./resources/kotlin/TestContainerManager.kt">TestContainerManager.kt</a>
+    
+    <h3 class="test">Test TransportTrolley</h3>
+
+    Per quanto riguarda il nodo in cui sono presenti i componenti <kc>TransportTrolleyCore</kc>, <kc>TransportTrolleyMover</kc> e il <kc>TransportTrolleyExecutor</kc>, abbiamo ritenuto 
+    sufficente disporre dei test solo per il componente <i>TransportTrolleyCore</i>. Infatti, il corretto funzionamento del <i>TransportTrolleyCore</i> implica il corretto 
+    funzionamento degli altri due componenti. <br>
+    Inoltre, <i>TransportTrolleyExecutor</i> è un componente che simula le azioni di carico e scarico 
+    tramite dei <ks>delay</ks>, per tale motivo non abbamo ritenuto necessario eseguire test su di esso. Il <i>TransportTrolleyMover</i> è il componente incaricato di comunicare 
+    con il <kc>pathexec</kc> per muovere il DDR robot, poichè il <i>pathexec</i> è un componente fornito dal committente diamo per scontato il suo corretto funzionamento e di conseguenza quello del <i>TransportTrolleyMover</i>.
+
+    <h5>Test TransportTrolleyCore</h5>
+
+    Il test di questo componente consiste nel inviare richieste e messaggi, facendo le veci del <kc>WasteServiceCore</kc>, e verificare il corretto aggiornamento delle <a href="#res2">risorse</a>.
+
+    <ul>
+        <li><b>test1Pickup</b> :</li>
+        Consiste nell'inviare al <i>TransportTrolleyCore</i> la richiesta <kc>pickup</kc>, verificare che la risposta sia una <kc>pickupdone</kc> e che lo stato della risorsa cambi in maniera corretta.
+        <pre>
+<key>var</key> pickup = <key3>"msg(pickup, request, testunit, transporttrolleycore, pickup(_),1)"</key3>
+<key>assertTrue</key>(asw.contains("pickupdone"))
+<key>assertEquals</key>("ONTHEROAD", newState.getCurrPosition().toString())
+<key>assertEquals</key>("MOVING", newState.getCurrState().toString())
+<key>assertEquals</key>("INDOOR", newState.getCurrPosition().toString())
+<key>assertEquals</key>("PICKINGUP", newState.getCurrState().toString())
+<key>assertEquals</key>("INDOOR", newState.getCurrPosition().toString())
+<key>assertEquals</key>("IDLE", newState.getCurrState().toString())</pre>
+        <li><b>test2Dropout</b> :</li>
+        Consiste nell'inviare al <i>TransportTrolleyCore</i> il messaggio <kc>dropout</kc> e verificare che lo stato della risorsa cambi in maniera corretta.
+        <pre>
+<key>var</key> dropout = <key3>"msg(dropout, dispatch, testunit, transporttrolleycore, dropout(PLASTIC),1)"</key3>
+<key>assertEquals</key>("ONTHEROAD", newState.getCurrPosition().toString())
+<key>assertEquals</key>("MOVING", newState.getCurrState().toString())
+<key>assertEquals</key>("PLASTICBOX", newState.getCurrPosition().toString())
+<key>assertEquals</key>("DROPPINGOUT", newState.getCurrState().toString())
+<key>assertEquals</key>("PLASTICBOX", newState.getCurrPosition().toString())
+<key>assertEquals</key>("IDLE", newState.getCurrState().toString())</pre>
+        <li><b>test3BackHome</b> :</li>
+        Consiste nell'inviare al <i>TransportTrolleyCore</i> il messaggio <kc>gotohome</kc> e verificare che lo stato della risorsa cambi in maniera corretta.
+        <pre>
+<key>var</key> gotohome = <key3>"msg(gotohome, dispatch, testunit, transporttrolleycore, gotohome(_),1)"</key3>
+<key>assertEquals</key>("ONTHEROAD", newState.getCurrPosition().toString())
+<key>assertEquals</key>("MOVING", newState.getCurrState().toString())
+<key>assertEquals</key>("HOME", newState.getCurrPosition().toString())
+<key>assertEquals</key>("IDLE", newState.getCurrState().toString())</pre>
+    </ul>
+Il codice del test è consultabile in <a href="./resources/kotlin/TestTransportTrolleyCore.kt">TestTransportTrolleyCore.kt</a>
+
 </div>
 
 <br/><br/> 	

@@ -5,14 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="da66c02c-91d2-47f7-b256-28ec376cd4ea" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/executionHistory/executionHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/executionHistory/executionHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/7.4/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/test/TestTransportTrolleyCore.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/test/TestTransportTrolleyCore.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../unibo.transportTrolley/test/mockCtx/MockCtx.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.transportTrolley/test/mockCtx/MockCtx.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.4/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.4/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.4/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.4/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.4/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.4/fileHashes/fileHashes.bin" afterDir="false" />
@@ -20,10 +13,17 @@
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Arch_wasteservice.py" beforeDir="false" afterPath="$PROJECT_DIR$/Arch_wasteservice.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unibo/containermanager/Containermanager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unibo/containermanager/Containermanager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unibo/wasteservicecore/Wasteservicecore.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unibo/wasteservicecore/Wasteservicecore.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unibo/wasteservicehandler/Wasteservicehandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unibo/wasteservicehandler/Wasteservicehandler.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wasteService.qak" beforeDir="false" afterPath="$PROJECT_DIR$/src/wasteService.qak" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/TestContainerManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/test/TestContainerManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/TestWasteServiceHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/test/TestWasteServiceHandler.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../userDocs/resources/img/ArchLogicSprint1.png" beforeDir="false" afterPath="$PROJECT_DIR$/../userDocs/resources/img/ArchLogicSprint1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../userDocs/resources/img/ArchLogicSprint1New.png" beforeDir="false" afterPath="$PROJECT_DIR$/../userDocs/resources/img/ArchLogicSprint1New.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../userDocs/resources/img/ArchLogicSprint1WSH_C.png" beforeDir="false" afterPath="$PROJECT_DIR$/../userDocs/resources/img/ArchLogicSprint1WSH_C.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../userDocs/resources/img/InteractionSchemaTTC.png" beforeDir="false" afterPath="$PROJECT_DIR$/../userDocs/resources/img/InteractionSchemaTTC.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../userDocs/sprint1.html" beforeDir="false" afterPath="$PROJECT_DIR$/../userDocs/sprint1.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,7 +79,7 @@
     &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;
   }
 }</component>
-  <component name="RunManager" selected="Gradle.TestContainerManager">
+  <component name="RunManager" selected="Gradle.TestWasteServiceCore">
     <configuration name="TestContainerManager" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -117,6 +117,29 @@
             <option value=":test" />
             <option value="--tests" />
             <option value="&quot;TestProva&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="TestWasteServiceCore" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;TestWasteServiceCore&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -171,8 +194,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.TestContainerManager" />
+        <item itemvalue="Gradle.TestWasteServiceCore" />
         <item itemvalue="Gradle.TestWasteServiceHandler" />
+        <item itemvalue="Gradle.TestContainerManager" />
         <item itemvalue="Gradle.TestProva" />
         <item itemvalue="Kotlin.MainCtxwasteserviceKt" />
       </list>
@@ -198,6 +222,8 @@
       <workItem from="1666367750574" duration="597000" />
       <workItem from="1666423814953" duration="13000" />
       <workItem from="1666604726145" duration="6808000" />
+      <workItem from="1666684532330" duration="10009000" />
+      <workItem from="1666769113664" duration="2726000" />
     </task>
     <servers />
   </component>

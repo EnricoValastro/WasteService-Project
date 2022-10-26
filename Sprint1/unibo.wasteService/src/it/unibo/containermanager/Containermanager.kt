@@ -22,7 +22,7 @@ class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
-						println("$name	|	starting...")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.CYAN) 
 						updateResourceRep(boxState.toJsonString() 
 						)
 						//genTimer( actor, state )
@@ -34,7 +34,7 @@ class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("idle") { //this:State
 					action { //it:State
-						println("$name	|	waiting...")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.CYAN) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -46,7 +46,7 @@ class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("evaluation") { //this:State
 					action { //it:State
-						println("$name	|	evaluating request")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	evaluating request...", unibo.comm22.utils.ColorsOut.CYAN) 
 						if( checkMsgContent( Term.createTerm("evalreq(MAT,QUA)"), Term.createTerm("evalreq(MAT,QUA)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 									try{
@@ -71,7 +71,7 @@ class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("update") { //this:State
 					action { //it:State
-						println("$name	|	updating container state")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	updating container state", unibo.comm22.utils.ColorsOut.CYAN) 
 						if( checkMsgContent( Term.createTerm("update(MAT,QUA)"), Term.createTerm("update(MAT,QUA)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 									
@@ -97,8 +97,8 @@ class Containermanager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("end") { //this:State
 					action { //it:State
-						println("$name	|	bye")
-						terminate(1)
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	bye", unibo.comm22.utils.ColorsOut.CYAN) 
+						terminate(0)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
