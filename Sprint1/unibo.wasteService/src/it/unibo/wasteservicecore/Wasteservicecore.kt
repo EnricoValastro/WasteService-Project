@@ -22,7 +22,7 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					action { //it:State
 						
 									utility.Banner.printBannerWasteService()
-						println("$name 	| 	starting...")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.CYAN) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -32,7 +32,7 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("idle") { //this:State
 					action { //it:State
-						println("$name 	| 	waiting...")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.CYAN) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -44,7 +44,7 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("pickup") { //this:State
 					action { //it:State
-						println("$name 	| 	asking for pickup...")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	asking for pickup", unibo.comm22.utils.ColorsOut.CYAN) 
 						if( checkMsgContent( Term.createTerm("dojob(MAT)"), Term.createTerm("dojob(MAT)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
@@ -53,7 +53,7 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 											}catch(e : Exception){}
 						}
 						request("pickup", "pickup(_)" ,"transporttrolleycore" )  
-						println("$name 	| 	waiting for pickup done...")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting for pickup done...", unibo.comm22.utils.ColorsOut.CYAN) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -63,7 +63,7 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("dropout") { //this:State
 					action { //it:State
-						println("$name 	| 	asking for dropout")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	asking for dropout", unibo.comm22.utils.ColorsOut.CYAN) 
 						forward("dropout", "dropout($REQMATERIAL)" ,"transporttrolleycore" ) 
 						//genTimer( actor, state )
 					}
@@ -74,7 +74,7 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("backHome") { //this:State
 					action { //it:State
-						println("$name 	| 	sending robot to home")
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	sending robot to home", unibo.comm22.utils.ColorsOut.CYAN) 
 						forward("gotohome", "gotohome(_)" ,"transporttrolleycore" ) 
 						//genTimer( actor, state )
 					}
@@ -87,7 +87,7 @@ class Wasteservicecore ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					action { //it:State
 						forward("exit", "exit(_)" ,"wasteservicehandler" ) 
 						forward("exit", "exit(_)" ,"containermanager" ) 
-						terminate(1)
+						terminate(0)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
