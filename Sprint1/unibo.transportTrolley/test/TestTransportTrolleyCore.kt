@@ -121,7 +121,7 @@ class TestTransportTrolleyCore {
 
         newState = obs.getNext()
 
-        
+
 
     }
     @Test
