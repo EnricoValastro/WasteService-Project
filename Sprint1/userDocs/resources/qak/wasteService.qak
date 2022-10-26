@@ -49,18 +49,21 @@ QActor containermanager context ctxwasteservice{
 	#]
 	
 	State init initial {
-		println("$name	|	starting...")
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.CYAN)#]
+		
 		updateResource[#boxState.toJsonString()#]
 	}Goto idle
 	
 	State idle {
-		println("$name	|	waiting...")
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.CYAN)#]
+		
 	}Transition t0 whenRequest evalreq -> evaluation
 					whenMsg    update  -> update
 					whenMsg    exit    -> end
 	
 	State evaluation {
-		println("$name	|	evaluating request")
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	evaluating request...", unibo.comm22.utils.ColorsOut.CYAN)#]
+		
 		onMsg (evalreq : evalreq(MAT,QUA)){
 			[#	try{
 					requestMaterialToStore = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())  
@@ -81,7 +84,8 @@ QActor containermanager context ctxwasteservice{
 	}Goto idle
 	
 	State update {
-		println("$name	|	updating container state")
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	updating container state", unibo.comm22.utils.ColorsOut.CYAN)#]
+		
 		onMsg (update : update(MAT,QUA)){
 			[#	
 				try{
@@ -101,8 +105,9 @@ QActor containermanager context ctxwasteservice{
 	}Goto idle
 	
 	State end {
-		println("$name	|	bye")
-		terminate 1
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	bye", unibo.comm22.utils.ColorsOut.CYAN)#]
+		
+		terminate 0
 	}
 }
 
@@ -120,15 +125,16 @@ QActor wasteservicehandler context ctxwasteservice{
 		var REQWEIGHT : Double = 0.0
 	#]
 	State init initial{
-		println("$name	|	starting...")
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.CYAN)#]
 		
-		request wasteservicehandler -m storewaste : storewaste(GLASS, 300)
+		//request wasteservicehandler -m storewaste : storewaste(GLASS, 300)
 		//request wasteservicehandler -m storewaste : storewaste(PLASTIC, 200)
 		
 	}Goto idle
 	
 	State idle{
-		println("$name	|	waiting...")
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.CYAN)#]
+		
 	}Transition t0 whenRequest storewaste -> evalReq
 					whenMsg    exit 	  -> end
 	
@@ -145,20 +151,22 @@ QActor wasteservicehandler context ctxwasteservice{
 					whenReply evalko -> rejectRequest
 	
 	State acceptRequest{
-		println("$name	|	request accepted")
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	request accepted", unibo.comm22.utils.ColorsOut.CYAN)#]
+		
 		forward containermanager -m update : update($REQMATERIAL, $REQWEIGHT)
 		replyTo storewaste with loadaccept : loadaccept(_)
 		forward wasteservicecore -m dojob: dojob($REQMATERIAL)		
 	}Goto idle
 	
 	State rejectRequest{
-		println("$name	|	request rejected")
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	request rejected", unibo.comm22.utils.ColorsOut.CYAN)#]
+		
 		forward containermanager -m update : update($REQMATERIAL, 0)
 		replyTo storewaste with loadrejected : loadrejected(_)
 	}Goto idle
 	
 	State end{
-		terminate 1
+		terminate 0
 	}
 	
 }
@@ -181,17 +189,20 @@ QActor wasteservicecore context ctxwasteservice{
 		[#
 			utility.Banner.printBannerWasteService()
 		#]
-		println("$name 	| 	starting...")
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.CYAN)#]
+		
 	}Goto idle
 
 	State idle{
-		println("$name 	| 	waiting...")
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.CYAN)#]
+		
 	}Transition t0 whenMsg 	  dojob -> pickup
 					whenEvent dropoutdone -> backHome
 					whenMsg   exit -> end
 
 	State pickup{
-		println("$name 	| 	asking for pickup...")
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	asking for pickup", unibo.comm22.utils.ColorsOut.CYAN)#]
+		
 		onMsg(dojob : dojob(MAT)){
 		[#
 			try{
@@ -200,23 +211,26 @@ QActor wasteservicecore context ctxwasteservice{
 		#]
 		}
 		request transporttrolleycore -m pickup : pickup(_)
-		println("$name 	| 	waiting for pickup done...")
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting for pickup done...", unibo.comm22.utils.ColorsOut.CYAN)#]
+		
 	}Transition t0 whenReply pickupdone  -> dropout 
 					
 	State dropout{
 		//forward smartdevice -m leaveindoor : leaveindoor(_)
-		println("$name 	| 	asking for dropout")
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	asking for dropout", unibo.comm22.utils.ColorsOut.CYAN)#]
+		
 		forward transporttrolleycore -m dropout : dropout($REQMATERIAL)
 	}Goto idle
 	
 	State backHome{
-		println("$name 	| 	sending robot to home")
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	sending robot to home", unibo.comm22.utils.ColorsOut.CYAN)#]
+		
 		forward transporttrolleycore -m gotohome : gotohome(_)
 	}Goto idle
 	
 	State end{
 		forward wasteservicehandler -m exit : exit(_)
 		forward containermanager -m exit : exit(_)
-		terminate 1
+		terminate 0
 	}
 }
