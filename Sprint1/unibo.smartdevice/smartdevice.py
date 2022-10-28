@@ -1,6 +1,8 @@
 import socket
 
-hostAddress = "192.168.1.4"
+#hostAddress = "192.168.1.4"
+
+hostAddress = "localhost"
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -18,7 +20,6 @@ def connect(p):
         inserisci()
 
 def request( message ) :
-    print("request", message)
     msg = message + "\n"
     byt = msg.encode()    #required in Python3
     sock.send(byt)
@@ -39,7 +40,7 @@ def console():
         console()
 
 def handleAnswer():
-    print("handleAnswer")
+    #print("handleAnswer")
     while True:  ##client wants to maintain the connection
         reply = ''
         while True:
@@ -47,9 +48,16 @@ def handleAnswer():
             if len(answer) <= 0:
                 break
             reply += answer.decode("utf-8")
+            reply = reply.replace("msg","")
+            reply = reply.replace("(","")
+            reply = reply.replace(")","")
+            reply = reply.split(",")
             if reply.endswith("\n"):
                 break
-        print("reply", reply)
+        if(reply[0] == "loadaccept"):
+            print("Carico accettato. Si prega di lasciare l'INDOOR")
+        else:
+            print("Carico rifiutato. Si prega di inserire una nuova richiesta")
         console()
 
 inserisci()
