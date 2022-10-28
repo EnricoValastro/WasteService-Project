@@ -27,8 +27,8 @@ def request( message ) :
 
 def console():
     print("Inserisci il tipo di carico:\n")
-    mat = input("GLASS OR PLASTIC \n")
-    if mat == "GLASS" or mat == "PLASTIC":
+    mat = input("Glass OR Plastic \n")
+    if mat == "glass" or mat == "plastic":
         print("Inserisci il peso del carico:\n")
         qua = input()
         storewaste = "msg(storewaste, request,smartdevice,wasteservice,storewaste(MAT,QUA),1)"
@@ -48,13 +48,14 @@ def handleAnswer():
             if len(answer) <= 0:
                 break
             reply += answer.decode("utf-8")
-            reply = reply.replace("msg","")
-            reply = reply.replace("(","")
-            reply = reply.replace(")","")
-            reply = reply.split(",")
+            valuation = reply.replace("msg","")
+            valuation = valuation.replace("(","")
+            valuation = valuation.replace(")","")
+            valuation = valuation.split(",")
             if reply.endswith("\n"):
                 break
-        if(reply[0] == "loadaccept"):
+        
+        if(valuation[0] == "loadaccept"):
             print("Carico accettato. Si prega di lasciare l'INDOOR")
         else:
             print("Carico rifiutato. Si prega di inserire una nuova richiesta")
