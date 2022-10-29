@@ -27,11 +27,12 @@ def request( message ) :
 
 def console():
     print("Inserisci il tipo di carico:\n")
-    mat = input("Glass OR Plastic \n")
+    mat = input("Glass or Plastic \n")
     if mat == "glass" or mat == "plastic":
         print("Inserisci il peso del carico:\n")
         qua = input()
         storewaste = "msg(storewaste, request,smartdevice,wasteservice,storewaste(MAT,QUA),1)"
+        #storewaste = "msg(storewaste, request,smartdevice,wasteservicehandler,storewaste(MAT,QUA),1)"
         storewaste = storewaste.replace("MAT", mat)
         storewaste = storewaste.replace("QUA", qua)
         request(storewaste)
@@ -40,8 +41,7 @@ def console():
         console()
 
 def handleAnswer():
-    #print("handleAnswer")
-    while True:  ##client wants to maintain the connection
+    while True: 
         reply = ''
         while True:
             answer = sock.recv(50)
@@ -58,7 +58,7 @@ def handleAnswer():
         if(valuation[0] == "loadaccept"):
             print("Carico accettato. Si prega di lasciare l'INDOOR")
         else:
-            print("Carico rifiutato. Si prega di inserire una nuova richiesta")
+            print("Carico rifiutato. Si prega di lasciare l'INDOOR")
         console()
 
 inserisci()
