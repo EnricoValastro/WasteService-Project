@@ -38,12 +38,12 @@ function connect() {
         let gMax = container['boxMaxWeight']['GLASS'];
 
 
-        setMessageToWindow(glassprog, gCurr);
-        setMessageToWindow(glassprogMax, gMax);
+        setMessageToWindow(glassprog, gCurr.toString());
+        setMessageToWindow(glassMax, gMax.toString());
 
 
-        setMessageToWindow(plasticprog, pCurr);
-        setMessageToWindow(plasticprogMax, pMax);
+        setMessageToWindow(plasticprog, pCurr.toString());
+        setMessageToWindow(plasticMax, pMax.toString());
 
     };
 

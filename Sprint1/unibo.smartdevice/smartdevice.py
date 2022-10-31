@@ -1,8 +1,8 @@
 import socket
 
-#hostAddress = "192.168.1.4"
+hostAddress = "172.20.10.3"
 
-hostAddress = "localhost"
+#hostAddress = "localhost"
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -28,17 +28,18 @@ def request( message ) :
 def console():
     print("Inserisci il tipo di carico:\n")
     mat = input("Glass or Plastic \n")
-    if mat == "glass" or mat == "plastic":
-        print("Inserisci il peso del carico:\n")
-        qua = input()
-        storewaste = "msg(storewaste, request,smartdevice,wasteservice,storewaste(MAT,QUA),1)"
-        #storewaste = "msg(storewaste, request,smartdevice,wasteservicehandler,storewaste(MAT,QUA),1)"
-        storewaste = storewaste.replace("MAT", mat)
-        storewaste = storewaste.replace("QUA", qua)
-        request(storewaste)
-    else:
-        print("Errore. Riprova a inserire i dati")
-        console()
+    #if mat == "glass" or mat == "plastic".:
+    print("Inserisci il peso del carico:\n")
+    qua = input()
+    storewaste = "msg(storewaste, request,smartdevice,wasteservice,storewaste(MAT,QUA),1)"
+    #storewaste = "msg(storewaste, request,smartdevice,wasteservicehandler,storewaste(MAT,QUA),1)"
+    storewaste = storewaste.replace("MAT", mat)
+    storewaste = storewaste.replace("QUA", qua)
+    request(storewaste)
+    console()
+    #else:
+     #   print("Errore. Riprova a inserire i dati")
+      #  console()
 
 def handleAnswer():
     while True: 

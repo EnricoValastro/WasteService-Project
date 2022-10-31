@@ -2,10 +2,10 @@
 ioutils.js
 */
 
-    const glassprog       = document.getElementById("glassprog");
-    const plasticprog     = document.getElementById("plasticprog");
-    const glassprogMax       = document.getElementById("glassprogMax");
-    const plasticprogMax     = document.getElementById("plasticprogMax");
+    const glassprog       = document.getElementById("glassCurrent");
+    const plasticprog     = document.getElementById("plasticCurrent");
+    const glassMax       = document.getElementById("glassMax");
+    const plasticMax     = document.getElementById("plasticMax");
 
     function setMessageToWindow(outfield, message) {
          var output = message.replace("\n","<br/>")
