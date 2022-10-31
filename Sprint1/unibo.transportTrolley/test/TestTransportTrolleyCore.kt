@@ -121,8 +121,6 @@ class TestTransportTrolleyCore {
 
         newState = obs.getNext()
 
-
-
     }
     @Test
     @Throws(InterruptedException::class)

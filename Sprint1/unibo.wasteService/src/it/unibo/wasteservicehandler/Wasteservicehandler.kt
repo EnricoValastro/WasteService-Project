@@ -22,6 +22,8 @@ class Wasteservicehandler ( name: String, scope: CoroutineScope  ) : ActorBasicF
 				state("init") { //this:State
 					action { //it:State
 						 unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.CYAN) 
+						request("storewaste", "storewaste(GLASS,300)" ,"wasteservicehandler" )  
+						request("storewaste", "storewaste(PLASTIC,200)" ,"wasteservicehandler" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
