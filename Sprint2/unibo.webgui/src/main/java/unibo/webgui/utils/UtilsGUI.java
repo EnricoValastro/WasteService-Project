@@ -14,7 +14,7 @@ public class UtilsGUI {
         try{
             CommSystemConfig.tracing = true;
             String ctx = "ctxwasteservice";
-            String qak = "containermanager";
+            String qak = "systemstatemanager";
             String path = ctx+"/"+qak;
             conn = new CoapConnection(addr, path);
             ColorsOut.out("UtilsGUI | connect Tcp conn:" + conn );
