@@ -75,12 +75,17 @@ QActor wasteservice context ctxwasteservice{
 	
 		onMsg (storewaste : storewaste (MAT, QUA)){
 		[#
-			try{
-				REQMATERIAL = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())
-				REQWEIGHT = payloadArg(1).toDouble()	
-			}catch(e : Exception){		
+			if(payloadArg(0).trim().uppercase()!="PLASTIC" && payloadArg(0).trim().uppercase()!="GLASS"){
+				eval = false
 			}
-			eval = containerState.canStore(REQMATERIAL, REQWEIGHT)
+			else {
+				try{
+					REQMATERIAL = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())
+					REQWEIGHT = payloadArg(1).toDouble()	
+				}catch(e : Exception){		
+				}
+				eval = containerState.canStore(REQMATERIAL, REQWEIGHT)	
+			}
 			
 		#]
 
