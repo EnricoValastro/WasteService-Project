@@ -2,8 +2,6 @@ import socket
 
 hostAddress = "172.20.10.3"
 
-#hostAddress = "localhost"
-
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 def inserisci():
@@ -27,6 +25,7 @@ def request( message ) :
 
 def console():
     print("Inserisci il tipo di carico:\n")
+
     mat = input("Glass or Plastic \n")
     #if mat == "glass" or mat == "plastic".:
     print("Inserisci il peso del carico:\n")

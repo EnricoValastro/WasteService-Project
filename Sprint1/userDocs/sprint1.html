@@ -1431,6 +1431,58 @@ Il codice del test è consultabile in <a href="./resources/kotlin/TestTransportT
 
 </div>
 
+<h2>Sprint1 - Review</h2>
+<div class="remark">
+    <h3>Nodi del sistema</h3>
+    In seguito all'interazione con il committente, si è stabilito che, per contenere i costi, sarebbe opportuno porre sullo stesso nodo computazionale il <kc>ctxwasteservice</kc> e 
+    il <kc>ctxtransporttrolley</kc>. <br>
+
+    <h3>WasteService</h3>
+    In seguito alla fase di review condotta con i membri del team, si è stabilito che, il <kc>wasteservicehandler</kc> e il <kc>wasteservicecore</kc> dovrebbero essere un unico 
+    componente il <kc>wasteservice</kc>, in quanto la loro separazione non è necessaria e genera problemi nella comunicazione con lo <kc>smartdevice</kc>.
+
+    <h3>Dropoutdone</h3>
+    Si è deciso di utilizzare un <ks>event</ks> per comunicare al <kc>wasteservice</kc> la conclusione dell'operazione <kc>dropout</kc>, tuttavia per limitare l'overhead di rete 
+    si è scelto di utilizzare un <ks>local event</ks>, ovvero un evento il cui identificativo inizia con <b><i>local_</i></b> e che non viene propagato al di fuori del contesto in 
+    cui è stato generato.
+    <pre>
+<key2>Event</key2> local_dropoutdone : local_dropoutdone(_)</pre>
+
+    <h3>ContainerManager</h3>
+    Si è deciso di modificare il behavior del <kc>containermanager</kc>, in modo che esso non sia più il componente incaricato di gestire i container e valutare le richieste <kc>storewaste</kc>. 
+    Il <kc>containermanager</kc> che da adesso si chiamera <kc>systemstatemanager</kc> sarà il componente incaricato di raccogliere tutti i cambiamenti di stato del sistema (container, trolley state e trolley position) 
+    e di aggiornare tutti i CoAP obserber. <br>
+    Per poter fare ciò è stato necessario introdurre due nuovi messaggi nel sistema:
+    <pre>
+<key2>Dispatch</key2> updatecontainer : updatecontainer(MAT, QUA)
+<key2>Dispatch</key2> updatetrolley	  : updatetrolley(POS, STAT)</pre>
+    Il compito di valutare le richieste <kc>storewaste</kc> ritorna dunque al <kc>wasteservice</kc>.
+
+    <h3>Architettura Logica</h3>
+    In seguito ai cambiamenti apportati al sistema, l'architettura logica è stata modificata: <br>
+    <img src="./resources/img/ArchLogicSprint1Review.png" alt="" style="width: 60%; height: 60%;"> <br>
+    <a href="./resources/qak/wasteServiceNew.qak">wasteService.qak</a>
+
+    <h3>Test Plan</h3>
+    Per quanto riguarda i test plan, essi non vengono modificati, tuttavia sono state instanziate delle classi di test che fanno uso di <ks>mockActors</ks> anzichè utilizzare i <ks>mockCtx</ks>.
+    <b><i>Test WasteService</i></b> <br>
+    <a href="./resources/kotlin/TestWasteServiceComponent.kt">TestWasteServiceComponent.kt</a><br>
+    <a href="./resources/qak/testWasteService.qakx">testWasteService.qak</a>
+    <br><br>
+    <b><i>Test SystemStateManager</i></b> <br>
+    <a href="./resources/kotlin/TestSystemStateManager.kt">TestSystemStateManager.kt</a><br>
+    <a href="./resources/qak/testSystemStateManager.qakx">TestSystemStateManager.qak</a>
+    <br><br>
+    <b><i>Test TransportTrolleyCore</i></b><br>
+    <a href="./resources/kotlin/TestTransportTrolleyCoreNew.kt">TestTransportTrolleyCore.kt</a><br>
+    <a href="./resources/qak/testTransportTrolleyCore.qakx">testTransportTrolleyCore.qak</a>
+
+    <h3>Smart Device</h3>
+    Nella fase di review dello sprint, è stato deciso di sviluppare un prototipo di <kc>smartdevice</kc>. Questo permetterà al committente e a noi sviluppatori di provare il sistema. <br>
+    Lo <i>smartdevice</i> è stato realizzato come una UI
+
+</div>
+
 <br/><br/> 	
 
 <div style="background-color:rgba(60, 131, 186, 0.9); width:50%;text-align:center;color:white; margin-left: 25%; border-radius: 25px;" >

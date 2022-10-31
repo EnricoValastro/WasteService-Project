@@ -127,8 +127,8 @@ QActor wasteservicehandler context ctxwasteservice{
 	State init initial{
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.CYAN)#]
 		
-		//request wasteservicehandler -m storewaste : storewaste(GLASS, 300)
-		//request wasteservicehandler -m storewaste : storewaste(PLASTIC, 200)
+		request wasteservicehandler -m storewaste : storewaste(GLASS, 300)
+		request wasteservicehandler -m storewaste : storewaste(PLASTIC, 200)
 		
 	}Goto idle
 	
