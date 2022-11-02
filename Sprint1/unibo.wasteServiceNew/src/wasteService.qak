@@ -198,7 +198,7 @@ QActor transporttrolleycore context ctxwasteservice{
 					whenReply moveko -> moveErr
 
 	State dropoutExec{
-		forward systemstatemanager -m updatetrolley : updatetrolley(POS, DROPPINGOUT)
+		forward systemstatemanager -m updatetrolley : updatetrolley($POS, DROPPINGOUT)
 		request transporttrolleyexecutor -m execaction : execaction(DROPOUT)
 	}Transition t0 whenReply execok -> dropoutRes
 					whenReply execko -> execErr
@@ -206,7 +206,7 @@ QActor transporttrolleycore context ctxwasteservice{
 	State dropoutRes{
 		
 		emit local_dropoutdone : local_dropoutdone
-		forward systemstatemanager -m updatetrolley : updatetrolley(POS, IDLE)
+		forward systemstatemanager -m updatetrolley : updatetrolley($POS, IDLE)
 		
 	}Goto idle
 
@@ -455,7 +455,7 @@ QActor systemstatemanager context ctxwasteservice{
 	
 	State updateTrolleyState{
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	updating trolley state", unibo.comm22.utils.ColorsOut.MAGENTA)#]
-		onMsg (updatecontainer : updatecontainer(MAT,QUA)){
+		onMsg (updatetrolley : updatetrolley(POS,STAT)){
 			[#	
 				try{
 					position = sys.state.TTPosition.valueOf(payloadArg(0).trim().uppercase())  
