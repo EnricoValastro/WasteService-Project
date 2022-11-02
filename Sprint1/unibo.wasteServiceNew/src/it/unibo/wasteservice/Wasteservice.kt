@@ -50,12 +50,17 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						if( checkMsgContent( Term.createTerm("storewaste(MAT,QUA)"), Term.createTerm("storewaste(MAT,QUA)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
-											try{
-												REQMATERIAL = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())
-												REQWEIGHT = payloadArg(1).toDouble()	
-											}catch(e : Exception){		
+											if(payloadArg(0).trim().uppercase()!="PLASTIC" && payloadArg(0).trim().uppercase()!="GLASS"){
+												eval = false
 											}
-											eval = containerState.canStore(REQMATERIAL, REQWEIGHT)
+											else {
+												try{
+													REQMATERIAL = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())
+													REQWEIGHT = payloadArg(1).toDouble()	
+												}catch(e : Exception){		
+												}
+												eval = containerState.canStore(REQMATERIAL, REQWEIGHT)	
+											}
 											
 						}
 						//genTimer( actor, state )
