@@ -1,22 +1,21 @@
 import socket
 
-"""def inserisci():
-    address = input("Inserisci l'indirizzo IP del server\n")
-    port = int(input("Inserisci porta a cui collegarsi\n"))
-    connect(address, port)
-"""
+hostAddress = "172.20.10.3"
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-
-hostAddress = "localhost"
-port = 8055
-
+def inserisci():
+    port = int(input("Inserisci porta a cui collegarsi\n"))
+    connect(port)
 
 def connect(p):
     server_address = (hostAddress, p)
-    sock.connect(server_address)
-    print("CONNECTED WITH", server_address)
+    try:
+        sock.connect(server_address)
+        print("CONNECTED WITH", server_address)
+    except:
+        print("Si è verificato un errore. Riprova")
+        inserisci()
 
 def request( message ) :
     msg = message + "\n"
@@ -25,15 +24,21 @@ def request( message ) :
     handleAnswer()
 
 def console():
-    print("Inserisci il tipo di carico da depositare: ")
-    mat = input()
-    print("\n\nInserisci il peso del carico: ")
+    print("Inserisci il tipo di carico:\n")
+
+    mat = input("Glass or Plastic \n")
+    #if mat == "glass" or mat == "plastic".:
+    print("Inserisci il peso del carico:\n")
     qua = input()
     storewaste = "msg(storewaste, request,smartdevice,wasteservice,storewaste(MAT,QUA),1)"
+    #storewaste = "msg(storewaste, request,smartdevice,wasteservicehandler,storewaste(MAT,QUA),1)"
     storewaste = storewaste.replace("MAT", mat)
     storewaste = storewaste.replace("QUA", qua)
     request(storewaste)
     console()
+    #else:
+     #   print("Errore. Riprova a inserire i dati")
+      #  console()
 
 def handleAnswer():
     while True: 
@@ -49,13 +54,12 @@ def handleAnswer():
             valuation = valuation.split(",")
             if reply.endswith("\n"):
                 break
+        
         if(valuation[0] == "loadaccept"):
-            print("\n\nCarico accettato. Si prega di lasciare l'INDOOR")
-            println("\n\n")
+            print("Carico accettato. Si prega di lasciare l'INDOOR")
         else:
-            print("\n\nCarico rifiutato. Si prega di lasciare l'INDOOR")
-            println("\n\n")
+            print("Carico rifiutato. Si prega di lasciare l'INDOOR")
         console()
 
-connect(port)
+inserisci()
 console()

@@ -276,12 +276,117 @@
         </div>
 
         <h2>Problem analysis</h2>
+        
         <div class="remark">
-
-            
+            <h3>Sprint1 result</h3>
+            Al termine dello <a href="../../Sprint1/userDocs/sprint1.html">Sprint1</a>, l'architettura logica è la seguente: <br></br>
+            <img src="../../Sprint1/userDocs/resources/img/ArchLogicSprint1Review.png" alt="" width="60%" height="60%">
+            <br>
         </div>
 
+        <div class="remark">
+            <div id="dataSource"><h3>Problem: Show Data</h3></div>
+            Dai requisiti, emerge che il componente <kc>WasteServiceStatusGUI</kc> deve essere in grado di mostrare a un utente umano, il <kc>Service-manager</kc>, 
+            una serie di informazioni riguardanti lo stato del sistema e dei sui componenti. <br>
+            <h4>Data Source</h4>
+            Bisogna quindi comprendere quali siano le fonti di tali informazioni. In particolare, la <i>GUI</i> deve fornire informazioni su:
+            <ul>
+                <li>
+                    <b>Stato del <kc>transportTrolley</kc> e la sua posizione nella stanza</b>
+                </li>
+                <li>
+                    <b>Peso corrente dei due container</b>
+                </li>
+                <li>
+                    <b>Stato correte del Led</b>
+                </li>
+            </ul>
+            <h5>Stato e posizione del transportTrolley</h5>
+            Dall'analisi dei requisiti è emerso che lo stato e la posizione del <kc>transportTrolley</kc>, possono essere rappresentati tramite i seguenti enumerativi:
 
+            <pre>
+<key>enum</key> <key>class</key> CurrStateTrolley { <i>IDLE</i>, <i>STOPPED</i>, <i>MOVING</i>, <i>PICKINGUP</i>, <i>DROPPINGOUT</i> }</pre>
+
+            <pre>
+<key>enum</key> <key>class</key> TTPosition { <i>HOME</i>, <i>INDOOR</i>, <i>PLASTICBOX</i>, <i>GLASSBOX</i>, <i>ONTHEROAD</i> }</pre>
+
+            Inoltre, in seguito all'analisi condotta nello Sprint1, è stato deciso di mantenere questi dati utilizzando la <ks>data class Kotlin</ks> <a href="./resources/kotlin/SystemState.kt">SystemState.kt</a>. 
+            I dati vengo amministrati da un componente, che è stato creato <i>ad hoc</i> per gestire e mantenere lo stato del sistema, il <kc>SystemStateManager</kc>.
+            Tale componente è implementato come un attore QAk, pertanto esso è definito come una risorsa CoAP osservabile, il che lo rende una possibile fonte per i dati di interesse della GUI.
+
+            <h5>Peso corrente dei due container</h5>
+            Dall'analisi dei requisiti è emerso che il peso corrente dei due container, può essere rappresentato tramite una <ks>MutableMap</ks>:
+            <pre>
+<key>private val</key> boxCurrentWeight : MutableMap < Material, Double ></pre>
+            
+            Inoltre, come emerso dallo Sprint1, lo stato dei container è mantenuto nella <ks>data class Kotlin</ks> <a href="./resources/kotlin/SystemState.kt">SystemState.kt</a>. 
+            Anche in questo caso, i dati relativi al peso corrente dei container vengono amministrati dal <i>SystemStateManager</i>.
+            
+            <h5>Stato del Led</h5>
+            Per quanto rigurda lo stato del led, dall'analisi dei requisiti è emerso che può essere rappresentato tramite un enumerativo:
+
+            <pre>
+<key>enum</key> <key>class</key> CurrStateLed { <i>ON</i>, <i>OFF</i>, <i>BLINKING</i> }</pre>
+            
+            Tuttavia, la sua gestione, resta una problematica ancora aperta che verrà trattata nello Sprint3. Ciò nonostante, supponiamo che lo stato del led sarà gestito allo 
+            stesso modo degli altri dati, ossia tramite il <i>SystemStateManager</i>. Per tale motivo, suggeriamo agli sviluppatori di apportare le modifiche necessarie, al <i>SystemStateManager</i> 
+            e alla <i>data class</i> <a href="./resources/kotlin/SystemState.kt">SystemState.kt</a>, affinchè essi siano predisposti alla gestione dello stato del led.
+            
+            <br><br>
+            Alla luce di questa analisi è possibile affermare che la <i>fonte di dati</i> per la GUI, è rapresentata dal componente <i>SystemStateManager</i>.
+            <h4>Fetch vs Push</h4>
+            Una volta compreso che il <kc>SystemStateManager</kc> è la fonte di dati per la GUI, bisogna comprendere come questi dati vengano recuperati dalla GUI. <br>
+            Sono possibili due modalità di recupero dei dati:
+            <h5>Fetch</h5>
+            Questa soluzione prevede che sia la GUI a richiedere i dati al <kc>SystemStateManager</kc>, ciò comporta che la <i>GUI</i> debba aprire un canale di comunicazione con il <kc>SystemStateManager</kc> 
+            e richiedere i dati e stare in ascolto di risposte. <br> Inoltre, affinchè non venga perso nessun dato, è necessario che questa operazione venga ripetuta ad intervalli regolari, generando un elevato <i>overhead</i> di rete.<br> 
+            Per tale motivo, scongliamo agli sviluppatori di adottare questo approccio.
+            <h5>Push</h5>
+            Tale soluzione prevede che la <kc>GUI</kc> venga progettata come un componente passivo, che riceve dati e li mostra all'utente. Per fare ciò è necessario, che qualche componente 
+            invii in maniera spontanea, tutti gli aggioramenti di stato alla <i>GUI</i>. <br> 
+            L'adozione di questa soluzione è particolarmente consigliata, in quanto permette di sfruttare la caratteristica degli attori QAk di essere realizzati come delle risorse <i>CoAP</i> osservabili. 
+            Procedendo in questo modo, sarà sufficente che la <i>GUI</i> apra una conessione <i>CoAP</i> con il <i>server CoAP</i> del <kc>SystemStateManager</kc> e si registri come osservatore della risorsa.
+            Successivamente l'attore QAk, potrà utilizzare la primitiva <ks>updateResources</ks> per inviare al server <i>CoAP</i> l'aggiornamento di stato, questo successivamente notificherà gli osservatori circa il cambiamento di stato.
+
+        </div>
+
+        <div class="remark">
+            <div id="gui"><h3>Problem: Kind of GUI</h3></div>
+            Per sviluppare la <kc>GUI</kc> è possibile servirsi di: <br>
+            <ul>
+                <li>App Android</li>
+                <li>Web App</li>
+                <li>App IOS</li>
+            </ul>
+            Per quanto riguarda l'App Android e IOS, gli utenti dovrebbero essere forniti di dispositivi compatibile con esse, risultando quindi più dispendioso. <br>
+            Per quanto riguarda la Web App invece, è possibile utilizzare un browser web da qualsiasi dispositivo per accedere alla GUI. <br>
+            Dopo aver analizzato le varie opzioni, il team ha deciso di sviluppare una Web App(servendosi del framework SpringBoot) essendo quest'ultima molto più versatile delle altre ed avendo il team conoscenze pregresse sull'uso del framework. <br>
+        </div>
+        
+        <div class="remark">
+            <div id="lateStart"><h3>Problem: Late start of the GUI</h3></div>
+            Dal momento che l'avvio del <kc>WasteService</kc> è svincolato dall'avvio della <kc>GUI</kc>, potrebbe verificarsi lo scenario in cui 
+            la <i>GUI</i> parte dopo il <i>WasteService</i>. <br>
+            Bisogna comprendere come, in tale circostanza, debba essere gestito l'aggiornamento dei dati mostrati dalla <i>GUI</i>.
+            Infatti se la <i>GUI</i> parte dopo il <i>WasteService</i>, potrebbero perdere alcuni dati. <br>
+            Si pone il problema di come gestire l'aggiornamento dei dati mostrati dalla <i>GUI</i> in caso di <i>late start</i>. <br>
+            <ul>
+                <li>Fare la fetch all'avvio della GUI</li>
+                <li>Aspettare che arriva un'altra richiesta al WasteService</li>
+            </ul>
+            Aspettare che arriva un'altra richiesta al WasteService è la soluzione più semplice da implementare, ma non è la migliore. <br>
+            Infatti protrebbe verificarsi il caso in cui al WasteService non arrivino richieste anche per istanti di tempo lunghi, e quindi la GUI non si aggiorna mai. <br>
+            Per questo motivo fare la fetch all'avvio della GUI è la soluzione migliore. <br>
+        </div>
+        
+        <div class="remark">
+            <h3>Architettura Logica</h3>
+            Sulla base di quanto emerso in fase di analisi del problema è possibile ridefinire l'architettura logica della <kc>Business Core</kc> e 
+            quindi quella dell'intero sistema.<br> 
+            La nuova architettura logica è riportata di seguito: <br><br>
+            <img src="" alt="" style="width:60% ; height:60% ;">
+        </div>
+    
         <h2>Project</h2>
         <div class="remark"></div>
 

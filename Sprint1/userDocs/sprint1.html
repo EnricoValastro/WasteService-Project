@@ -1456,6 +1456,8 @@ Il codice del test è consultabile in <a href="./resources/kotlin/TestTransportT
     <pre>
 <key2>Dispatch</key2> updatecontainer : updatecontainer(MAT, QUA)
 <key2>Dispatch</key2> updatetrolley	  : updatetrolley(POS, STAT)</pre>
+    Il <kc>systemstatemanager</kc> mantiene lo stato, utilizzando una <ks>dataclass Kotlin</ks> (<a href="./resources/kotlin/SystemState.kt">SystemState.kt</a>) che raggruppa 
+    le informazioni e le funzionalità che precedentemente erano suddivise nei due file <a href="./resources/kotlin/ServiceAreaState.kt">ServiceAreaState.kt</a> e <a href="./resources/kotlin/TransportTrolleyState.kt">TransportTrolleyState.kt</a>. <br>
     Il compito di valutare le richieste <kc>storewaste</kc> ritorna dunque al <kc>wasteservice</kc>.
 
     <h3>Architettura Logica</h3>
@@ -1479,8 +1481,47 @@ Il codice del test è consultabile in <a href="./resources/kotlin/TestTransportT
 
     <h3>Smart Device</h3>
     Nella fase di review dello sprint, è stato deciso di sviluppare un prototipo di <kc>smartdevice</kc>. Questo permetterà al committente e a noi sviluppatori di provare il sistema. <br>
-    Lo <i>smartdevice</i> è stato realizzato come una UI
+    Lo <i>smartdevice</i> è stato realizzato tramite uno script <ks>python</ks> che simula il comportamento dello <i>smartdevice</i>. Tramite una CLI richiede all'utente di inserire 
+    il tipo di materiale da depositare e la quantità. <br>
+    Il codice dello <i>smartdevice</i> è disponibile al seguente link: <a href="./resources/python/smartdevice.py">smartdevice.py</a>
+</div>
 
+<div class="remark">
+    <h3>How to start the system</h3>
+    <ul>
+        <li>
+            <b>Avviare il <kc>VirtualRobot</kc></b> <br> 
+            Da terminale navigare fino al path <i>WasteService-Project/WEnv/it.unibo.virtualRobot2020/node/WEnv/server/src</i> e lanciare il comando <i>node WebpageServer.js</i>
+            <pre>
+cd WasteService-Project/WEnv/it.unibo.virtualRobot2020/node/WEnv/server/src
+node WebpageServer.js</pre>
+            </pre>
+        </li>
+
+        <li>
+            <b>Avviare il <kc>basicrobot22</kc></b> <br>
+            Da terminale navigare fino al path <i>WasteService-Project/Sprint1/unibo.basicrobot22</i> e lanciare il comando <i>./gradlew run </i>
+            <pre>
+cd WasteService-Project/Sprint1/unibo.basicrobot22
+./gradlew run</pre>
+        </li>
+
+        <li>
+            <b>Avviare il <kc>wasteService</kc></b> <br>
+            Da terminale navigare fino al path <i>WasteService-Project/Sprint1/unibo.wasteServiceNew</i> e lanciare il comando <i>./gradlew run </i>
+            <pre>
+cd WasteService-Project/Sprint1/unibo.wasteServiceNew
+./gradlew run</pre>
+        </li>
+
+        <li>
+            <b>Avviare lo <kc>smartdevice</kc></b>
+            Da terminale navigare fino al path <i>WasteService-Project/Sprint1/unibo.smartdevice</i> e lanciare il comando <i>python3 smartdevice.py</i>
+            <pre>
+cd WasteService-Project/Sprint1/unibo.smartdevice
+python3 smartdevice.py</pre>
+        </li>
+    </ul>
 </div>
 
 <br/><br/> 	

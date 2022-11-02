@@ -1,4 +1,4 @@
-System wasteservice
+System testtransporttrolleycore
 
 /* Shout Down Message */
 Dispatch exit 		 : exit(_)
@@ -36,16 +36,8 @@ Request  dopath      : dopath(PATH)
 Reply    dopathdone  : dopathdone(ARG)
 Reply    dopathfail  : dopathfail(ARG)
 
-Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
+
 Context ctxwasteservice ip [host="localhost" port=8055]
-
-ExternalQActor pathexec context ctxbasicrobot
-
-/* *********************************************************************************************
- * ---------------------------------------------------------------------------------------------
- * Core component addicted to manage all the request exec by interacting with TT component 
- * ---------------------------------------------------------------------------------------------
- **********************************************************************************************/
 
 QActor wasteservice context ctxwasteservice{
 	
@@ -57,9 +49,7 @@ QActor wasteservice context ctxwasteservice{
 	#]
 	
 	State init initial{
-		[#
-			utility.Banner.printBannerWasteService()
-		#]
+		println("TestTransportTrolleyCore")
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.CYAN)#]
 		
 	}Goto idle
@@ -75,17 +65,12 @@ QActor wasteservice context ctxwasteservice{
 	
 		onMsg (storewaste : storewaste (MAT, QUA)){
 		[#
-			if(payloadArg(0).trim().uppercase()!="PLASTIC" && payloadArg(0).trim().uppercase()!="GLASS"){
-				eval = false
+			try{
+				REQMATERIAL = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())
+				REQWEIGHT = payloadArg(1).toDouble()	
+			}catch(e : Exception){		
 			}
-			else {
-				try{
-					REQMATERIAL = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())
-					REQWEIGHT = payloadArg(1).toDouble()	
-				}catch(e : Exception){		
-				}
-				eval = containerState.canStore(REQMATERIAL, REQWEIGHT)	
-			}
+			eval = containerState.canStore(REQMATERIAL, REQWEIGHT)
 			
 		#]
 
@@ -132,17 +117,28 @@ QActor wasteservice context ctxwasteservice{
 	}
 }
 
-/* *********************************************************************************************
- * ---------------------------------------------------------------------------------------------
- * Component addicted to manage request and actions
- * ---------------------------------------------------------------------------------------------
- **********************************************************************************************/
+QActor transporttrolleymover context ctxwasteservice{
+	
+	State init initial{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.BLUE)#]
+		[# unibo.kotlin.planner22Util.initAI() #]
+	}Goto idle
+
+	State idle{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.BLUE)#]
+	}Transition t0 whenRequest moveto -> moveok
+	
+	State moveok{
+		delay 300
+		replyTo moveto with moveok : moveok
+	}Goto idle
+}
 
 QActor transporttrolleycore context ctxwasteservice{
 	
 	[#
 		lateinit var MaterialToStore : String
-		lateinit var POS 			 : String
+		lateinit var POST 			 : String
 	#]
 	
 	State init initial{
@@ -178,35 +174,37 @@ QActor transporttrolleycore context ctxwasteservice{
 	}Goto idle
 
 	State dropoutMove{
+		
 		onMsg(dropout : dropout(MATERIAL)){
 			[#	
 				try{
 					MaterialToStore = payloadArg(0).trim().uppercase()
-					if(MaterialToStore.equals("PLASTIC")){
-						POS = "PLASTICBOX"
+					if(MaterialToStore.equals("PLASTIC")){						
+						POST = "PLASTICBOX"
 					}
 					else{
-						POS = "GLASSBOX"
+						POST = "GLASSBOX"
 					}
 				}catch(e : Exception){}	
+				
 			#]	
 		}
-		request transporttrolleymover -m moveto : moveto($POS)
+		
+		request transporttrolleymover -m moveto : moveto($POST)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
 		
 	}Transition t0 whenReply moveok -> dropoutExec
 					whenReply moveko -> moveErr
 
 	State dropoutExec{
-		forward systemstatemanager -m updatetrolley : updatetrolley($POS, DROPPINGOUT)
+		forward systemstatemanager -m updatetrolley : updatetrolley($POST, DROPPINGOUT)
 		request transporttrolleyexecutor -m execaction : execaction(DROPOUT)
 	}Transition t0 whenReply execok -> dropoutRes
 					whenReply execko -> execErr
 
 	State dropoutRes{
-		
 		emit local_dropoutdone : local_dropoutdone
-		forward systemstatemanager -m updatetrolley : updatetrolley($POS, IDLE)
+		forward systemstatemanager -m updatetrolley : updatetrolley($POST, IDLE)
 		
 	}Goto idle
 
@@ -236,187 +234,28 @@ QActor transporttrolleycore context ctxwasteservice{
 		forward transporttrolleymover -m exit : exit(_)
 		terminate 0
 	}
+
 }
-
-/* *********************************************************************************************
- * ---------------------------------------------------------------------------------------------
- * Component addicted to move the DDR robot
- * ---------------------------------------------------------------------------------------------
- **********************************************************************************************/
-
-QActor transporttrolleymover context ctxwasteservice{
-	
-	[#
-		
-		lateinit var destination  : String
-		var xDestination : Int = 0
-		var yDestination : Int = 0
-		var dir : String = "" 
-		var PATH = ""
-		var PATHSTILLTODO = ""
-		var attempt : Int = 0
-		var someToFix : Boolean = false
-	#]
-	
-	State init initial{
-		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.BLUE)#]
-		[# unibo.kotlin.planner22Util.initAI() #]
-	}Goto idle
-
-	State idle{
-		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.BLUE)#]
-		
-		[#someToFix = false#]
-		
-	}Transition t0 whenRequest moveto -> destinationEval
-					whenMsg exit -> end
-
-	State destinationEval{
-		
-		onMsg(moveto : moveto(POS)){
-			[#	
-				try{
-					destination = payloadArg(0).trim().uppercase()
-				
-					xDestination = utility.ServiceAreaDestinationConfig.getXDestination(destination)
-					yDestination = utility.ServiceAreaDestinationConfig.getYDestination(destination)
-					dir 		 = utility.ServiceAreaDestinationConfig.getPlannerDirection(destination)
-				}catch(e : Exception){}	
-			#]	
-		}
-		
-	}Goto plan
-
-	State plan{
-		
-		[#
-			unibo.kotlin.planner22Util.setGoal(xDestination, yDestination)
-			unibo.kotlin.planner22Util.doPlan()
-			PATH = unibo.kotlin.planner22Util.get_actionSequenceAsString()
-			unibo.comm22.utils.ColorsOut.outappl("$name	|	moving to $destination", unibo.comm22.utils.ColorsOut.BLUE)
-		#]
-
-	}Goto execMove
-
-	State execMove{
-		
-		request pathexec -m dopath : dopath($PATH)
-		
-	}Transition t0 whenReply dopathdone -> lookForFix
-					whenReply dopathfail -> moveKo
-				
-	State lookForFix{
-		[# unibo.kotlin.planner22Util.updateAfterPath(PATH) #]
-		[# someToFix = false #]
-		if[# unibo.kotlin.planner22Util.getDirection() != dir #]{
-			[# someToFix = true #]
-		}
-		
-	}Goto fixDir if[# someToFix #]
-					else moveOk 
-				
-	State fixDir{
-		[# 
-			PATH = utility.DirectionFixer.getPathForFixDir(unibo.kotlin.planner22Util.getDirection(), dir) 
-		 	unibo.comm22.utils.ColorsOut.outappl("$name	|	fixing direction", unibo.comm22.utils.ColorsOut.BLUE)
-		#]
-		
-	}Goto execMove
-	
-	State moveOk{
-		
-		[# attempt = 0 #]
-		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	arrived in $destination", unibo.comm22.utils.ColorsOut.BLUE)#]
-		
-		replyTo moveto with moveok : moveok
-		
-	}Goto idle
-
-	State moveKo{
-		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	moveKo", unibo.comm22.utils.ColorsOut.BLUE)#]
-		[#attempt++#]
-		onMsg(dopathfail : dopathfail(ARG)){
-			[#	
-				try{
-					PATHSTILLTODO = payloadArg(0)
-				}catch(e : Exception){}	
-			#]
-		}
-		if[#attempt==3#]{
-			[# attempt = 0 #]
-			replyTo moveto with moveko : moveko(_)
-		}
-		else{
-			request pathexec -m dopath : dopath($PATHSTILLTODO)	
-		}
-		
-	}Transition t0 whenReply dopathdone -> lookForFix
-					whenReply dopathfail -> moveKo 
-						
-	State end{
-		terminate 0
-	}
-}
-
-/* *********************************************************************************************
- * ---------------------------------------------------------------------------------------------
- *Component for performing actions
- * ---------------------------------------------------------------------------------------------
- **********************************************************************************************/
 
 QActor transporttrolleyexecutor context ctxwasteservice{
 	
-	[#
-		lateinit var action : String	
-	#]
-	
 	State init initial{
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.BLUE)#]
 	}Goto idle
 	
 	State idle{
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.BLUE)#]
-	}Transition t0 whenRequest execaction -> actionEval
-					whenMsg exit -> end
+	}Transition t0 whenRequest execaction -> execok
 	
-	State actionEval{
-		onMsg(execaction : execaction(ACT)){
-			[#	
-				try{
-					action = payloadArg(0).trim().uppercase()
-				}catch(e : Exception){}	
-			#]	
-		}
-	}Goto execPickup if[#action.equals("PICKUP")#]
-						else execDropout
-	
-	State execPickup{
-		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	$action execution", unibo.comm22.utils.ColorsOut.BLUE)#]
-		[#delay(kotlin.random.Random.nextLong(3000, 5000))#]
-		replyTo execaction with execok : execok(_)
+	State execok {
+		delay 400
+		replyTo execaction with execok : execok
 	}Goto idle
-	
-	State execDropout{
-		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	$action execution", unibo.comm22.utils.ColorsOut.BLUE)#]
-		[#delay(kotlin.random.Random.nextLong(2000, 4000))#]
-		replyTo execaction with execok : execok(_)
-	}Goto idle
-	
-	State end{
-		terminate 0
-	}
 }
 
-/* *********************************************************************************************
- * ---------------------------------------------------------------------------------------------
- * Component addicted to manage container state
- * ---------------------------------------------------------------------------------------------
- **********************************************************************************************/
-
 QActor systemstatemanager context ctxwasteservice{
-	
 	[#
-		val system  = sys.state.SystemState()
+		val systemState  = sys.state.SystemState()
 		lateinit var requestMaterialToStore : sys.state.Material 
 		var requestWeightToStore : Double = 0.0	
 		lateinit var position : sys.state.TTPosition
@@ -426,7 +265,7 @@ QActor systemstatemanager context ctxwasteservice{
 	State init initial {
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.MAGENTA)#]
 		
-		updateResource[#system.toJsonString()#]
+		updateResource[# systemState.toJsonString() #]
 	}Goto idle
 	
 	State idle {
@@ -444,30 +283,28 @@ QActor systemstatemanager context ctxwasteservice{
 				try{
 					requestMaterialToStore = sys.state.Material.valueOf(payloadArg(0).trim().uppercase())  
 					requestWeightToStore = payloadArg(1).toDouble()	
-					system.updateBoxWeight(requestMaterialToStore, requestWeightToStore)
+					systemState.updateBoxWeight(requestMaterialToStore, requestWeightToStore)
 				}catch(e : Exception){
-					//TobeDone
 				}
 			#]
 		}
-		updateResource[# system.toJsonString() #]
+		updateResource[# systemState.toJsonString() #]
 	}Goto idle
 	
 	State updateTrolleyState{
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	updating trolley state", unibo.comm22.utils.ColorsOut.MAGENTA)#]
-		onMsg (updatetrolley : updatetrolley(POS,STAT)){
+		onMsg (updatetrolley : updatetrolley(POS, STAT)){
 			[#	
 				try{
 					position = sys.state.TTPosition.valueOf(payloadArg(0).trim().uppercase())  
 					state = sys.state.CurrStateTrolley.valueOf(payloadArg(1).trim().uppercase())	
-					system.setCurrState(state)
-					system.setCurrPosition(position)
+					systemState.setCurrState(state)
+					systemState.setCurrPosition(position)
 				}catch(e : Exception){
-					//TobeDone
 				}
 			#]
 		}
-		updateResource[# system.toJsonString() #]
+		updateResource[# systemState.toJsonString() #]
 	}Goto idle
 	
 	State end {
@@ -475,5 +312,6 @@ QActor systemstatemanager context ctxwasteservice{
 		
 		terminate 0
 	}
-}
 
+	
+}
