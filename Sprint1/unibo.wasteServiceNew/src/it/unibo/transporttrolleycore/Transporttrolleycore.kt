@@ -104,7 +104,7 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				}	 
 				state("dropoutExec") { //this:State
 					action { //it:State
-						forward("updatetrolley", "updatetrolley(POS,DROPPINGOUT)" ,"systemstatemanager" ) 
+						forward("updatetrolley", "updatetrolley($POS,DROPPINGOUT)" ,"systemstatemanager" ) 
 						request("execaction", "execaction(DROPOUT)" ,"transporttrolleyexecutor" )  
 						//genTimer( actor, state )
 					}
@@ -117,7 +117,7 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				state("dropoutRes") { //this:State
 					action { //it:State
 						emit("local_dropoutdone", "local_dropoutdone" ) 
-						forward("updatetrolley", "updatetrolley(POS,IDLE)" ,"systemstatemanager" ) 
+						forward("updatetrolley", "updatetrolley($POS,IDLE)" ,"systemstatemanager" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

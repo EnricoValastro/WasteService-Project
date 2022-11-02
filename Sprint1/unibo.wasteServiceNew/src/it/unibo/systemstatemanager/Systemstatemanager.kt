@@ -72,7 +72,7 @@ class Systemstatemanager ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 				state("updateTrolleyState") { //this:State
 					action { //it:State
 						 unibo.comm22.utils.ColorsOut.outappl("$name	|	updating trolley state", unibo.comm22.utils.ColorsOut.MAGENTA) 
-						if( checkMsgContent( Term.createTerm("updatecontainer(MAT,QUA)"), Term.createTerm("updatecontainer(MAT,QUA)"), 
+						if( checkMsgContent( Term.createTerm("updatetrolley(POS,STAT)"), Term.createTerm("updatetrolley(POS,STAT)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 									
 												try{

@@ -19,8 +19,8 @@
         <button onclick="change()" class="btn btn-outline-success" type="submit">Connect</button>
     </form>
 
-    <div class="col-3 px-2 text-success m-1">
-        <b><span th:text="${addr}"></span></b>
+    <div id="ipaddr" class="col-3 px-2 text-danger m-1">
+        <b><span th:text="${addr}">not connected</span></b>
     </div>
     <!-- Service Area Status -->
     <div class="container col-8 p-2 text-center border rounded border-dark">
