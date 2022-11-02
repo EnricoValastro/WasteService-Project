@@ -18,7 +18,6 @@ def connect(p):
     sock.connect(server_address)
     print("CONNECTED WITH", server_address)
 
-
 def request( message ) :
     msg = message + "\n"
     byt = msg.encode()    #required in Python3
@@ -56,4 +55,5 @@ def handleAnswer():
             print("Carico rifiutato. Si prega di lasciare l'INDOOR")
         console()
 
+connect(port)
 console()
