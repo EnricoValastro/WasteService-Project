@@ -352,13 +352,31 @@
 
         <div class="remark">
             <div id="gui"><h3>Problem: Kind of GUI</h3></div>
-            - App Android
-            - Web App
-            - App IOS
+            Per sviluppare la <kc>GUI</kc> è possibile servirsi di: <br>
+            <ul>
+                <li>App Android</li>
+                <li>Web App</li>
+                <li>App IOS</li>
+            </ul>
+            Per quanto riguarda l'App Android e IOS, gli utenti dovrebbero essere forniti di dispositivi compatibile con esse, risultando quindi più dispendioso. <br>
+            Per quanto riguarda la Web App invece, è possibile utilizzare un browser web da qualsiasi dispositivo per accedere alla GUI. <br>
+            Dopo aver analizzato le varie opzioni, il team ha deciso di sviluppare una Web App(servendosi del framework SpringBoot) essendo quest'ultima molto più versatile delle altre ed avendo il team conoscenze pregresse sull'uso del framework. <br>
         </div>
         
         <div class="remark">
             <div id="lateStart"><h3>Problem: Late start of the GUI</h3></div>
+            Dal momento che l'avvio del <kc>WasteService</kc> è svincolato dall'avvio della <kc>GUI</kc>, potrebbe verificarsi lo scenario in cui 
+            la <i>GUI</i> parte dopo il <i>WasteService</i>. <br>
+            Bisogna comprendere come, in tale circostanza, debba essere gestito l'aggiornamento dei dati mostrati dalla <i>GUI</i>.
+            Infatti se la <i>GUI</i> parte dopo il <i>WasteService</i>, potrebbero perdere alcuni dati. <br>
+            Si pone il problema di come gestire l'aggiornamento dei dati mostrati dalla <i>GUI</i> in caso di <i>late start</i>. <br>
+            <ul>
+                <li>Fare la fetch all'avvio della GUI</li>
+                <li>Aspettare che arriva un'altra richiesta al WasteService</li>
+            </ul>
+            Aspettare che arriva un'altra richiesta al WasteService è la soluzione più semplice da implementare, ma non è la migliore. <br>
+            Infatti protrebbe verificarsi il caso in cui al WasteService non arrivino richieste anche per istanti di tempo lunghi, e quindi la GUI non si aggiorna mai. <br>
+            Per questo motivo fare la fetch all'avvio della GUI è la soluzione migliore. <br>
         </div>
         
         <div class="remark">
