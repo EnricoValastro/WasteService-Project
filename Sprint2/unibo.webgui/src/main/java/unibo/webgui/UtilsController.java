@@ -23,6 +23,18 @@ public class UtilsController{
     @Value("${container.plasticcurrent}")
     String plasticcurrent;
 
+    @Value("${container.plasticmax}")
+    String plasticmax;
+
+    @Value("${container.glassmax}")
+    String glassmax;
+
+    @Value("${container.trolleystate}")
+    String trolleystate;
+
+    @Value("${container.trolleyposition}")
+    String trolleyposition;
+
     protected String buildThePage(Model viewmodel) {
         setConfigParams(viewmodel);
         return mainPage;
@@ -32,6 +44,10 @@ public class UtilsController{
         viewmodel.addAttribute("addr", addr);
         viewmodel.addAttribute("glasscurrent", glasscurrent);
         viewmodel.addAttribute("plasticcurrent",  plasticcurrent);
+        viewmodel.addAttribute("glassmax",  glassmax);
+        viewmodel.addAttribute("plasticmax",  plasticmax);
+        viewmodel.addAttribute("trolleystate",  trolleystate);
+        viewmodel.addAttribute("trolleyposition",  trolleyposition);
     }
 
     @GetMapping("/")

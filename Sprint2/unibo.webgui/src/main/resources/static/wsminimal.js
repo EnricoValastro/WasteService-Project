@@ -8,7 +8,6 @@ function connect() {
     var host = document.location.host;
     var pathname = "/"                   //document.location.pathname;
     var addr = "ws://" + host + pathname + "socket";
-    //alert("connect addr=" + addr   );
 
     // Assicura che sia aperta un unica connessione
     if (socket !== undefined && socket.readyState !== WebSocket.CLOSED) {
@@ -34,6 +33,9 @@ function connect() {
         let pCurr = container['boxCurrentWeight']['PLASTIC'];
         let gCurr = container['boxCurrentWeight']['GLASS'];
 
+        let trolley = container['currState'];
+        let position = container['currPosition'];
+
         let pMax = container['boxMaxWeight']['PLASTIC'];
         let gMax = container['boxMaxWeight']['GLASS'];
 
@@ -45,8 +47,10 @@ function connect() {
         setMessageToWindow(plasticprog, pCurr.toString());
         setMessageToWindow(plasticMax, pMax.toString());
 
-    };
+        setMessageToWindow(trolleystate, trolley.toString());
+        setMessageToWindow(trolleyposition, position.toString());
 
+    };
 
 }//connect
 
