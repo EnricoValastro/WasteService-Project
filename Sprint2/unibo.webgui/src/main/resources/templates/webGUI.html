@@ -16,7 +16,7 @@
 <div class="container-fluid">
     <form class="d-flex p-2 col-3" action ="update" role="search" method="post">
         <input class="form-control me-2" type="search" name="ipaddr" aria-label="Search">
-        <button onclick="change()" id="connect" class="btn btn-outline-success" type="submit">Connect</button>
+        <button id="connect" class="btn btn-outline-success" type="submit">Connect</button>
     </form>
 
     <div id="ipaddr" class="col-3 px-2 text-success m-1">
@@ -104,16 +104,15 @@
         © 2022 Copyright:
         <span class="text-white">Enrico Valastro - Alessio Reitano - Annamaria Simonitto</span>
     </div>
-    <!-- Copyright -->
 </footer>
 
-<!--<script src="change.js"></script>-->
-<script src="table.js"></script>
 <script src="vendors/jquery/jquery.min.js"></script>
 <script src="sockjs.min.js"></script>
 <script src="ioutils.js"></script>
+<script src="table.js"></script>
 <script src="wsminimal.js"></script>
 <script>connect()</script> <!-- connect definita in wsminimal-->
+
 
 </body>
 </html>

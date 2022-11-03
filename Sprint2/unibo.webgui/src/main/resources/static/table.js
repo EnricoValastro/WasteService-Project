@@ -1,14 +1,19 @@
-// read local JSON file using jQuery
-$.getJSON("wasteServiceSystemConfig.json", function (data) {
-    let home = data['LOCATION']['HOME']
-    let indoor = data['LOCATION']['INDOOR']
-    let plastic = data['LOCATION']['PLASTICBOX']
-    let glass = data['LOCATION']['GLASSBOX']
+/*
+table.js
+*/
 
+const home = [0, 0]
+const indoor = [0, 8]
+const plastic = [10, 8]
+const glass = [10, 0]
+
+function generateTable() {
+    console.log("document")
+}
+    /*
     let table = document.createElement("table")
     table.classList.add("table")
     table.classList.add("table-bordered")
-    table.classList.add("table-dark")
     let tbody = document.createElement("tbody")
     table.appendChild(tbody)
     for (let i = 0; i < indoor[1]; i++) {
@@ -23,6 +28,8 @@ $.getJSON("wasteServiceSystemConfig.json", function (data) {
     }
     let div = document.getElementById("table")
     div.appendChild(table)
-})
+
+   */
+
 
 
