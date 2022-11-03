@@ -9,7 +9,7 @@ import socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 
-hostAddress = "localhost"
+hostAddress = "192.168.183.33"
 port = 8055
 
 
