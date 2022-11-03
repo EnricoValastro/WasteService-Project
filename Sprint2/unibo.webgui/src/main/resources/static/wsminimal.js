@@ -15,7 +15,6 @@ function connect() {
     }
     socket = new WebSocket(addr);
 
-
     function sendMessage(message) {
         var jsonMsg = JSON.stringify({ 'name': message });
         socket.send(jsonMsg);
@@ -50,6 +49,10 @@ function connect() {
         setMessageToWindow(trolleystate, trolley.toString());
         setMessageToWindow(trolleyposition, position.toString());
 
+        generateTable();
+      /*  if(position.toString() == "HOME")
+            generateTableHome();
+        */
     };
 
 }//connect

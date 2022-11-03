@@ -18,7 +18,6 @@ def connect(p):
     sock.connect(server_address)
     print("CONNECTED WITH", server_address)
 
-
 def request( message ) :
     msg = message + "\n"
     byt = msg.encode()    #required in Python3
@@ -28,7 +27,7 @@ def request( message ) :
 def console():
     print("Inserisci il tipo di carico da depositare: ")
     mat = input()
-    print("\n\nInserisci il peso del carico: ")
+    print("\n\Inserisci il peso del carico: ")
     qua = input()
     storewaste = "msg(storewaste, request,smartdevice,wasteservice,storewaste(MAT,QUA),1)"
     storewaste = storewaste.replace("MAT", mat)
@@ -52,10 +51,11 @@ def handleAnswer():
                 break
         if(valuation[0] == "loadaccept"):
             print("\n\nCarico accettato. Si prega di lasciare l'INDOOR")
-            println("\n\n")
+            print("\n\n")
         else:
             print("\n\nCarico rifiutato. Si prega di lasciare l'INDOOR")
-            println("\n\n")
+            print("\n\n")
         console()
 
+connect(port)
 console()
