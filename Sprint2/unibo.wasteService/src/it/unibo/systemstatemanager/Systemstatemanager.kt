@@ -119,6 +119,7 @@ class Systemstatemanager ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 				}	 
 				state("sendData") { //this:State
 					action { //it:State
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	sending data to someone", unibo.comm22.utils.ColorsOut.MAGENTA) 
 						updateResourceRep( system.toJsonString()  
 						)
 						//genTimer( actor, state )
