@@ -116,9 +116,11 @@ class Systemstatemanager ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
 				}	 
 				state("sendData") { //this:State
 					action { //it:State
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	sending data to someone", unibo.comm22.utils.ColorsOut.MAGENTA) 
 						updateResourceRep( system.toJsonString()  
 						)
 						//genTimer( actor, state )
@@ -126,6 +128,7 @@ class Systemstatemanager ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
 				}	 
 				state("end") { //this:State
 					action { //it:State

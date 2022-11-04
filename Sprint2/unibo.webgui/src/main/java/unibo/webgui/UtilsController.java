@@ -1,18 +1,22 @@
 package unibo.webgui;
 
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import unibo.comm22.coap.CoapConnection;
+
 import unibo.webgui.utils.UtilsGUI;
+
 
 @Controller
 public class UtilsController{
 
     protected String mainPage = "webGUI";
+
+    protected String updatePage = "update";
 
     @Value("${webgui.addr}")
     String addr;
@@ -35,9 +39,17 @@ public class UtilsController{
     @Value("${container.trolleyposition}")
     String trolleyposition;
 
+    @Value("${container.ledstate}")
+    String ledstate;
+
     protected String buildThePage(Model viewmodel) {
         setConfigParams(viewmodel);
         return mainPage;
+    }
+
+    protected String buildTheUpdatePage(Model viewmodel){
+        setConfigParams(viewmodel);
+        return updatePage;
     }
 
     protected void setConfigParams(Model viewmodel){
@@ -48,6 +60,7 @@ public class UtilsController{
         viewmodel.addAttribute("plasticmax",  plasticmax);
         viewmodel.addAttribute("trolleystate",  trolleystate);
         viewmodel.addAttribute("trolleyposition",  trolleyposition);
+        viewmodel.addAttribute("ledstate", ledstate);
     }
 
     @GetMapping("/")
@@ -59,8 +72,9 @@ public class UtilsController{
     public String update(Model viewmodel, @RequestParam String ipaddr  ){
         addr = ipaddr;
         viewmodel.addAttribute("addr", addr);
-        CoapConnection conn = UtilsGUI.connectWithUtilsUsingCoap(ipaddr);
-        conn.observeResource( new UtilsCoapObserver() );
-        return buildThePage(viewmodel);
+        UtilsGUI.connectWithUtilsUsingTcp(ipaddr);
+        UtilsGUI.connectWithUtilsUsingCoap(ipaddr).observeResource(new UtilsCoapObserver());
+        UtilsGUI.sendMsg();
+        return buildTheUpdatePage(viewmodel);
     }
 }

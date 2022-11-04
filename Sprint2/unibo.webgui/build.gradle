@@ -42,7 +42,7 @@ dependencies {
 	implementation name: 'uniboInterfaces'
 	implementation name: '2p301'
 	implementation name: 'unibo.comm22-1.1'
-	implementation name: 'unibo.qakactor22-3.0'  //per ApplMessage
+	implementation name: 'unibo.qakactor22-3.0'
 }
 
 tasks.named('test') {

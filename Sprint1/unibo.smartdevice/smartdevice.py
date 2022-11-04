@@ -9,7 +9,9 @@ import socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 
+
 hostAddress = "172.20.10.2"
+
 port = 8055
 
 
@@ -27,7 +29,7 @@ def request( message ) :
 def console():
     print("Inserisci il tipo di carico da depositare: ")
     mat = input()
-    print("\n\Inserisci il peso del carico: ")
+    print("\nInserisci il peso del carico: ")
     qua = input()
     storewaste = "msg(storewaste, request,smartdevice,wasteservice,storewaste(MAT,QUA),1)"
     storewaste = storewaste.replace("MAT", mat)

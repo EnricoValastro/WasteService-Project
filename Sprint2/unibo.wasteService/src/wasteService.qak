@@ -489,11 +489,12 @@ QActor systemstatemanager context ctxwasteservice{
 			#]
 		}
 		updateResource[# system.toJsonString() #]
-	}
+	}Goto idle
 	
 	State sendData{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	sending data to someone", unibo.comm22.utils.ColorsOut.MAGENTA)#]
 		updateResource[# system.toJsonString() #]
-	}
+	}Goto idle
 	
 	State end {
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	bye", unibo.comm22.utils.ColorsOut.MAGENTA)#]
