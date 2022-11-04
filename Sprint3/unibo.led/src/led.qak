@@ -1,0 +1,68 @@
+System raspberry
+
+Dispatch blink : blink(_)
+Dispatch turnon : turnon(_)
+Dispatch turnoff : turnoff(_)
+
+Dispatch updateled : updateled(STATE)
+
+Context ctxwasteservice ip[host="127.0.0.1" port=8055]
+Context ctxpi ip [host="localhost" port=8090 ]
+
+ExternalQActor systemstatemanager context ctxwasteservice
+
+QActor led context ctxpi {
+	[# 
+		var led : `it.unibo`.radarSystem22.domain.interfaces.ILed? = null
+		var flagBlink = false
+	#]
+	State s0 initial{
+		
+	}Goto idle
+	
+	State idle {
+		
+	}Transition t0 whenMsg blink -> blinkon
+					whenMsg turnon -> on
+					whenMsg turnoff -> off
+	State on {
+		[#led.turnOn()#]
+		[# flagBlink = false #]
+		forward systemstatemanager -m updateled : updateled(ON)
+	}Goto idle
+	
+	State off {
+		[#led.turnOff()#]
+		[# flagBlink = false #]
+		forward systemstatemanager -m updateled : updateled(OFF)
+	}Goto idle
+	
+	State blinkon {
+		if[# flagBlink == false#]{
+			forward systemstatemanager -m updateled : updateled(BLINK)
+			[# flagBlink = true #]
+		}
+		[#led.turnOn()#]
+	}Transition t0 whenTime 250 -> blinkoff
+					whenMsg turnon -> on
+					whenMsg turnoff -> off
+	
+	State blinkoff {
+		[#led.turnOff()#]
+	}Transition t0 whenTime 250 -> blinkon
+					whenMsg turnon -> on
+					whenMsg turnoff -> off
+}
+
+QActor sonar context ctxpi{
+	State s0 initial {
+		
+	}
+	
+	State activateSonar {
+		
+	}
+	State deactivateSonar{
+		
+	}
+}
