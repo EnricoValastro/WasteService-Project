@@ -18,9 +18,10 @@ class Systemstatemanager ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 		
 				val system  = sys.state.SystemState()
 				lateinit var requestMaterialToStore : sys.state.Material 
-				var requestWeightToStore : Double = 0.0	
-				lateinit var position : sys.state.TTPosition
-				lateinit var state : sys.state.CurrStateTrolley
+				var requestWeightToStore 			: Double = 0.0	
+				lateinit var position 				: sys.state.TTPosition
+				lateinit var state 					: sys.state.CurrStateTrolley
+				lateinit var led 					: sys.state.CurrStateLed
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
@@ -44,7 +45,9 @@ class Systemstatemanager ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					}	 	 
 					 transition(edgeName="t026",targetState="updateContainerState",cond=whenDispatch("updatecontainer"))
 					transition(edgeName="t027",targetState="updateTrolleyState",cond=whenDispatch("updatetrolley"))
-					transition(edgeName="t028",targetState="end",cond=whenDispatch("exit"))
+					transition(edgeName="t028",targetState="updateLedState",cond=whenDispatch("updateled"))
+					transition(edgeName="t029",targetState="sendData",cond=whenDispatch("getdata"))
+					transition(edgeName="t030",targetState="end",cond=whenDispatch("exit"))
 				}	 
 				state("updateContainerState") { //this:State
 					action { //it:State
@@ -92,6 +95,37 @@ class Systemstatemanager ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					sysaction { //it:State
 					}	 	 
 					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("updateLedState") { //this:State
+					action { //it:State
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	updating led state", unibo.comm22.utils.ColorsOut.MAGENTA) 
+						if( checkMsgContent( Term.createTerm("updateled(STAT)"), Term.createTerm("updateled(STAT)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+									
+												try{
+													led = sys.state.CurrStateLed.valueOf(payloadArg(0).trim().uppercase())  
+													system.setCurrLedState(led)
+												}catch(e : Exception){
+													//TobeDone
+												}
+						}
+						updateResourceRep( system.toJsonString()  
+						)
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+				}	 
+				state("sendData") { //this:State
+					action { //it:State
+						updateResourceRep( system.toJsonString()  
+						)
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 				}	 
 				state("end") { //this:State
 					action { //it:State

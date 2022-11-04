@@ -225,7 +225,7 @@ div.imagedesc{
     
 <head>
     <meta charset="UTF-8">
-    <title>Sprint1</title>
+    <title>Sprint3</title>
 </head>
     
 <body>
@@ -249,12 +249,50 @@ div.imagedesc{
 
 <h2>Work Plan</h2>
 <div class="remark">
+    In questo Sprint ci occuperemo dello sviluppo di <kc> Sonar</kc> e <kc>Led </kc>collocati sul RaspberryPI. <br>
+    Il <i> Sonar </i> verrà usato come un 'alarm device', infatti alla presenza di un ostacolo rilevato dal Sonar, il transportTrolley si fermerà. Il valore entro cui il Sonar rileva
+    l'ostacolo sarà un valore prefissato <kc> DLIMIT</kc>. <br>
+    Il <i> Led</i> verrà usato per indicare lo stato del transportTrolley :
+    <ul>
+        <li>LED off quando il transportTrolley è in HOME</li>
+        <li>LED blinks quando il transportTrolley è in movimento(pickup,dropout,gotoHome). <br>
+            (se il robot si trova in HOME ma si sta girando (magari per riposizionarsi dopo aver gestito una depositaction),
+ il Led deve comunque lampeggiare(detto dal committente)). </li>
+        <li>
+            LED on quando il transportTrolley è fermo/stopped.
+        </li>
+       
+    </ul>
 </div>
 
 <h2>Problem analysis</h2>
-<div class="remark"></div>
+<div class="remark">
+    <h3>Sprint2 result</h3>
+    Al termine dello <a href="../../Sprint2/userDocs/sprint2.html">Sprint2</a>, l'architettura logica è la seguente: <br></br>
+    <img src="../../Sprint2/userDocs/resources/img/ArchLogicSprint2Initial.png" alt="" width="60%" height="60%">
+    <br>
+</div>
+<div class="remark">
+    <h3><b>Led</b></h3>
+    
+    <h4>Interazione Led e SystemStateManager</h4>
+    Per poter la <kc>GUI</kc>  mostrare lo stato del Led si potrebbe operare in due modi differenti:
+    <ul>
+        <li>Il Led interagisce direttamente con la <i>GUI</i> mandandole il suo stato</li>
+        <li>Il Led interagisce col SystemStateManager mandandogli lo stato e poi sarà lui a comunicare con la <i>GUI</i> </li>
+    </ul>
+    Si sceglie di usare la seconda opzione, poichè con la prima si avrebbero due connessioni, in quanto la <i>GUI</i>  dovrebbe connettersi sia col SystemStateManager che col Led. <br>
+    Invece interagendo anche il Led con SystemStateManager(oltre a transportTrolley e WasteService) si avrà una sola connessione <i>GUI</i> -SystemStateManager.
 
+    <h3><b>Sonar</b></h3>
+</div>
 
+<div class="remark">
+    <h3>Architettura Logica</h3>
+    Sulla base di quanto emerso in fase di analisi del problema è possibile ridefinire l'architettura logica del sistema.<br> 
+    <br><br>
+    <img src="" alt="" style="width:60% ; height:60% ;">
+</div>
 <h2>Project</h2>
 <div class="remark"></div>
 

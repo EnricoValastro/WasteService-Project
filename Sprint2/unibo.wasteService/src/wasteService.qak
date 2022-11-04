@@ -14,7 +14,9 @@ Dispatch gotohome    : gotohome(_)
 
 /* State update Messages*/
 Dispatch updatecontainer  : updatecontainer(MAT,QUA)
-Dispatch updatetrolley	  : updatetrolley(POS, STAT)	
+Dispatch updatetrolley	  : updatetrolley(POS, STAT)
+Dispatch updateled		  : updateled(STAT)
+Dispatch getdata		  : getdata(_)
 
 /* Deposit Request Messages */
 Request  storewaste   : storewaste(MAT, QUA)
@@ -418,9 +420,10 @@ QActor systemstatemanager context ctxwasteservice{
 	[#
 		val system  = sys.state.SystemState()
 		lateinit var requestMaterialToStore : sys.state.Material 
-		var requestWeightToStore : Double = 0.0	
-		lateinit var position : sys.state.TTPosition
-		lateinit var state : sys.state.CurrStateTrolley
+		var requestWeightToStore 			: Double = 0.0	
+		lateinit var position 				: sys.state.TTPosition
+		lateinit var state 					: sys.state.CurrStateTrolley
+		lateinit var led 					: sys.state.CurrStateLed
 	#]
 	
 	State init initial {
@@ -432,9 +435,12 @@ QActor systemstatemanager context ctxwasteservice{
 	State idle {
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.MAGENTA)#]
 		
-	}Transition t0 whenMsg    updatecontainer  -> updateContainerState
-					whenMsg   updatetrolley 	   -> updateTrolleyState
-					whenMsg    exit            -> end
+	}Transition t0 whenMsg    updatecontainer  	-> updateContainerState
+					whenMsg   updatetrolley 	-> updateTrolleyState
+					whenMsg	  updateled			-> updateLedState
+					whenMsg	  getdata			-> sendData
+					whenMsg   exit            	-> end
+					
 	
 	State updateContainerState{
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	updating container state", unibo.comm22.utils.ColorsOut.MAGENTA)#]
@@ -470,9 +476,27 @@ QActor systemstatemanager context ctxwasteservice{
 		updateResource[# system.toJsonString() #]
 	}Goto idle
 	
+	State updateLedState{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	updating led state", unibo.comm22.utils.ColorsOut.MAGENTA)#]
+		onMsg (updateled : updateled(STAT)){
+			[#	
+				try{
+					led = sys.state.CurrStateLed.valueOf(payloadArg(0).trim().uppercase())  
+					system.setCurrLedState(led)
+				}catch(e : Exception){
+					//TobeDone
+				}
+			#]
+		}
+		updateResource[# system.toJsonString() #]
+	}
+	
+	State sendData{
+		updateResource[# system.toJsonString() #]
+	}
+	
 	State end {
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	bye", unibo.comm22.utils.ColorsOut.MAGENTA)#]
-		
 		terminate 0
 	}
 }
