@@ -46,7 +46,7 @@ public class UtilsGUI {
         try {
             String msg = "msg(getdata, dispatch, webgui, systemstatemanager, getdata(_), 1)";
             ColorsOut.outappl("UtilsGUI | sendMsg msg:" + msg + " conn=" + conn, ColorsOut.BLUE);
-            //connTCP.forward(msg);
+            connTCP.forward(msg);
         } catch (Exception e) {
             ColorsOut.outerr("UtilsGUI | sendMsg on:" + conn + " ERROR:" + e.getMessage());
         }

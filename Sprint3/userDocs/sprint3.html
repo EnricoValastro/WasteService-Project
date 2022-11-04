@@ -273,18 +273,49 @@ div.imagedesc{
     <br>
 </div>
 <div class="remark">
-    <h3><b>Led</b></h3>
+    <h3>Led</h3>
     
-    <h4>Interazione Led e SystemStateManager</h4>
-    Per poter la <kc>GUI</kc>  mostrare lo stato del Led si potrebbe operare in due modi differenti:
+    <h4>Stato del Led</h4>
+    Dall'analisi dei requisiti è emerso che il committente vuole che sia mostrato lo stato del Led nella <kc>GUI</kc>. Per fare ciò è necessario gestire e mantanere lo stato del Led. 
+    Inoltre, dall'analisi dei requisiti è emerso che lo stato del Led può essere rappresentato dal seguente enumerativo:
+    <pre>
+<key>enum class</key> CurrStateLed{ <i>ON</i>, <i>OFF</i>, <i>BLINK</i>}</pre>
+    Lo stato può essere mantenuto in due modi differenti:
     <ul>
-        <li>Il Led interagisce direttamente con la <i>GUI</i> mandandole il suo stato</li>
-        <li>Il Led interagisce col SystemStateManager mandandogli lo stato e poi sarà lui a comunicare con la <i>GUI</i> </li>
+        <li>Cablare lo stato del Led all'interno del componente Led.</li>
+        <li>Mantenere lo stato del Led usando una <ks>data class Kotlin</ks>.</li>
     </ul>
-    Si sceglie di usare la seconda opzione, poichè con la prima si avrebbero due connessioni, in quanto la <i>GUI</i>  dovrebbe connettersi sia col SystemStateManager che col Led. <br>
-    Invece interagendo anche il Led con SystemStateManager(oltre a transportTrolley e WasteService) si avrà una sola connessione <i>GUI</i> -SystemStateManager.
+    <h5>Stato cablato</h5>
+    Questa soluzione prevede di mantenere lo stato all'interno del file QAk del Led. <br>
+    <pre>
+<key2>QActor</key2> led <key2>context</key2> ctxpi{
+    [#
+        var ledState : CurrStateLed
+    #]
+}</pre>
+    Sebbene questa soluzione sia semplice, da al componente Led la responsabilità di mantenere lo stato del Led e di aggiornare la <i>GUI</i>. 
+    Inoltre affinchè la <i>GUI</i> possa mostrare lo stato del Led, è necessario che la GUI apra una connnesione Coap con il Led. <br>
+    <h5>Data class</h5>
+    Questa soluzione prevede di mantenere lo stato del Led in una <ks>data class Kotlin</ks>, togliendo in questo modo la responsabilità al Led.
+    <pre>
+<key>enum class</key> CurrStateLed { <i>ON</i>, <i>OFF</i>, <i>BLINK</i> }
+<key>data class</key> SystemState (
+    <key>private var</key> currLedState : CurrStateLed
+) {
+    <key>fun</key> getCurrLedState() : CurrStateLed 
+    <key>fun</key> setCurrLedState(currLedState : CurrStateLed)
+}</pre>
+    Sebbene questa soluzione sia più complessa da implementare, è quella che consigliamo agli sviluppatori in quanto permette di disaccoppiare la gestione dello stato dalle funzionalità del Led.
+    <h4>Gestione dello stato del Led</h4>
+    Per quanto riguarda la gestione dello stato del Led, essa viene effettuata da un componente creato ad-hoc, il <kc>SystemStateManager</kc> , che si occupa di mantenere lo stato del sistema. <br>
+    Affinchè questo avvenga, il Led attraverso l'invio di messaggi, dirà al SystemStateManager i suoi cambiamenti si stato.
+    <pre>
+<key>Dispatch</key> updateled : updateled(STATE)
+    </pre>
 
-    <h3><b>Sonar</b></h3>
+    
+
+    <h3>Sonar</h3>
 </div>
 
 <div class="remark">
