@@ -74,7 +74,7 @@ public class UtilsController{
         viewmodel.addAttribute("addr", addr);
         UtilsGUI.connectWithUtilsUsingTcp(ipaddr);
         UtilsGUI.connectWithUtilsUsingCoap(ipaddr).observeResource(new UtilsCoapObserver());
-        UtilsGUI.sendMsg();
+        //UtilsGUI.sendMsg();
         return buildTheUpdatePage(viewmodel);
     }
 }
