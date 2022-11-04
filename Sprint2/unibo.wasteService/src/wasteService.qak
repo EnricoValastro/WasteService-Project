@@ -493,6 +493,7 @@ QActor systemstatemanager context ctxwasteservice{
 	
 	State sendData{
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	sending data to someone", unibo.comm22.utils.ColorsOut.MAGENTA)#]
+		delay 1000
 		updateResource[# system.toJsonString() #]
 	}Goto idle
 	
