@@ -41,15 +41,14 @@ public class UtilsGUI {
         }
     }
 
-   /*
+
     public static void sendMsg() {
         try {
             String msg = "msg(getdata, dispatch, webgui, systemstatemanager, getdata(_), 1)";
             ColorsOut.outappl("UtilsGUI | sendMsg msg:" + msg + " conn=" + conn, ColorsOut.BLUE);
-            connTCP.forward(msg);
-            //conn.forward(msg.toString());
+            //connTCP.forward(msg);
         } catch (Exception e) {
             ColorsOut.outerr("UtilsGUI | sendMsg on:" + conn + " ERROR:" + e.getMessage());
         }
-    }*/
+    }
 }
