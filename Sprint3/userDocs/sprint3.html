@@ -229,119 +229,120 @@ div.imagedesc{
 </head>
     
 <body>
-<div id="top">
-<h1>LABORATORIO DI INGEGNERIA DEI SISTEMI SOFTWARE <font size="5"></font> </h1>
-</div>  
+    <div id="top">
+        <h1>LABORATORIO DI INGEGNERIA DEI SISTEMI SOFTWARE <font size="5"></font> </h1>
+    </div>  
 
-<div class="body"> 
-<a href="../../Sprint0/userDocs/sprint0.html">Sprint 0</a>
-<a href="../../Sprint1/userDocs/sprint1.html">Sprint 1</a>
-<a href="../../Sprint2/userDocs/sprint2.html">Sprint 2</a>
-<a href="./sprint3.html">Sprint 3</a>
-<h2>Introduction</h2>
-<div class="remark">
-    Progetto finale di ISS finalizzato allo sviluppo software di un impianto di smistamento dei rifiuti attraverso un robot che preleva il carico del camion e lo porta al container appropriato
- </div>
-<h2>Requirements</h2>
-<div class="remark">
-    <a href="../../Sprint0/userDocs/resouces/html/TemaFinale22.html">TemaFinale22</a>
-</div>
+    <div class="body"> 
+        <a href="../../Sprint0/userDocs/sprint0.html">Sprint 0</a>
+        <a href="../../Sprint1/userDocs/sprint1.html">Sprint 1</a>
+        <a href="../../Sprint2/userDocs/sprint2.html">Sprint 2</a>
+        <a href="./sprint3.html">Sprint 3</a>
+        
+        <h2>Introduction</h2>
+        <div class="remark">
+            Progetto finale di ISS finalizzato allo sviluppo software di un impianto di smistamento dei rifiuti attraverso un robot che preleva il carico del camion e lo porta al container appropriato
+        </div>
 
-<h2>Work Plan</h2>
-<div class="remark">
-    In questo Sprint ci occuperemo dello sviluppo di <kc> Sonar</kc> e <kc>Led </kc>collocati sul RaspberryPI. <br>
-    Il <i> Sonar </i> verrà usato come un 'alarm device', infatti alla presenza di un ostacolo rilevato dal Sonar, il transportTrolley si fermerà. Il valore entro cui il Sonar rileva
-    l'ostacolo sarà un valore prefissato <kc> DLIMIT</kc>. <br>
-    Il <i> Led</i> verrà usato per indicare lo stato del transportTrolley :
-    <ul>
-        <li>LED off quando il transportTrolley è in HOME</li>
-        <li>LED blinks quando il transportTrolley è in movimento(pickup,dropout,gotoHome). <br>
-            (se il robot si trova in HOME ma si sta girando (magari per riposizionarsi dopo aver gestito una depositaction),
- il Led deve comunque lampeggiare(detto dal committente)). </li>
-        <li>
-            LED on quando il transportTrolley è fermo/stopped.
-        </li>
-       
-    </ul>
-</div>
+        <h2>Requirements</h2>
+        <div class="remark">
+            <a href="../../Sprint0/userDocs/resouces/html/TemaFinale22.html">TemaFinale22</a>
+        </div>
 
-<h2>Problem analysis</h2>
-<div class="remark">
-    <h3>Sprint2 result</h3>
-    Al termine dello <a href="../../Sprint2/userDocs/sprint2.html">Sprint2</a>, l'architettura logica è la seguente: <br></br>
-    <img src="../../Sprint2/userDocs/resources/img/ArchLogicSprint2Initial.png" alt="" width="60%" height="60%">
-    <br>
-</div>
-<div class="remark">
-    <h3>Led</h3>
-    
-    <h4>Stato del Led</h4>
-    Dall'analisi dei requisiti è emerso che il committente vuole che sia mostrato lo stato del Led nella <kc>GUI</kc>. Per fare ciò è necessario gestire e mantanere lo stato del Led. 
-    Inoltre, dall'analisi dei requisiti è emerso che lo stato del Led può essere rappresentato dal seguente enumerativo:
-    <pre>
+        <h2>Work Plan</h2>
+        <div class="remark">
+            In questo Sprint ci occuperemo dello sviluppo di <kc> Sonar</kc> e <kc>Led </kc>collocati sul RaspberryPI. <br>
+            Il <i> Sonar </i> verrà usato come un 'alarm device', infatti alla presenza di un ostacolo rilevato dal Sonar, il transportTrolley si fermerà. Il valore entro cui il Sonar rileva
+            l'ostacolo sarà un valore prefissato <kc> DLIMIT</kc>. <br>
+            Il <i> Led</i> verrà usato per indicare lo stato del transportTrolley :
+            <ul>
+                <li>LED off quando il transportTrolley è in HOME</li>
+                <li>LED blinks quando il transportTrolley è in movimento(pickup,dropout,gotoHome). <br>
+                    (se il robot si trova in HOME ma si sta girando (magari per riposizionarsi dopo aver gestito una depositaction),
+        il Led deve comunque lampeggiare(detto dal committente)). </li>
+                <li>
+                    LED on quando il transportTrolley è fermo/stopped.
+                </li>
+            
+            </ul>
+        </div>
+
+        <h2>Problem analysis</h2>
+        <div class="remark">
+            <h3>Sprint2 result</h3>
+            Al termine dello <a href="../../Sprint2/userDocs/sprint2.html">Sprint2</a>, l'architettura logica è la seguente: <br></br>
+            <img src="../../Sprint2/userDocs/resources/img/ArchLogicSprint2Initial.png" alt="" width="60%" height="60%">
+            <br>
+        </div>
+        <div class="remark">
+            <h3>Led</h3>
+            
+            <h4>Stato del Led</h4>
+            Dall'analisi dei requisiti è emerso che il committente vuole che sia mostrato lo stato del Led nella <kc>GUI</kc>. Per fare ciò è necessario gestire e mantanere lo stato del Led. 
+            Inoltre, dall'analisi dei requisiti è emerso che lo stato del Led può essere rappresentato dal seguente enumerativo:
+            <pre>
 <key>enum class</key> CurrStateLed{ <i>ON</i>, <i>OFF</i>, <i>BLINK</i>}</pre>
-    Lo stato può essere mantenuto in due modi differenti:
-    <ul>
-        <li>Cablare lo stato del Led all'interno del componente Led.</li>
-        <li>Mantenere lo stato del Led usando una <ks>data class Kotlin</ks>.</li>
-    </ul>
-    <h5>Stato cablato</h5>
-    Questa soluzione prevede di mantenere lo stato all'interno del file QAk del Led. <br>
-    <pre>
+            Lo stato può essere mantenuto in due modi differenti:
+            <ul>
+                <li>Cablare lo stato del Led all'interno del componente Led.</li>
+                <li>Mantenere lo stato del Led usando una <ks>data class Kotlin</ks>.</li>
+            </ul>
+            <h5>Stato cablato</h5>
+            Questa soluzione prevede di mantenere lo stato all'interno del file QAk del Led. <br>
+            <pre>
 <key2>QActor</key2> led <key2>context</key2> ctxpi{
     [#
         var ledState : CurrStateLed
     #]
 }</pre>
-    Sebbene questa soluzione sia semplice, da al componente Led la responsabilità di mantenere lo stato del Led e di aggiornare la <i>GUI</i>. 
-    Inoltre affinchè la <i>GUI</i> possa mostrare lo stato del Led, è necessario che la GUI apra una connnesione Coap con il Led. <br>
-    <h5>Data class</h5>
-    Questa soluzione prevede di mantenere lo stato del Led in una <ks>data class Kotlin</ks>, togliendo in questo modo la responsabilità al Led.
-    <pre>
+            Sebbene questa soluzione sia semplice, da al componente Led la responsabilità di mantenere lo stato del Led e di aggiornare la <i>GUI</i>. 
+            Inoltre affinchè la <i>GUI</i> possa mostrare lo stato del Led, è necessario che la GUI apra una connnesione Coap con il Led. <br>
+            <h5>Data class</h5>
+            Questa soluzione prevede di mantenere lo stato del Led in una <ks>data class Kotlin</ks>, togliendo in questo modo la responsabilità al Led.
+            <pre>
 <key>enum class</key> CurrStateLed { <i>ON</i>, <i>OFF</i>, <i>BLINK</i> }
 <key>data class</key> SystemState (
-    <key>private var</key> currLedState : CurrStateLed
+        <key>private var</key> currLedState : CurrStateLed
 ) {
     <key>fun</key> getCurrLedState() : CurrStateLed 
     <key>fun</key> setCurrLedState(currLedState : CurrStateLed)
 }</pre>
-    Sebbene questa soluzione sia più complessa da implementare, è quella che consigliamo agli sviluppatori in quanto permette di disaccoppiare la gestione dello stato dalle funzionalità del Led.
-    <h4>Gestione dello stato del Led</h4>
-    Per quanto riguarda la gestione dello stato del Led, essa viene effettuata da un componente creato ad-hoc, il <kc>SystemStateManager</kc> , che si occupa di mantenere lo stato del sistema. <br>
-    Affinchè questo avvenga, il Led attraverso l'invio di messaggi, dirà al SystemStateManager i suoi cambiamenti si stato.
-    <pre>
-<key>Dispatch</key> updateled : updateled(STATE)
-    </pre>
+            Sebbene questa soluzione sia più complessa da implementare, è quella che consigliamo agli sviluppatori in quanto permette di disaccoppiare la gestione dello stato dalle funzionalità del Led.
+            <h4>Gestione dello stato del Led</h4>
+            Per quanto riguarda la gestione dello stato del Led, essa viene effettuata da un componente creato ad-hoc, il <kc>SystemStateManager</kc> , che si occupa di mantenere lo stato del sistema. <br>
+            Affinchè questo avvenga, il Led attraverso l'invio di messaggi, dirà al SystemStateManager i suoi cambiamenti si stato.
+            <pre>
+<key>Dispatch</key> updateled : updateled(STATE)</pre>
 
-    
+            <h3>Sonar</h3>
+        </div>
 
-    <h3>Sonar</h3>
-</div>
-
-<div class="remark">
-    <h3>Architettura Logica</h3>
-    Sulla base di quanto emerso in fase di analisi del problema è possibile ridefinire l'architettura logica del sistema.<br> 
-    <br><br>
-    <img src="" alt="" style="width:60% ; height:60% ;">
-</div>
-<h2>Project</h2>
-<div class="remark"></div>
+        <div class="remark">
+            <h3>Architettura Logica</h3>
+            Sulla base di quanto emerso in fase di analisi del problema è possibile ridefinire l'architettura logica del sistema.<br> 
+            <br><br>
+            <img src="" alt="" style="width:60% ; height:60% ;">
+        </div>
+        <h2>Project</h2>
+        <div class="remark"></div>
 
 
 
-	      	
-<br/><br/> 	
-
-<div style="background-color:rgba(60, 131, 186, 0.9); width:50%;text-align:center;color:white; margin-left: 25%; border-radius: 25px;" >
-    <br>
-    By students: <br>
-    Name: Annamaria Simonitto, Enrico Valastro, Alessio Reitano   
-    <br>
-    Email: annamaria.simonitto@studio.unibo.it, enrico.valastro@studio.unibo.it, alessio.reitano@studio.unibo.it
-    <br><br>
-    <img src="../../Sprint0/userDocs/resouces/images/AnnamariaSimonitto.jpg" alt="" width="8%" height="8%">
-    <img src="../../Sprint0/userDocs/resouces/images/EnricoValastro.jpeg" alt="" width="8.5%" height="8.5%">
-    <img src="../../Sprint0/userDocs/resouces/images/AlessioReitano.jpeg" alt="" width="10%" height="10%">
-</div> 
+        <div style="display: flex; flex-direction: row; justify-content: space-around;">
+            <div><a href="../../Sprint2/userDocs/sprint2.html"> <-- Sprint2</a></div>
+        </div>
+        <br><br>
+        <div style="background-color:rgba(60, 131, 186, 0.9); width:50%;text-align:center;color:white; margin-left: 25%; border-radius: 25px;" >
+            <br>
+            By students: <br>
+            Name: Annamaria Simonitto, Enrico Valastro, Alessio Reitano   
+            <br>
+            Email: annamaria.simonitto@studio.unibo.it, enrico.valastro@studio.unibo.it, alessio.reitano@studio.unibo.it
+            <br><br>
+            <img src="../../Sprint0/userDocs/resouces/images/AnnamariaSimonitto.jpg" alt="" width="8%" height="8%">
+            <img src="../../Sprint0/userDocs/resouces/images/EnricoValastro.jpeg" alt="" width="8.5%" height="8.5%">
+            <img src="../../Sprint0/userDocs/resouces/images/AlessioReitano.jpeg" alt="" width="10%" height="10%">
+        </div> 
+    </div>
 </body>
 </html>
