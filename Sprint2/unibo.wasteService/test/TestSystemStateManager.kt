@@ -4,6 +4,7 @@
 * Eliminare tutti i package in "src" e rigenerarli salvando il file testSystemStateManager.qak
 * ---------------------------------------------------------------------------------------------------------------------
 * */
+
 import it.unibo.ctxwasteservice.main
 import it.unibo.kactor.QakContext
 import org.junit.Before
@@ -33,7 +34,7 @@ class TestSystemStateManager {
     @Before
     fun setUp(){
         if(!setup) {
-            ColorsOut.outappl("TestSystemStateManager	|	setup...", ColorsOut.GREEN)
+            ColorsOut.outappl("Sprint2TestSystemStataManager	|	setup...", ColorsOut.GREEN)
 
             object : Thread() {
                 override fun run() {
@@ -43,14 +44,14 @@ class TestSystemStateManager {
 
             var ws = QakContext.getActor("wasteservice")
             while (ws == null) {
-                ColorsOut.outappl("TestSystemStateManager	|	waiting for application starts...", ColorsOut.GREEN)
+                ColorsOut.outappl("Sprint2TestSystemStataManager	|	waiting for application starts...", ColorsOut.GREEN)
                 CommUtils.delay(200)
                 ws = QakContext.getActor("wasteservice")
             }
             try {
                 conn = TcpClientSupport.connect("localhost", 8055, 5)
             } catch (e: Exception) {
-                ColorsOut.outappl("TestSystemStateManager	|	TCP connection failed...", ColorsOut.GREEN)
+                ColorsOut.outappl("Sprint2TestSystemStataManager	|	TCP connection failed...", ColorsOut.GREEN)
             }
             startObs("localhost:8055")
             obs.getNext()
@@ -85,26 +86,71 @@ class TestSystemStateManager {
 
     @Test
     fun testLoadAcceptUpdate(){
-        ColorsOut.outappl("TestSystemStateManager	|	testLoadAcceptUpdate", ColorsOut.GREEN)
+        ColorsOut.outappl("Sprint2TestSystemStataManager	|	testLoadAcceptUpdate", ColorsOut.GREEN)
 
         var asw = ""
         val prevState = obs.currentTypedState!!
 
+        ColorsOut.outappl("Starting state of the system: $prevState", ColorsOut.GREEN)
+
         var storeWaste = "msg(storewaste, request, testunit, wasteservice, storewaste(GLASS, 50),1)"
+        ColorsOut.outappl("Sending message to WasteService: $storeWaste", ColorsOut.GREEN)
 
         try {
             asw = conn.request(storeWaste)
         } catch (e: Exception) {
-            ColorsOut.outappl("TestSystemStateManager	|	 some err in request: $e", ColorsOut.GREEN)
+            ColorsOut.outappl("Sprint2TestSystemStataManager	|	 some err in request: $e", ColorsOut.GREEN)
         }
 
         var newState = obs.getNext()
+        ColorsOut.outappl("State Updated: $newState", ColorsOut.GREEN)
         assertEquals(prevState.getCurrentBoxWeight(sys.state.Material.GLASS)+50, newState.getCurrentBoxWeight(sys.state.Material.GLASS) )
         assertEquals(prevState.getCurrentBoxWeight(sys.state.Material.PLASTIC), newState.getCurrentBoxWeight(sys.state.Material.PLASTIC))
-    }
+        assertTrue(newState.getCurrPosition().toString().contains("HOME"))
+        assertTrue(newState.getCurrState().toString().contains("IDLE"))
 
+        newState = obs.getNext()
+        ColorsOut.outappl("State Updated: $newState", ColorsOut.GREEN)
+        assertTrue(newState.getCurrPosition().toString().contains("ONTHEROAD"))
+        assertTrue(newState.getCurrState().toString().contains("MOVING"))
+
+        newState = obs.getNext()
+        ColorsOut.outappl("State Updated: $newState", ColorsOut.GREEN)
+        assertTrue(newState.getCurrPosition().toString().contains("INDOOR"))
+        assertTrue(newState.getCurrState().toString().contains("PICKINGUP"))
+
+        newState = obs.getNext()
+        ColorsOut.outappl("State Updated: $newState", ColorsOut.GREEN)
+        assertTrue(newState.getCurrPosition().toString().contains("INDOOR"))
+        assertTrue(newState.getCurrState().toString().contains("IDLE"))
+
+        newState = obs.getNext()
+        ColorsOut.outappl("State Updated: $newState", ColorsOut.GREEN)
+        assertTrue(newState.getCurrPosition().toString().contains("ONTHEROAD"))
+        assertTrue(newState.getCurrState().toString().contains("MOVING"))
+
+        newState = obs.getNext()
+        ColorsOut.outappl("State Updated: $newState", ColorsOut.GREEN)
+        assertTrue(newState.getCurrPosition().toString().contains("GLASSBOX"))
+        assertTrue(newState.getCurrState().toString().contains("DROPPINGOUT"))
+
+        newState = obs.getNext()
+        ColorsOut.outappl("State Updated: $newState", ColorsOut.GREEN)
+        assertTrue(newState.getCurrPosition().toString().contains("GLASSBOX"))
+        assertTrue(newState.getCurrState().toString().contains("IDLE"))
+
+        newState = obs.getNext()
+        ColorsOut.outappl("State Updated: $newState", ColorsOut.GREEN)
+        assertTrue(newState.getCurrPosition().toString().contains("ONTHEROAD"))
+        assertTrue(newState.getCurrState().toString().contains("MOVING"))
+
+        newState = obs.getNext()
+        ColorsOut.outappl("State Updated: $newState", ColorsOut.GREEN)
+        assertTrue(newState.getCurrPosition().toString().contains("HOME"))
+        assertTrue(newState.getCurrState().toString().contains("IDLE"))
+    }
     fun testLoadRejectUpdate(){
-        ColorsOut.outappl("TestSystemStateManager	|	testLoadRejectUpdate", ColorsOut.GREEN)
+        ColorsOut.outappl("Sprint2TestSystemStataManager	|	testLoadRejectUpdate", ColorsOut.GREEN)
 
         var asw = ""
         val prevState = obs.currentTypedState!!
@@ -114,14 +160,13 @@ class TestSystemStateManager {
         try {
             asw = conn.request(storeWaste)
         } catch (e: Exception) {
-            ColorsOut.outappl("TestSystemStateManager	|	 some err in request: $e", ColorsOut.GREEN)
+            ColorsOut.outappl("Sprint2TestSystemStataManager	|	 some err in request: $e", ColorsOut.GREEN)
         }
 
         var newState = obs.getNext()
         assertEquals(prevState.getCurrentBoxWeight(sys.state.Material.GLASS), newState.getCurrentBoxWeight(sys.state.Material.GLASS) )
         assertEquals(prevState.getCurrentBoxWeight(sys.state.Material.PLASTIC), newState.getCurrentBoxWeight(sys.state.Material.PLASTIC))
+        assertTrue(newState.getCurrPosition().toString().contains("HOME"))
+        assertTrue(newState.getCurrState().toString().contains("IDLE"))
     }
-
-
-
 }

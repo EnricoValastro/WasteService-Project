@@ -43,11 +43,11 @@ class Systemstatemanager ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t026",targetState="updateContainerState",cond=whenDispatch("updatecontainer"))
-					transition(edgeName="t027",targetState="updateTrolleyState",cond=whenDispatch("updatetrolley"))
-					transition(edgeName="t028",targetState="updateLedState",cond=whenDispatch("updateled"))
-					transition(edgeName="t029",targetState="sendData",cond=whenDispatch("getdata"))
-					transition(edgeName="t030",targetState="end",cond=whenDispatch("exit"))
+					 transition(edgeName="t020",targetState="updateContainerState",cond=whenDispatch("updatecontainer"))
+					transition(edgeName="t021",targetState="updateTrolleyState",cond=whenDispatch("updatetrolley"))
+					transition(edgeName="t022",targetState="updateLedState",cond=whenDispatch("updateled"))
+					transition(edgeName="t023",targetState="sendData",cond=whenDispatch("getdata"))
+					transition(edgeName="t024",targetState="end",cond=whenDispatch("exit"))
 				}	 
 				state("updateContainerState") { //this:State
 					action { //it:State
