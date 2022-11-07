@@ -272,7 +272,7 @@
                 <li>vedere lo stato corrente del Led</li>
             </ul>
             Nello Sprint analizzeremo le principali problematiche relative alla GUI e le risolveremo.
-            ... 
+         
         </div>
 
         <h2>Problem analysis</h2>
@@ -311,7 +311,7 @@
                     <b>Peso corrente dei due container</b>
                 </li>
                 <li>
-                    <b>Stato correte del Led</b>
+                    <b>Stato corrente del Led</b>
                 </li>
             </ul>
             <h5>Stato e posizione del transportTrolley</h5>
@@ -346,14 +346,14 @@
             e alla <i>data class</i> <a href="./resources/kotlin/SystemState.kt">SystemState.kt</a>, affinchè essi siano predisposti alla gestione dello stato del led.
             
             <br><br>
-            Alla luce di questa analisi è possibile affermare che la <i>fonte di dati</i> per la GUI, è rapresentata dal componente <i>SystemStateManager</i>.
+            Alla luce di questa analisi è possibile affermare che la <i>fonte di dati</i> per la GUI, è rappresentata dal componente <i>SystemStateManager</i>.
             <h4>Fetch vs Push</h4>
             Una volta compreso che il <kc>SystemStateManager</kc> è la fonte di dati per la GUI, bisogna comprendere come questi dati vengano recuperati dalla GUI. <br>
             Sono possibili due modalità di recupero dei dati:
             <h5>Fetch</h5>
             Questa soluzione prevede che sia la GUI a richiedere i dati al <kc>SystemStateManager</kc>, ciò comporta che la <i>GUI</i> debba aprire un canale di comunicazione con il <kc>SystemStateManager</kc> 
             e richiedere i dati e stare in ascolto di risposte. <br> Inoltre, affinchè non venga perso nessun dato, è necessario che questa operazione venga ripetuta ad intervalli regolari, generando un elevato <i>overhead</i> di rete.<br> 
-            Per tale motivo, scongliamo agli sviluppatori di adottare questo approccio.
+            Per tale motivo, sconsigliamo agli sviluppatori di adottare questo approccio.
             <h5>Push</h5>
             Tale soluzione prevede che la <kc>GUI</kc> venga progettata come un componente passivo, che riceve dati e li mostra all'utente. Per fare ciò è necessario, che qualche componente 
             invii in maniera spontanea, tutti gli aggioramenti di stato alla <i>GUI</i>. <br> 
@@ -395,7 +395,27 @@
         </div>
     
         <h2>Project</h2>
-        <div class="remark"></div>
+        <div class="remark">
+            <h3>GUI</h3>
+            <h4>Operazioni Preliminari</h4>
+            Come suggerito dagli analisti, si è deciso di progettare la <kc>GUI</kc> come una Web App, sfruttando a pieno le potenzialità del framework <kc>SpringBoot</kc>. Si è optato per questa soluzione perchè risulta essere quella più versatile che permette di accedere alla <i>GUI</i> da qualsiasi dispositivo. 
+            <br>
+            Per iniziare è bastato collegarsi al sito <a href="https://start.spring.io">Spring.io</a> il quale ci ha permesso di creare il progetto, scegliendone innanzitutto il tipo (Gradle o Maven), la versione di Java da utilizzare e le dipendenze necessarie da "aggiungere" al progetto come mostrato in figura. Premuto il tasto <ks>GENERATE</ks> si ottiene un file <ks>.zip</ks> che contiene l'intero progetto. <br>
+            <br>
+            <img src="./resources/img/Spring_Initializr.png" width="50%" height="30%">
+            <br>
+            Dopo aver scaricato il file <i>.zip</i> è stato necessario decomprimerlo e importarlo nel nostro IDE come progetto <ks>Gradle</ks>, dove abbiamo potuto notare la struttura che il framework <i>SpringBoot</i> ha creato per noi. <br>
+            Dopo di che andiamo ad aggiungere al file <kc>build.gradle</kc> le ulteriori dipendenze che ci serviranno per il progetto, oltre a quelle già generate al momento della creazione del progetto. <br>
+            <br>
+            <img src="./resources/img/build.gralde.png" width="50%" height="30%"> <br>
+            <br>
+            Il file <i>build.gralde</i> dell'applicazione è consultabile al seguente link <a href="./resources/gradle/build.gradle">build.gradle</a>.
+            <br>
+            Il passo successivo è stato quello di definire all'interno del file <kc>application.properties</kc> la porta sulla quale gira la nostra applicazione, il nome dell'applicazione e il banner che verrà mostrato all'avvio. <br>
+            <br>
+            <img src="./resources/img/application_properties.png" width="50%" height="30%"> <br>
+            <h4>Operazioni Preliminari</h4>
+        </div>
 
         <h2>Test Plan</h2>
         <div class="remarkTest"></div>
