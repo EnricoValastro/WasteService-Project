@@ -18,28 +18,13 @@ public class UtilsController{
 
     protected String updatePage = "update";
 
-    @Value("${webgui.addr}")
     String addr;
-
-    @Value("${container.glasscurrent}")
     String glasscurrent;
-
-    @Value("${container.plasticcurrent}")
     String plasticcurrent;
-
-    @Value("${container.plasticmax}")
-    String plasticmax;
-
-    @Value("${container.glassmax}")
     String glassmax;
-
-    @Value("${container.trolleystate}")
+    String plasticmax;
     String trolleystate;
-
-    @Value("${container.trolleyposition}")
     String trolleyposition;
-
-    @Value("${container.ledstate}")
     String ledstate;
 
     protected String buildThePage(Model viewmodel) {

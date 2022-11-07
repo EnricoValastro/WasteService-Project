@@ -400,7 +400,7 @@
             <h4>Operazioni Preliminari</h4>
             Come suggerito dagli analisti, si è deciso di progettare la <kc>GUI</kc> come una Web App, sfruttando a pieno le potenzialità del framework <kc>SpringBoot</kc>. Si è optato per questa soluzione perchè risulta essere quella più versatile che permette di accedere alla <i>GUI</i> da qualsiasi dispositivo. 
             <br>
-            Per iniziare è bastato collegarsi al sito <a href="https://start.spring.io">Spring.io</a> il quale ci ha permesso di creare il progetto, scegliendone innanzitutto il tipo (Gradle o Maven), la versione di Java da utilizzare e le dipendenze necessarie da "aggiungere" al progetto come mostrato in figura. Premuto il tasto <ks>GENERATE</ks> si ottiene un file <ks>.zip</ks> che contiene l'intero progetto. <br>
+            Per iniziare è bastato collegarsi al sito <a href="https://start.spring.io">Spring.io</a>, il quale ci ha permesso di creare il progetto, scegliendone innanzitutto il tipo (Gradle o Maven), la versione Java da utilizzare e le dipendenze necessarie da "aggiungere" al progetto come mostrato in figura. Premuto il tasto <ks>GENERATE</ks> si ottiene un file <ks>.zip</ks> che contiene l'intero progetto. <br>
             <br>
             <img src="./resources/img/Spring_Initializr.png" width="50%" height="30%">
             <br>
@@ -414,7 +414,100 @@
             Il passo successivo è stato quello di definire all'interno del file <kc>application.properties</kc> la porta sulla quale gira la nostra applicazione, il nome dell'applicazione e il banner che verrà mostrato all'avvio. <br>
             <br>
             <img src="./resources/img/application_properties.png" width="50%" height="30%"> <br>
-            <h4>Operazioni Preliminari</h4>
+            <h4>Realizzazione dell'applicazione</h4>
+            SpringBoot si basa sul pattern <i>Model-View-Controller</i> (MVC) che permette di separare la logica dell'applicazione dalla sua presentazione. <br> 
+            Quando è stato creato il progetto, in maniera del tutto automatica è stata generata la classe <kc>Application</kc> che rappresenta il main della nostra applicazione. <br>
+
+            <pre>
+<key2>@SpringBootApplication</key2>
+<key>public</key> <key>class</key> Application {
+    <key>public</key> <key>static</key> <key>void</key> main(String[] args) {
+        SpringApplication.run(Application.<key>class</key>, args);
+    }
+}</pre>
+        La classe <kc>Application</kc> è annotata con <kc>@SpringBootApplication</kc> che è un'annotazione che consente di abilitare la configurazione automatica di SpringBoot. <br>
+        In generale, l'applicazione funziona anche senza aver definito un Controller, poichè al momento dell'avvio della classe main, SpringBoot va a "cercare" un file <kc>index.html</kc> all'interno della cartella <kc>resources/static</kc> e lo mostra all'utente. <br>
+        Poichè nel nostro caso faremo utilizzo di un Controller, il cui codice verrà descritto più avanti, abbiamo creato all'interno della cartella <kc>resources/static</kc> un file <a href="./resources/html/webGUI.html">webGUI.html</a> che contiene un form, il quale permette di instaurare una connessione Coap all'indirizzo e la porta del contesto in cui si trova il <kc>SystemStateManager</kc>.
+        Dopo di che il progetto è stato realizzato consultando il software <a href="https://github.com/anatali/issLab2022/tree/main/webRobot22">webRobot22</a> fornitoci dal committente in cui troviamo un'interfaccia Java costruita nel seguente modo.
+        
+        <pre>
+<key>public</key> <key>interface</key> IWsHandler {
+    <key>void</key> sendToAll (<key>String</key> message);
+}</pre>
+        
+        All'interno del software fornitoci vi è anche una classe di supporto in cui è possibile trovare il codice per creare una connessione <i>Coap</i> e una connessione <i>TCP</i>. 
+        <pre>
+<key>public</key> <key>class</key> UtilsGUI {
+    <key>private</key> <key>static</key> Interaction2021 conn;
+    <key>private</key> <key>static</key> Interaction2021 connTcp;      
+
+    <key>public</key> <key>static</key> CoapConnection connectWithUtilsUsingCoap(<key>String</key> addr)() {
+        <key>String</key> ctx = "ctxwasteservice";
+        <key>String</key> qak = "systemstatemanager";
+        <key>String</key> path = ctx+"/"+qak;
+        <key>conn</key> = new CoapConnection(addr, path);
+        <key>return</key> conn;
+    }
+}</pre>
+
+        Tale metodo restituisce un oggetto di tipo <kc>CoapConnection</kc> e dunque una connessione verso l'indirizzo e il path dato dal nome del contesto e dal nome dell'attore che si trova in quel determinato contesto e a cui noi facciamo riferimento, il <kc>SystemStateManager</kc>. <br>
+        <pre>
+<key>public</key> <key>static</key> void connectWithUtilsUsingTcp(<key>String</key> addr)() {
+    <key>String</key> x[] = addr.trim().split(":");
+    <key>connTCP</key> = TcpClientSupport.connect(x[0], Integer.parseInt(x[1]), 10);
+}</pre>
+        Tale metodo viene utilizzato in particolar modo per risolvere un problema posto in fase di analisi. Infatti nel caso in cui la GUI si collega dopo tanto tempo, 
+        si ha il bisogno comunque di mostrare lo stato attuale del sistema. Per questo tramite la connessione <i>TCP</i> viene inviato un <kc>Dispatch</kc> al <kc>SystemStateManager</kc>, facendo quello che ci viene richiesto dagli analisti, ovvero fetch dei dati. 
+        <pre>
+<key>public</key> <key>void</key> sendMsg(){
+    <key>String</key> msg = "msg(getdata, dispatch, webgui, systemstatemanager, getdata(_), 1)";
+    <key>connTCP</key>.forward(msg);
+}</pre>
+        <br>
+        La classe <kc>UtilsGUI</kc> è consultabile al seguente link <a href="./resources/java/UtilsGUI.java">UtilsGUI.java</a>.<br><br>
+        Affinchè l'applicazione Spring inoltri le richieste di un client al server, è necessario registrare un gestore utilizzando una classe di configurazione che implementa l'interfaccia <kc>WebSocketConfigurer</kc>      
+        <pre>
+<key2>@Configuration</key2>
+<key2>@EnableWebSocket</key2>
+<key>public</key> <key>class</key> WebSocketConfiguration <key>implements</key> WebSocketConfigurer {
+    <key2>@Override</key2>
+    <key>public</key> <key>void</key> registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(new WebSocketHandler(), "/ws").setAllowedOrigins("*");
+    }
+}</pre>
+L'annotazione <kc>@EnableWebSocket</kc> abilita l'uso delle plain WebSocket. <br> 
+Nel nostro caso ci avvaliamo della classe <kc>WebSocketHandler</kc> per reinviare sulla WebSocket il messaggio ricevuto. Per propagare un messaggio a tutti i client connessi attraverso la WebSocket, basta tenere traccia delle sessioni.
+    <pre>
+<key>public</key> <key>class</key> WebSocketHandler <key>extends</key> AbstractWebSocketHandler <key>implements</key> IWsHandler {
+    <key>private</key> <key>final</key> List&lt;<key>WebSocketSession</key>&gt; sessions = <key>new</key> <key>CopyOnWriteArrayList</key>&lt;&gt;();
+    <key2>@Override</key2>
+    <key>protected</key> <key>void</key> handleTextMessage(WebSocketSession session, TextMessage message) <key>throws</key> Exception { 
+        sendToAll(message);
+    }
+    <key2>@Override</key2>
+    <key>public</key> <key>void</key> afterConnectionEstablished(WebSocketSession session) <key>throws</key> Exception {
+        sessions.add(session);
+    }
+    <key2>@Override</key2>
+    <key>public</key> <key>void</key> afterConnectionClosed(WebSocketSession session, CloseStatus status) <key>throws</key> Exception {
+        sessions.remove(session);
+    }
+}</pre>
+
+    Il codice della classe <kc>WebSocketHandler</kc> è consultabile al seguente link <a href="./resources/java/WebSocketHandler.java">WebSocketHandler.java</a>.<br><br>
+
+    La classe <kc>UtilsCoapObserver</kc> è una classe di supporto che viene utilizzata per gestire le notifiche <i>Coap</i> che arrivano dal <kc>SystemStateManager</kc>. Essa implementa la classe <kc>CoapHandler</kc> e ha i metodi <kc>onLoad</kc> e <kc>onError</kc> che vengono richiamati quando si ha un cambiamento di stato o si verifica un errore.
+    <pre>
+<key>public</key> <key>class</key> UtilsCoapObserver <key>implements</key> CoapHandler {
+    
+    <key2>@Override</key2>
+    <key>public</key> <key>void</key> onLoad(CoapResponse response){}
+        <key>WebSocketConfiguration</key>.wshandler.sendToAll(""+response.getResponseText());
+    }
+}</pre>
+
+Il codice della classe <kc>UtilsCoapObserver</kc> è consultabile al seguente link <a href="./resources/java/UtilsCoapObserver.java">UtilsCoapObserver.java</a>.<br><br>
+
         </div>
 
         <h2>Test Plan</h2>
