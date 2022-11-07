@@ -272,7 +272,7 @@
                 <li>vedere lo stato corrente del Led</li>
             </ul>
             Nello Sprint analizzeremo le principali problematiche relative alla GUI e le risolveremo.
-            ... 
+         
         </div>
 
         
@@ -315,7 +315,7 @@
                     <b>Peso corrente dei due container</b>
                 </li>
                 <li>
-                    <b>Stato correte del Led</b>
+                    <b>Stato corrente del Led</b>
                 </li>
             </ul>
             <h5>Stato e posizione del transportTrolley</h5>
@@ -407,7 +407,27 @@
         </div>
     
         <h2>Project</h2>
-        <div class="remark"></div>
+        <div class="remark">
+            <h3>GUI</h3>
+            <h4>Operazioni Preliminari</h4>
+            Come suggerito dagli analisti, si è deciso di progettare la <kc>GUI</kc> come una Web App, sfruttando a pieno le potenzialità del framework <kc>SpringBoot</kc>. Si è optato per questa soluzione perchè risulta essere quella più versatile che permette di accedere alla <i>GUI</i> da qualsiasi dispositivo. 
+            <br>
+            Per iniziare è bastato collegarsi al sito <a href="https://start.spring.io">Spring.io</a> il quale ci ha permesso di creare il progetto, scegliendone innanzitutto il tipo (Gradle o Maven), la versione di Java da utilizzare e le dipendenze necessarie da "aggiungere" al progetto come mostrato in figura. Premuto il tasto <ks>GENERATE</ks> si ottiene un file <ks>.zip</ks> che contiene l'intero progetto. <br>
+            <br>
+            <img src="./resources/img/Spring_Initializr.png" width="50%" height="30%">
+            <br>
+            Dopo aver scaricato il file <i>.zip</i> è stato necessario decomprimerlo e importarlo nel nostro IDE come progetto <ks>Gradle</ks>, dove abbiamo potuto notare la struttura che il framework <i>SpringBoot</i> ha creato per noi. <br>
+            Dopo di che andiamo ad aggiungere al file <kc>build.gradle</kc> le ulteriori dipendenze che ci serviranno per il progetto, oltre a quelle già generate al momento della creazione del progetto. <br>
+            <br>
+            <img src="./resources/img/build.gralde.png" width="50%" height="30%"> <br>
+            <br>
+            Il file <i>build.gralde</i> dell'applicazione è consultabile al seguente link <a href="./resources/gradle/build.gradle">build.gradle</a>.
+            <br>
+            Il passo successivo è stato quello di definire all'interno del file <kc>application.properties</kc> la porta sulla quale gira la nostra applicazione, il nome dell'applicazione e il banner che verrà mostrato all'avvio. <br>
+            <br>
+            <img src="./resources/img/application_properties.png" width="50%" height="30%"> <br>
+            <h4>Operazioni Preliminari</h4>
+        </div>
 
         <h2>Test Plan</h2>
         <div class="remarkTest">

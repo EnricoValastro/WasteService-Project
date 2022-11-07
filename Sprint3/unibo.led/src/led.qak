@@ -6,8 +6,15 @@ Dispatch turnoff : turnoff(_)
 
 Dispatch updateled : updateled(STATE)
 
+Dispatch sonaractivate : info(ARG)
+Dispatch sonardeactivate : info(ARG)
+
+
 Context ctxwasteservice ip[host="127.0.0.1" port=8055]
 Context ctxpi ip [host="localhost" port=8090 ]
+
+CodedQActor sonarsimulator  context ctxpi className "sonarSimulator"  
+CodedQActor sonardatasource context ctxpi className "sonarHCSR04Support2021"
 
 ExternalQActor systemstatemanager context ctxwasteservice
 
@@ -55,14 +62,33 @@ QActor led context ctxpi {
 }
 
 QActor sonar context ctxpi{
+	[#
+		val simulate = true
+		val sonarActorName = "sonar"	
+	#]
 	State s0 initial {
+		run sonarConfig.configureTheSonar(simulate, sonarActorName)
 		
 	}
 	
 	State activateSonar {
-		
+		printCurrentMessage
+		if[# 'it.unibo'.radarSystem22.domani.utils.DomainSystemConfig.simulation#]{
+			forward sonarsimulator -m sonaractivate :info(ARG)
+			
+		}else{
+			forward sonardatasource -m sonaractivate : info(ARG)
+		}
 	}
+	
+	
 	State deactivateSonar{
-		
+		printCurrentMessage
+	}Goto end
+	
+	
+	State end{
+		println("sonar BYE")
+		[#System.exit(0)#]
 	}
 }
