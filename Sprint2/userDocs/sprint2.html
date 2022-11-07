@@ -275,15 +275,19 @@
          
         </div>
 
-        <h2>Problem analysis</h2>
         
+        <h2>Checkpoint Sprint1</h2>
         <div class="remark">
             <h3>Sprint1 result</h3>
-            Al termine dello <a href="../../Sprint1/userDocs/sprint1.html">Sprint1</a>, l'architettura logica è la seguente: <br></br>
+            L'analisi condotta nello <a href="../../Sprint1/userDocs/sprint1.html">Sprint1</a> e la successiva fase di progetto e sviluppo, hanno dato vita ad un sistema che 
+            presenta la seguente architettura logica: <br></br>
             <img src="../../Sprint1/userDocs/resources/img/ArchLogicSprint1Review.png" alt="" width="60%" height="60%">
             <br>
-        </div>
+            L'obbiettivo di questo Sprint, è quello di zoomare sul componente <kc>WasteServiceStatusGUI</kc>, affrontare e superare le problematiche connessa alla sua implementaizione e fornire un prototipo funzionante del componente, che 
+            verrà integrato con il sistema sviluppato nello Sprint1.
 
+        </div>
+        <h2>Problem analysis</h2>
         <div class="remark">
             <div id="gui"><h3>Problem: Kind of GUI</h3></div>
             Per sviluppare la <kc>GUI</kc> è possibile servirsi di: <br>
@@ -346,13 +350,13 @@
             e alla <i>data class</i> <a href="./resources/kotlin/SystemState.kt">SystemState.kt</a>, affinchè essi siano predisposti alla gestione dello stato del led.
             
             <br><br>
-            Alla luce di questa analisi è possibile affermare che la <i>fonte di dati</i> per la GUI, è rappresentata dal componente <i>SystemStateManager</i>.
-            <h4>Fetch vs Push</h4>
+            Alla luce di questa analisi è possibile affermare che la <i>fonte di dati</i> per la GUI, è rapresentata dal componente <i>SystemStateManager</i>.
+            <h4>Polling vs Push</h4>
             Una volta compreso che il <kc>SystemStateManager</kc> è la fonte di dati per la GUI, bisogna comprendere come questi dati vengano recuperati dalla GUI. <br>
             Sono possibili due modalità di recupero dei dati:
-            <h5>Fetch</h5>
-            Questa soluzione prevede che sia la GUI a richiedere i dati al <kc>SystemStateManager</kc>, ciò comporta che la <i>GUI</i> debba aprire un canale di comunicazione con il <kc>SystemStateManager</kc> 
-            e richiedere i dati e stare in ascolto di risposte. <br> Inoltre, affinchè non venga perso nessun dato, è necessario che questa operazione venga ripetuta ad intervalli regolari, generando un elevato <i>overhead</i> di rete.<br> 
+            <h5>Polling</h5>
+            Questa soluzione prevede che sia la GUI a richiedere i dati al <kc>SystemStateManager</kc>, ciò comporta che la <i>GUI</i> debba aprire un canale di comunicazione con il <kc>SystemStateManager</kc>, 
+            richiedere i dati e stare in ascolto di risposte. <br> Inoltre, affinchè non venga perso nessun dato, è necessario che questa operazione venga ripetuta ad intervalli regolari, generando un elevato <i>overhead</i> di rete.<br> 
             Per tale motivo, sconsigliamo agli sviluppatori di adottare questo approccio.
             <h5>Push</h5>
             Tale soluzione prevede che la <kc>GUI</kc> venga progettata come un componente passivo, che riceve dati e li mostra all'utente. Per fare ciò è necessario, che qualche componente 
@@ -391,7 +395,15 @@
             <h3>Architettura Logica</h3>
             Sulla base di quanto emerso in fase di analisi del problema è possibile ridefinire l'architettura logica del sistema.<br> 
             <br><br>
-            <img src="./resources/img/ArchLogicSprint2Initial.png" alt="" style="width:60% ; height:60% ;">
+            <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                <img src="./resources/img/ArchLogicSprint2v2.png" alt="" style="width:60% ; height:60% ;">
+                <div style="display: flex; flex-direction:column;">
+                <a href="./resources/qak/wasteService.qak">wasteService.qak</a>
+                <a href="./resources/java/UtilsController.java">UtilsController.java</a>
+                <a href="./resources/python/smartdevice.py">smartdevice.py</a>
+                </div>
+            </div>
+            
         </div>
     
         <h2>Project</h2>
@@ -511,7 +523,27 @@ Il codice della classe <kc>UtilsCoapObserver</kc> è consultabile al seguente li
         </div>
 
         <h2>Test Plan</h2>
-        <div class="remarkTest"></div>
+        <div class="remarkTest">
+            Per verificare il corretto funzionamento del sistema, è stata instanziata la classe di test: <a href="./resources/kotlin/TestSystemStateManager.kt">TestSystemStateManager.kt</a>.
+            Dal momento che la <kc>WasteServiceStatusGUI</kc> è progettata come un componente passivo che riceve dati su una connessione <ks>CoAP</ks>, per verificare il corretto funzionamento 
+            del sistema sarà sufficente verificare che la <kc>WasteServiceStatusGUI</kc> riceva i giusti aggiornamenti di stato da parte dello <kc>SystemStateManager</kc>. <br>
+            A tale scopo, il test plan prevede di inviare una serie di richieste di deposito al <kc>WasteService</kc> e di verificare che il <i>SystemStateManager</i> invii sulla connessione <i>CoAP</i> 
+            gli aggiornamenti di stato corretti. <br>
+            <pre>
+<key>fun</key> testLoadAcceptUpdate(){
+    <key>var</key> storeWaste = <key3>"msg(storewaste, request, testunit, wasteservice, storewaste(GLASS, 50),1)"</key3>
+    conn.request(storeWaste)
+    <key>var</key> newState = obs.getNext()
+    assertTrue(...)
+    assertTrue(...)
+}</pre>
+        </div>
+
+        <h2>Checkpoint Sprint2</h2>
+        <div class="remark">
+            A seguito dell'analisi del problema e delle successive fasi di progetto e sviluppo l'architettura logica è stata così ridefinita: <br>
+            <img src="./resources/img/ArchLogicSprint2Final.png" alt="" style="width: 60%; height: 60%">
+        </div>
 	    
         <div style="display: flex; flex-direction: row; justify-content: space-around;">
             <div><a href="../../Sprint1/userDocs/sprint1.html"> <-- Sprint1</a></div>

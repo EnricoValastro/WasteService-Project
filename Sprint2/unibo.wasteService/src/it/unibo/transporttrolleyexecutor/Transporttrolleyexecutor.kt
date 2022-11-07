@@ -15,8 +15,6 @@ class Transporttrolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorB
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
-		
-				lateinit var action : String	
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
@@ -36,32 +34,10 @@ class Transporttrolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorB
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t024",targetState="actionEval",cond=whenRequest("execaction"))
-					transition(edgeName="t025",targetState="end",cond=whenDispatch("exit"))
+					 transition(edgeName="t019",targetState="execok",cond=whenRequest("execaction"))
 				}	 
-				state("actionEval") { //this:State
+				state("execok") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("execaction(ACT)"), Term.createTerm("execaction(ACT)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-									
-												try{
-													action = payloadArg(0).trim().uppercase()
-												}catch(e : Exception){}	
-						}
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="execPickup", cond=doswitchGuarded({action.equals("PICKUP") 
-					}) )
-					transition( edgeName="goto",targetState="execDropout", cond=doswitchGuarded({! (action.equals("PICKUP") 
-					) }) )
-				}	 
-				state("execPickup") { //this:State
-					action { //it:State
-						 unibo.comm22.utils.ColorsOut.outappl("$name	|	$action execution", unibo.comm22.utils.ColorsOut.BLUE) 
-						delay(kotlin.random.Random.nextLong(3000, 5000)) 
 						answer("execaction", "execok", "execok(_)"   )  
 						//genTimer( actor, state )
 					}
@@ -69,27 +45,6 @@ class Transporttrolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorB
 					sysaction { //it:State
 					}	 	 
 					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
-				}	 
-				state("execDropout") { //this:State
-					action { //it:State
-						 unibo.comm22.utils.ColorsOut.outappl("$name	|	$action execution", unibo.comm22.utils.ColorsOut.BLUE) 
-						delay(kotlin.random.Random.nextLong(2000, 4000)) 
-						answer("execaction", "execok", "execok(_)"   )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
-				}	 
-				state("end") { //this:State
-					action { //it:State
-						terminate(0)
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
 				}	 
 			}
 		}
