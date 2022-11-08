@@ -80,11 +80,10 @@ dependencies {
     implementation name: '2p301'
 	implementation name: 'unibo.qakactor22-3.2'
 	implementation name: 'unibo.comm22-1.1'
-    implementation name: 'it.unibo.radarSystem22.domain-1.0'
 
     /* AIMA **************************************************************************************************************** */
  	//PLANNER  
-    implementation name: 'unibo.planner22-3.0'
+    implementation name: 'unibo.planner22-1.0'
     // https://mvnrepository.com/artifact/com.googlecode.aima-java/aima-core
     implementation group: 'com.googlecode.aima-java', name: 'aima-core', version: '3.0.0'
 
@@ -106,7 +105,7 @@ eclipse {
 
 application {
     // Define the main class for the application.
-    mainClass = 'it.unibo.ctxpi.MainCtxpiKt'
+    mainClass = 'it.unibo.ctxwasteservice.MainCtxwasteserviceKt'
 }
 
  jar {

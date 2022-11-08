@@ -49,6 +49,10 @@ dependencies {
     // https://mvnrepository.com/artifact/org.eclipse.paho/org.eclipse.paho.client.mqttv3
     implementation group: 'org.eclipse.paho', name: 'org.eclipse.paho.client.mqttv3', version: '1.2.5'
 
+	/* GSON **************************************************************************************************************** */
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.1'
+
     /* JSON **************************************************************************************************************** */
     // https://mvnrepository.com/artifact/org.json/json
     implementation group: 'org.json', name: 'json', version: '20220320'
@@ -59,7 +63,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.eclipse.californium/californium-proxy2
     implementation group: 'org.eclipse.californium', name: 'californium-proxy2', version: '3.5.0'
 
-//OkHttp library for websockets with Kotlin
+	//OkHttp library for websockets with Kotlin
 	//implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.14.0'    
 	implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.3' 
 	// https://mvnrepository.com/artifact/com.squareup.okhttp3/mockwebserver
@@ -80,7 +84,6 @@ dependencies {
     implementation name: '2p301'
 	implementation name: 'unibo.qakactor22-3.2'
 	implementation name: 'unibo.comm22-1.1'
-    implementation name: 'it.unibo.radarSystem22.domain-1.0'
 
     /* AIMA **************************************************************************************************************** */
  	//PLANNER  
@@ -106,7 +109,7 @@ eclipse {
 
 application {
     // Define the main class for the application.
-    mainClass = 'it.unibo.ctxpi.MainCtxpiKt'
+    mainClass = 'it.unibo.ctxwasteservice.MainCtxwasteserviceKt'
 }
 
  jar {
