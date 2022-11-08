@@ -265,13 +265,32 @@
 
         <h2>Work Plan</h2>
         <div class="remark">
-            In questo Sprint ci occuperemo della <kc>WasteServiceStatusGUI</kc>. Questa permetterà al Service-manager di: 
+            In questo Sprint ci occuperemo dell'analisi e dello sviluppo della <kc>WasteServiceStatusGUI</kc>. <br>
+            In particolare tratteremo le problematiche relative a: 
             <ul>
-                <li>vedere lo stato corrente del transportTrolley e la sua posizione nella stanza</li>
-                <li>vedere il peso corrente dei due container</li>
-                <li>vedere lo stato corrente del Led</li>
+                <li>
+                    <a href="#gui"><b>Type of the GUI</b></a>
+                    <ul>
+                        <li>Web App</li>
+                        <li>Mobile App</li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#dataSource"><b>Data</b></a>
+                    <ul>
+                        <li>Comprendere quale sia la fonte dei dati di interresse per la GUI</li>
+                        <li>Comprendere come questi dati possano arrivare alla GUI</li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="lateStart"><b>Late start of the GUI</b></a>
+                    <ul>
+                        <li>Come deve comportarsi il sistema nel caso in cui la GUI venga avviata dopo il <kc>WasteService</kc></li>
+                    </ul>
+                </li>
             </ul>
-            Nello Sprint analizzeremo le principali problematiche relative alla GUI e le risolveremo.
+            Il team si occuperà di portare avanti le varie fasi dello sprint in parallelo.
+            
          
         </div>
 
@@ -637,6 +656,50 @@ Il codice della classe <kc>UtilsController</kc> è consultabile al seguente link
         <div class="remark">
             A seguito dell'analisi del problema e delle successive fasi di progetto e sviluppo l'architettura logica è stata così ridefinita: <br>
             <img src="./resources/img/ArchLogicSprint2Final.png" alt="" style="width: 60%; height: 60%">
+        </div>
+        
+        <div class="remark">
+            <h3>How to start the system</h3>
+            <ul>
+                <li>
+                    <b>Avviare il <kc>VirtualRobot</kc></b> <br> 
+                    Da terminale navigare fino al path <i>WasteService-Project/WEnv/it.unibo.virtualRobot2020/node/WEnv/server/src</i>, lanciare il comando <i>node WebpageServer.js</i>, aprire un browser e collegarsi al seguente indirizzo: <i>http://localhost:8090</i>
+                    <pre>
+cd WasteService-Project/WEnv/it.unibo.virtualRobot2020/node/WEnv/server/src
+node WebpageServer.js</pre>
+                    </pre>
+                </li>
+        
+                <li>
+                    <b>Avviare il <kc>basicrobot22</kc></b> <br>
+                    Da terminale navigare fino al path <i>WasteService-Project/Sprint1/unibo.basicrobot22</i> e lanciare il comando <i>./gradlew run </i>
+                    <pre>
+cd WasteService-Project/Sprint1/unibo.basicrobot22
+./gradlew run</pre>
+                </li>
+        
+                <li>
+                    <b>Avviare il <kc>wasteService</kc></b> <br>
+                    Da terminale navigare fino al path <i>WasteService-Project/Sprint2/unibo.wasteService</i> e lanciare il comando <i>./gradlew run </i>
+                    <pre>
+cd WasteService-Project/Sprint2/unibo.wasteService
+./gradlew run</pre>
+                </li>
+        
+                <li>
+                    <b>Avviare lo <kc>smartdevice</kc></b><br>
+                    Da terminale navigare fino al path <i>WasteService-Project/Sprint1/unibo.smartdevice</i> e lanciare il comando <i>python3 smartdevice.py</i>
+                    <pre>
+cd WasteService-Project/Sprint1/unibo.smartdevice
+python3 smartdevice.py</pre>
+                </li>
+
+                <li>
+                    <b>Avviare la <kc>WasteServiceStatusGUI</kc></b><br>
+                    Aprire il progetto <i>WasteService-Project/Sprint2/unibo.webgui</i> e eseguire <i>run</i> del <i>main</i>. <br>
+                    Aprire il browser e digitare l'indirizzo <i>http://localhost:8085</i>
+                </li>
+            </ul>
         </div>
 	    
         <div style="display: flex; flex-direction: row; justify-content: space-around;">
