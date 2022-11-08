@@ -19,6 +19,8 @@ eventedgeattr = {
 with Diagram('wasteserviceArch', show=False, outformat='png', graph_attr=graphattr) as diag:
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
+     with Cluster('ctxbasicrobot', graph_attr=nodeattr):
+          pathexec=Custom('pathexec(ext)','./qakicons/externalQActor.png')
      with Cluster('ctxwasteservice', graph_attr=nodeattr):
           wasteservice=Custom('wasteservice','./qakicons/symActorSmall.png')
           transporttrolleycore=Custom('transporttrolleycore','./qakicons/symActorSmall.png')
@@ -39,4 +41,5 @@ with Diagram('wasteserviceArch', show=False, outformat='png', graph_attr=graphat
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> transporttrolleycore
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> transporttrolleyexecutor
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> transporttrolleymover
+     transporttrolleymover >> Edge(color='magenta', style='solid', xlabel='dopath', fontcolor='magenta') >> pathexec
 diag
