@@ -14,10 +14,6 @@ import unibo.webgui.utils.UtilsGUI;
 @Controller
 public class UtilsController{
 
-    protected String mainPage = "webGUI";
-
-    protected String updatePage = "update";
-
     String addr;
     String glasscurrent;
     String plasticcurrent;
@@ -29,12 +25,12 @@ public class UtilsController{
 
     protected String buildThePage(Model viewmodel) {
         setConfigParams(viewmodel);
-        return mainPage;
+        return "webGUI";
     }
 
     protected String buildTheUpdatePage(Model viewmodel){
         setConfigParams(viewmodel);
-        return updatePage;
+        return "update";
     }
 
     protected void setConfigParams(Model viewmodel){

@@ -439,7 +439,8 @@
 }</pre>
         La classe <kc>Application</kc> è annotata con <kc>@SpringBootApplication</kc> che è un'annotazione che consente di abilitare la configurazione automatica di SpringBoot. <br>
         In generale, l'applicazione funziona anche senza aver definito un Controller, poichè al momento dell'avvio della classe main, SpringBoot va a "cercare" un file <kc>index.html</kc> all'interno della cartella <kc>resources/static</kc> e lo mostra all'utente. <br>
-        Poichè nel nostro caso faremo utilizzo di un Controller, il cui codice verrà descritto più avanti, abbiamo creato all'interno della cartella <kc>resources/static</kc> un file <a href="./resources/html/webGUI.html">webGUI.html</a> che contiene un form, il quale permette di instaurare una connessione Coap all'indirizzo e la porta del contesto in cui si trova il <kc>SystemStateManager</kc>.
+        Poichè nel nostro caso faremo utilizzo di un Controller, il cui codice verrà descritto più avanti, abbiamo creato all'interno della cartella <kc>resources/static</kc> un file <a href="./resources/html/webGUI.html">webGUI.html</a> che contiene un form, 
+        il quale permette di instaurare una connessione Coap all'indirizzo e alla porta del contesto in cui si trova il <kc>SystemStateManager</kc>.
         Dopo di che il progetto è stato realizzato consultando il software <a href="https://github.com/anatali/issLab2022/tree/main/webRobot22">webRobot22</a> fornitoci dal committente in cui troviamo un'interfaccia Java costruita nel seguente modo.
         
         <pre>
@@ -462,7 +463,7 @@
     }
 }</pre>
 
-        Tale metodo restituisce un oggetto di tipo <kc>CoapConnection</kc> e dunque una connessione verso l'indirizzo e il path dato dal nome del contesto e dal nome dell'attore che si trova in quel determinato contesto e a cui noi facciamo riferimento, il <kc>SystemStateManager</kc>. <br>
+        In questo modeo si ottiente un oggetto di tipo <kc>CoapConnection</kc> e dunque una connessione verso l'indirizzo e il path che è la combinazione del nome del contesto e del nome dell'attore che si trova in quel determinato contesto e a cui noi facciamo riferimento, il <kc>SystemStateManager</kc>. <br>
         <pre>
 <key>public</key> <key>static</key> void connectWithUtilsUsingTcp(<key>String</key> addr)() {
     <key>String</key> x[] = addr.trim().split(":");
@@ -475,16 +476,16 @@
     <key>String</key> msg = "msg(getdata, dispatch, webgui, systemstatemanager, getdata(_), 1)";
     <key>connTCP</key>.forward(msg);
 }</pre>
-        <br>
         La classe <kc>UtilsGUI</kc> è consultabile al seguente link <a href="./resources/java/UtilsGUI.java">UtilsGUI.java</a>.<br><br>
         Affinchè l'applicazione Spring inoltri le richieste di un client al server, è necessario registrare un gestore utilizzando una classe di configurazione che implementa l'interfaccia <kc>WebSocketConfigurer</kc>      
         <pre>
 <key2>@Configuration</key2>
 <key2>@EnableWebSocket</key2>
 <key>public</key> <key>class</key> WebSocketConfiguration <key>implements</key> WebSocketConfigurer {
+    <key>public</key> <key>static</key> <key>final</key> WebSocketHandler wshandler = <key>new</key> WebSocketHandler();
     <key2>@Override</key2>
     <key>public</key> <key>void</key> registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new WebSocketHandler(), "/ws").setAllowedOrigins("*");
+        registry.addHandler(wshandler, "/ws").setAllowedOrigins("*");
     }
 }</pre>
 L'annotazione <kc>@EnableWebSocket</kc> abilita l'uso delle plain WebSocket. <br> 
@@ -519,6 +520,8 @@ Nel nostro caso ci avvaliamo della classe <kc>WebSocketHandler</kc> per reinviar
 }</pre>
 
 Il codice della classe <kc>UtilsCoapObserver</kc> è consultabile al seguente link <a href="./resources/java/UtilsCoapObserver.java">UtilsCoapObserver.java</a>.<br><br>
+
+Precedentemente abbiamo detto che nel progetto è stato fatto uso di un <i>Controller</i>, il quale è definito nella classe <kc>UtilsController</kc> che viene dunque annotata con <kc>@Controller</kc> e che viene eseguita dall'applicazione Spring. 
 
         </div>
 
