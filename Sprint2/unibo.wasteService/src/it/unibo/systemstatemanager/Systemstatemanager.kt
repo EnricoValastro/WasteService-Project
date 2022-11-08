@@ -47,7 +47,11 @@ class Systemstatemanager ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					transition(edgeName="t027",targetState="updateTrolleyState",cond=whenDispatch("updatetrolley"))
 					transition(edgeName="t028",targetState="updateLedState",cond=whenDispatch("updateled"))
 					transition(edgeName="t029",targetState="sendData",cond=whenDispatch("getdata"))
-					transition(edgeName="t030",targetState="end",cond=whenDispatch("exit"))
+					transition(edgeName="t030",targetState="replyData",cond=whenRequest("getledstate"))
+					transition(edgeName="t031",targetState="replyData",cond=whenRequest("getcontainterstate"))
+					transition(edgeName="t032",targetState="replyData",cond=whenRequest("gettrolleystate"))
+					transition(edgeName="t033",targetState="replyData",cond=whenRequest("gettrolleyposition"))
+					transition(edgeName="t034",targetState="end",cond=whenDispatch("exit"))
 				}	 
 				state("updateContainerState") { //this:State
 					action { //it:State
@@ -124,6 +128,35 @@ class Systemstatemanager ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 						delay(1000) 
 						updateResourceRep( system.toJsonString()  
 						)
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("replyData") { //this:State
+					action { //it:State
+						if( checkMsgContent( Term.createTerm("getledstate(_)"), Term.createTerm("getledstate(_)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 var DATA = system.getCurrLedState().toString()  
+								answer("getledstate", "givedata", "givedata($DATA)"   )  
+						}
+						if( checkMsgContent( Term.createTerm("getcontainerstate(_)"), Term.createTerm("getcontainerstate(_)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 var DATA = system.getAllCurrentBoxWeight().toString()  
+								answer("getledstate", "givedata", "givedata($DATA)"   )  
+						}
+						if( checkMsgContent( Term.createTerm("gettrolleyposition(_)"), Term.createTerm("gettrolleyposition(_)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 var DATA = system.getCurrPosition().toString()  
+								answer("getledstate", "givedata", "givedata($DATA)"   )  
+						}
+						if( checkMsgContent( Term.createTerm("gettrolleystate(_)"), Term.createTerm("gettrolleystate(_)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 var DATA = system.getCurrState().toString()  
+								answer("getledstate", "givedata", "givedata($DATA)"   )  
+						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

@@ -14,8 +14,12 @@ enum class CurrStateTrolley {
 enum class TTPosition{
     HOME, INDOOR, PLASTICBOX, GLASSBOX, ONTHEROAD
 }
+enum class CurrStateLed {
+    ON, OFF, BLINKING
+}
 
 data class SystemState (
+        private var currLedState : CurrStateLed = CurrStateLed.OFF,
         private var currState : CurrStateTrolley = CurrStateTrolley.IDLE,
         private var currPosition : TTPosition = TTPosition.HOME,
         private val boxMaxWeight : MutableMap<Material, Double> = Material.values().associateWith { 0.0 }.toMutableMap(),
@@ -52,6 +56,9 @@ data class SystemState (
     fun getCurrentBoxWeight(material: Material) : Double{
         return boxCurrentWeight[material]!!
     }
+    fun getAllCurrentBoxWeight() : String {
+        return boxCurrentWeight.toString()
+    }
     fun getMaxBoxWeight(material: Material) : Double{
         return boxMaxWeight[material]!!
     }
@@ -73,6 +80,13 @@ data class SystemState (
         return currPosition
     }
 
+    /* For led state managing */
+    fun setCurrLedState(state : CurrStateLed){
+        currLedState = state
+    }
+    fun getCurrLedState() : CurrStateLed {
+        return currLedState
+    }
 
 
 

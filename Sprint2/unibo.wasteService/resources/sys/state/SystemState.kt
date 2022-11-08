@@ -56,6 +56,9 @@ data class SystemState (
     fun getCurrentBoxWeight(material: Material) : Double{
         return boxCurrentWeight[material]!!
     }
+    fun getAllCurrentBoxWeight() : String {
+        return boxCurrentWeight.toString()
+    }
     fun getMaxBoxWeight(material: Material) : Double{
         return boxMaxWeight[material]!!
     }

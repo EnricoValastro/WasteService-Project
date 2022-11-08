@@ -363,7 +363,7 @@
             invii in maniera spontanea, tutti gli aggioramenti di stato alla <i>GUI</i>. <br> 
             L'adozione di questa soluzione è particolarmente consigliata, in quanto permette di sfruttare la caratteristica degli attori QAk di essere realizzati come delle risorse <i>CoAP</i> osservabili. 
             Procedendo in questo modo, sarà sufficente che la <i>GUI</i> apra una conessione <i>CoAP</i> con il <i>server CoAP</i> del <kc>SystemStateManager</kc> e si registri come osservatore della risorsa.
-            Successivamente l'attore QAk, potrà utilizzare la primitiva <ks>updateResources</ks> per inviare al server <i>CoAP</i> l'aggiornamento di stato, questo successivamente notificherà gli osservatori circa il cambiamento di stato.
+            Successivamente l'attore QAk, potrà utilizzare la primitiva <ks>updateResource</ks> per inviare al server <i>CoAP</i> l'aggiornamento di stato, questo successivamente notificherà gli osservatori circa il cambiamento di stato.
 
         </div>
         
@@ -376,7 +376,7 @@
             Si pone il problema di come gestire l'aggiornamento dei dati mostrati dalla <i>GUI</i> in caso di <i>late start</i>. <br>
             <ul>
                 <li>Fare fetch all'avvio della GUI</li>
-                <li>Aspettare che una richiesta scateni un <ks>updateResources</ks></li>
+                <li>Aspettare che una richiesta scateni un <ks>updateResource</ks></li>
             </ul>
             <h4>Waiting for updateResources</h4>
             Aspettare che arriva un'altra richiesta al WasteService è la soluzione più semplice da implementare, ma non è la migliore. <br>
@@ -384,7 +384,7 @@
             <h4>Fetch</h4>
             Per fare ciò, si potrebbe inviare al <kc>SystemStateManager</kc>, usando una connessione TCP, un messaggio per richiedere l'invio dei dati. <br>
             Bisogna capire che tipo di messaggio inviare, un <kc>Dispatch</kc> o una <kc>Request</kc>. Utilizzando una <i>Request</i> la GUI dovrebbe rimanere in attesa della risposta, e gestire il messaggio ricevuto.
-            Utilizzando un <i>Dispatch</i>, si potrebbero evitare tali problematiche, in quanto, alla ricezione del <i>Dispatch</i>, il <kc>SystemStateManager</kc> scatenerà un <ks>updateResources</ks> che verrà raccolto e gestito in maniera analoga 
+            Utilizzando un <i>Dispatch</i>, si potrebbero evitare tali problematiche, in quanto, alla ricezione del <i>Dispatch</i>, il <kc>SystemStateManager</kc> scatenerà un <ks>updateResource</ks> che verrà raccolto e gestito in maniera analoga 
             agli aggiornamenti di stato.
             <pre>
 <key2>Dispatch</key2> getdata : getdata(_)</pre>
@@ -409,6 +409,43 @@
         <h2>Project</h2>
         <div class="remark">
             <h3>SystemStateManager</h3>
+            Come suggerito dagli analisti, abbiamo deciso di estendere le funzionalita del <kc>SystemStateManager</kc> affinchè esso sia in grado di ricevere e gestire 
+            gli aggiornamenti di stato da parte del <kc>Led</kc>. Per fare questo è stato necessarrio introdurre un meccanismo che permetta al <i>Led</i> di inviare gli aggiornamenti di stato 
+            al <i>SystemStateManager</i>. In accordo a quanto fatto per il <kc>TransportTrolley</kc> e per il <kc>WasteService</kc> abbiamo deciso, di implementare tale meccanismo 
+            come un <ks>Dispatch</ks> che il <i>Led</i> invia al <i>SystemStateManager</i>. <br>
+            <pre>
+<key2>Dispatch</key2> updateled : updateled(STATE)</pre>
+            
+            Inoltre, è stato necessario modificare anche la <ks>data class</ks> <kc>SystemState</kc> affinchè essa sia predisposta a contenere lo stato del <i>Led</i>.
+            <pre>
+<key>enum class</key> CurrStateLed { <i>ON</i>, <i>OFF</i>, <i>BLINKING</i> }
+<key>data class</key> SystemState (
+    <key>private var</key> currLedState : CurrStateLed = CurrStateLed.OFF
+    ...
+){
+    ...
+    <key>fun</key> setCurrLedState(ledState : CurrStateLed)
+    <key>fun</key> getCurrLedState() : CurrStateLed
+}</pre>
+
+            Inoltre, per risolvere la problematica "<i>Late start of the GUI</i>" abbiamo predisposto il <i>SystemStateManager</i> all'ascolto di un messaggio del tipo:
+<pre>
+<key2>Dispatch</key2> getdata : getdata(_)</pre>
+
+            Alla ricezione di questo messaggio il <i>SystemStateManager</i> esegue un <ks>updateResource</ks> inviando i dati al server CoAP. <br>
+            Questo meccanismo verrà sfruttato dalla <i>GUI</i> per eseguire il <ks>Fetch</ks> dei dati all'avvio. <br>
+            Infine, per predisporre il sistema a possibili sviluppi futuri e rendere il codice riutilizzabile, è stato deciso di dotare il <i>SystemStateManager</i> della capacità di riceve richieste circa lo stato del sistema e di inviare risposte. Per fare ciò sono stati introdotti i seguenti messaggi:
+<pre>
+<key2>Request</key2> getledstate : getledstate(_)
+<key2>Request</key2> gettrolleyposition : gettrolleyposition(_)
+<key2>Request</key2> gettrolleystate : gettrolleystate(_)
+<key2>Request</key2> getcontainerstate : getcontainerstate(_)
+<key2>Reply</key2>   givedata : givedata(DATA)</pre>
+
+            Ai seguenti link è possibile consultare il codice del <i>SystemStateManager</i> e della <i>SystemState</i>: <br>
+            <a href="./resources/qak/SystemStateManager.qak">SystemStateManager.qak</a><br>
+            <a href="./resources/kotlin/SystemState.kt">SystemState.kt</a>
+
 
             <h3>GUI</h3>
             <h4>Operazioni Preliminari</h4>
