@@ -1,0 +1,535 @@
+System wasteservice
+
+/* Shout Down Message */ 
+Dispatch exit 		 : exit(_)
+
+/* Deposit Action Message */
+Request  pickup      : pickup(_)
+Reply  	 pickupdone  : pickupdone(_)
+Dispatch dropout     : dropout(MATERIAL) // MATERIAL = PLASTIC | GLASS
+Event 	 local_dropoutdone : local_dropoutdone(_)
+
+/* BackHome Message */
+Dispatch gotohome    : gotohome(_)
+
+/* State update Messages*/
+Dispatch updatecontainer  : updatecontainer(MAT,QUA)
+Dispatch updatetrolley	  : updatetrolley(POS, STAT)
+Dispatch updateled		  : updateled(STAT)
+Dispatch getdata		  : getdata(_)
+
+/* Data Request */
+Request getledstate 	  	: getledstate(_)
+Request gettrolleyposition 	: gettrolleyposition(_)
+Request gettrolleystate 	: gettrolleystate(_)
+Request getcontainterstate 	: getcontainerstate(_)
+Reply   givedata 			: givedata(DATA)
+
+/* Deposit Request Messages */
+Request  storewaste   : storewaste(MAT, QUA)
+Reply 	 loadaccept   : loadaccept(_)
+Reply 	 loadrejected : loadrejected(_)
+
+/* Moving Message */
+Request  moveto      : moveto(POS)       // POS = HOME | INDOOR | PLASTICBOX | GLASSBOX
+Reply    moveok	     : moveok(_)
+Reply    moveko	     : moveko(_)
+
+/* Action Message */
+Request  execaction  : execaction(ACT)   // ACT = PICKUP | DROPOUT
+Reply    execok      : execok(_)
+Reply    execko      : execko(_) 
+
+/* Pathexec Message */
+Request  dopath      : dopath(PATH)
+Reply    dopathdone  : dopathdone(ARG)
+Reply    dopathfail  : dopathfail(ARG)
+
+Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
+Context ctxwasteservice ip [host="localhost" port=8055]
+
+ExternalQActor pathexec context ctxbasicrobot
+
+/* *********************************************************************************************
+ * ---------------------------------------------------------------------------------------------
+ * Core component addicted to manage all the request exec by interacting with TT component 
+ * ---------------------------------------------------------------------------------------------
+ **********************************************************************************************/
+
+QActor wasteservice context ctxwasteservice{
+	
+	[#
+		val containerState = wasteservice.state.ContainerState()
+		lateinit var REQMATERIAL : wasteservice.state.Material
+		var REQWEIGHT : Double = 0.0
+		var eval : Boolean = true
+	#]
+	
+	State init initial{
+		[#
+			utility.Banner.printBannerWasteService()
+		#]
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.CYAN)#]
+		
+	}Goto idle
+
+	State idle{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.CYAN)#]
+		
+	}Transition t0 whenRequest storewaste -> evalReq
+					whenEvent local_dropoutdone -> backHome
+					whenMsg   exit -> end
+
+	State evalReq{
+	
+		onMsg (storewaste : storewaste (MAT, QUA)){
+		[#
+			if(payloadArg(0).trim().uppercase()!="PLASTIC" && payloadArg(0).trim().uppercase()!="GLASS"){
+				eval = false
+			}
+			else {
+				try{
+					REQMATERIAL = wasteservice.state.Material.valueOf(payloadArg(0).trim().uppercase())
+					REQWEIGHT = payloadArg(1).toDouble()	
+				}catch(e : Exception){		
+				}
+				eval = containerState.canStore(REQMATERIAL, REQWEIGHT)	
+			}
+			
+		#]
+
+		}
+	}Goto acceptRequest if[# eval == true #]
+						else rejectRequest
+					
+	State rejectRequest{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	request rejected", unibo.comm22.utils.ColorsOut.CYAN)#]
+		replyTo storewaste with loadrejected : loadrejected(_)
+	}Goto idle
+	
+	State acceptRequest{
+		[# 
+			unibo.comm22.utils.ColorsOut.outappl("$name	|	request accepted", unibo.comm22.utils.ColorsOut.CYAN)
+			containerState.updateBoxWeight(REQMATERIAL, REQWEIGHT)
+		#]
+		forward systemstatemanager -m updatecontainer : updatecontainer($REQMATERIAL, $REQWEIGHT)
+		
+	}Goto pickup
+
+	State pickup{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	pickingup...", unibo.comm22.utils.ColorsOut.CYAN)#]
+		request transporttrolleycore -m pickup : pickup(_)
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting for pickup done...", unibo.comm22.utils.ColorsOut.CYAN)#]
+		
+	}Transition t0 whenReply pickupdone  -> dropout 
+					
+	State dropout{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	droppingout", unibo.comm22.utils.ColorsOut.CYAN)#]
+		replyTo storewaste with loadaccept : loadaccept
+		forward transporttrolleycore -m dropout : dropout($REQMATERIAL)
+	}Goto idle
+	
+	State backHome{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	sending robot to home", unibo.comm22.utils.ColorsOut.CYAN)#]
+		
+		forward transporttrolleycore -m gotohome : gotohome(_)
+	}Goto idle
+	
+	State end{
+		forward systemstatemanager -m exit : exit(_)
+		terminate 0
+	}
+}
+
+/* *********************************************************************************************
+ * ---------------------------------------------------------------------------------------------
+ * Component addicted to manage request and actions
+ * ---------------------------------------------------------------------------------------------
+ **********************************************************************************************/
+
+QActor transporttrolleycore context ctxwasteservice{
+	
+	[#
+		lateinit var MaterialToStore : String
+		lateinit var POS 			 : String
+	#]
+	
+	State init initial{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.BLUE)#]
+			
+	}Goto idle
+
+	State idle{
+		
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.BLUE)#]
+		
+	}Transition t0 whenRequest pickup -> pickupMove
+					whenMsg dropout -> dropoutMove
+					whenMsg gotohome -> backHome
+					whenMsg exit -> end
+
+	State pickupMove{
+		request transporttrolleymover -m moveto : moveto(INDOOR)
+		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
+	}Transition t0 whenReply moveok -> pickupExec
+					whenReply moveko -> moveErr
+
+	State pickupExec{
+		request transporttrolleyexecutor -m execaction : execaction(PICKUP)
+		forward systemstatemanager -m updatetrolley : updatetrolley(INDOOR, PICKINGUP)
+		
+	}Transition t0 whenReply execok -> pickupRes
+					whenReply execko -> execErr
+
+	State pickupRes{
+		forward systemstatemanager -m updatetrolley : updatetrolley(INDOOR, IDLE)
+		replyTo pickup with pickupdone : pickupdone(_)
+	}Goto idle
+
+	State dropoutMove{
+		onMsg(dropout : dropout(MATERIAL)){
+			[#	
+				try{
+					MaterialToStore = payloadArg(0).trim().uppercase()
+					if(MaterialToStore.equals("PLASTIC")){
+						POS = "PLASTICBOX"
+					}
+					else{
+						POS = "GLASSBOX"
+					}
+				}catch(e : Exception){}	
+			#]	
+		}
+		request transporttrolleymover -m moveto : moveto($POS)
+		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
+		
+	}Transition t0 whenReply moveok -> dropoutExec
+					whenReply moveko -> moveErr
+
+	State dropoutExec{
+		forward systemstatemanager -m updatetrolley : updatetrolley($POS, DROPPINGOUT)
+		request transporttrolleyexecutor -m execaction : execaction(DROPOUT)
+	}Transition t0 whenReply execok -> dropoutRes
+					whenReply execko -> execErr
+
+	State dropoutRes{
+		
+		emit local_dropoutdone : local_dropoutdone
+		forward systemstatemanager -m updatetrolley : updatetrolley($POS, IDLE)
+		
+	}Goto idle
+
+	State backHome{
+		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
+		request transporttrolleymover -m moveto : moveto(HOME)
+	}Transition t0 whenReply moveok -> backHomeRes
+					whenReply moveko -> moveErr
+
+	State backHomeRes{
+		forward systemstatemanager -m updatetrolley : updatetrolley(HOME, IDLE)
+
+	}Goto idle
+
+	State moveErr{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	something went wrong...assistance required.", unibo.comm22.utils.ColorsOut.BLUE)#]
+		forward wasteservice -m exit : exit(_)
+		forward transporttrolleycore -m exit : exit(_) 
+	}Goto idle 
+
+	State execErr{
+		//Still to be implemented 		
+	}
+
+	State end{
+		forward transporttrolleyexecutor -m exit : exit(_)
+		forward transporttrolleymover -m exit : exit(_)
+		terminate 0
+	}
+}
+
+/* *********************************************************************************************
+ * ---------------------------------------------------------------------------------------------
+ * Component addicted to move the DDR robot
+ * ---------------------------------------------------------------------------------------------
+ **********************************************************************************************/
+
+QActor transporttrolleymover context ctxwasteservice{
+	
+	[#
+		
+		lateinit var destination  : String
+		var xDestination : Int = 0
+		var yDestination : Int = 0
+		var dir : String = "" 
+		var PATH = ""
+		var PATHSTILLTODO = ""
+		var attempt : Int = 0
+		var someToFix : Boolean = false
+	#]
+	
+	State init initial{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.BLUE)#]
+		[# unibo.kotlin.planner22Util.initAI() #]
+	}Goto idle
+
+	State idle{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.BLUE)#]
+		
+		[#someToFix = false#]
+		
+	}Transition t0 whenRequest moveto -> destinationEval
+					whenMsg exit -> end
+
+	State destinationEval{
+		
+		onMsg(moveto : moveto(POS)){
+			[#	
+				try{
+					destination = payloadArg(0).trim().uppercase()
+				
+					xDestination = utility.ServiceAreaDestinationConfig.getXDestination(destination)
+					yDestination = utility.ServiceAreaDestinationConfig.getYDestination(destination)
+					dir 		 = utility.ServiceAreaDestinationConfig.getPlannerDirection(destination)
+				}catch(e : Exception){}	
+			#]	
+		}
+		
+	}Goto plan
+
+	State plan{
+		
+		[#
+			unibo.kotlin.planner22Util.setGoal(xDestination, yDestination)
+			unibo.kotlin.planner22Util.doPlan()
+			PATH = unibo.kotlin.planner22Util.get_actionSequenceAsString()
+			unibo.comm22.utils.ColorsOut.outappl("$name	|	moving to $destination", unibo.comm22.utils.ColorsOut.BLUE)
+		#]
+
+	}Goto execMove
+
+	State execMove{
+		
+		request pathexec -m dopath : dopath($PATH)
+		
+	}Transition t0 whenReply dopathdone -> lookForFix
+					whenReply dopathfail -> moveKo
+				
+	State lookForFix{
+		[# unibo.kotlin.planner22Util.updateAfterPath(PATH) #]
+		[# someToFix = false #]
+		if[# unibo.kotlin.planner22Util.getDirection() != dir #]{
+			[# someToFix = true #]
+		}
+		
+	}Goto fixDir if[# someToFix #]
+					else moveOk 
+				
+	State fixDir{
+		[# 
+			PATH = utility.DirectionFixer.getPathForFixDir(unibo.kotlin.planner22Util.getDirection(), dir) 
+		 	unibo.comm22.utils.ColorsOut.outappl("$name	|	fixing direction", unibo.comm22.utils.ColorsOut.BLUE)
+		#]
+		
+	}Goto execMove
+	
+	State moveOk{
+		
+		[# attempt = 0 #]
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	arrived in $destination", unibo.comm22.utils.ColorsOut.BLUE)#]
+		
+		replyTo moveto with moveok : moveok
+		
+	}Goto idle
+
+	State moveKo{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	moveKo", unibo.comm22.utils.ColorsOut.BLUE)#]
+		[#attempt++#]
+		onMsg(dopathfail : dopathfail(ARG)){
+			[#	
+				try{
+					PATHSTILLTODO = payloadArg(0)
+				}catch(e : Exception){}	
+			#]
+		}
+		if[#attempt==3#]{
+			[# attempt = 0 #]
+			replyTo moveto with moveko : moveko(_)
+		}
+		else{
+			request pathexec -m dopath : dopath($PATHSTILLTODO)	
+		}
+		
+	}Transition t0 whenReply dopathdone -> lookForFix
+					whenReply dopathfail -> moveKo 
+						
+	State end{
+		terminate 0
+	}
+}
+
+/* *********************************************************************************************
+ * ---------------------------------------------------------------------------------------------
+ *Component for performing actions
+ * ---------------------------------------------------------------------------------------------
+ **********************************************************************************************/
+
+QActor transporttrolleyexecutor context ctxwasteservice{
+	
+	[#
+		lateinit var action : String	
+	#]
+	
+	State init initial{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.BLUE)#]
+	}Goto idle
+	
+	State idle{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.BLUE)#]
+	}Transition t0 whenRequest execaction -> actionEval
+					whenMsg exit -> end
+	
+	State actionEval{
+		onMsg(execaction : execaction(ACT)){
+			[#	
+				try{
+					action = payloadArg(0).trim().uppercase()
+				}catch(e : Exception){}	
+			#]	
+		}
+	}Goto execPickup if[#action.equals("PICKUP")#]
+						else execDropout
+	
+	State execPickup{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	$action execution", unibo.comm22.utils.ColorsOut.BLUE)#]
+		[#delay(kotlin.random.Random.nextLong(3000, 5000))#]
+		replyTo execaction with execok : execok(_)
+	}Goto idle
+	
+	State execDropout{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	$action execution", unibo.comm22.utils.ColorsOut.BLUE)#]
+		[#delay(kotlin.random.Random.nextLong(2000, 4000))#]
+		replyTo execaction with execok : execok(_)
+	}Goto idle
+	
+	State end{
+		terminate 0
+	}
+}
+
+/* *********************************************************************************************
+ * ---------------------------------------------------------------------------------------------
+ * Component addicted to manage container state
+ * ---------------------------------------------------------------------------------------------
+ **********************************************************************************************/
+
+QActor systemstatemanager context ctxwasteservice{
+	
+	[#
+		val system  = sys.state.SystemState()
+		lateinit var requestMaterialToStore : sys.state.Material 
+		var requestWeightToStore 			: Double = 0.0	
+		lateinit var position 				: sys.state.TTPosition
+		lateinit var state 					: sys.state.CurrStateTrolley
+		lateinit var led 					: sys.state.CurrStateLed
+	#]
+	
+	State init initial {
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.MAGENTA)#]
+		
+		updateResource[#system.toJsonString()#]
+	}Goto idle
+	
+	State idle {
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.MAGENTA)#]
+		
+	}Transition t0 whenMsg    	updatecontainer    -> updateContainerState
+					whenMsg   	updatetrolley 	   -> updateTrolleyState
+					whenMsg	  	updateled		   -> updateLedState
+					whenMsg	  	getdata			   -> sendData
+					whenRequest getledstate 	   -> replyData
+					whenRequest getcontainterstate -> replyData
+					whenRequest gettrolleystate    -> replyData
+					whenRequest gettrolleyposition -> replyData
+					whenMsg   	exit               -> end
+					
+	
+	State updateContainerState{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	updating container state", unibo.comm22.utils.ColorsOut.MAGENTA)#]
+		
+		onMsg (updatecontainer : updatecontainer(MAT,QUA)){
+			[#	
+				try{
+					requestMaterialToStore = sys.state.Material.valueOf(payloadArg(0).trim().uppercase())  
+					requestWeightToStore = payloadArg(1).toDouble()	
+					system.updateBoxWeight(requestMaterialToStore, requestWeightToStore)
+				}catch(e : Exception){
+					//TobeDone
+				}
+			#]
+		}
+		updateResource[# system.toJsonString() #]
+	}Goto idle
+	
+	State updateTrolleyState{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	updating trolley state", unibo.comm22.utils.ColorsOut.MAGENTA)#]
+		onMsg (updatetrolley : updatetrolley(POS,STAT)){
+			[#	
+				try{
+					position = sys.state.TTPosition.valueOf(payloadArg(0).trim().uppercase())  
+					state = sys.state.CurrStateTrolley.valueOf(payloadArg(1).trim().uppercase())	
+					system.setCurrState(state)
+					system.setCurrPosition(position)
+				}catch(e : Exception){
+					//TobeDone
+				}
+			#]
+		}
+		updateResource[# system.toJsonString() #]
+	}Goto idle
+	
+	State updateLedState{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	updating led state", unibo.comm22.utils.ColorsOut.MAGENTA)#]
+		onMsg (updateled : updateled(STAT)){
+			[#	
+				try{
+					led = sys.state.CurrStateLed.valueOf(payloadArg(0).trim().uppercase())  
+					system.setCurrLedState(led)
+				}catch(e : Exception){
+					//TobeDone
+				}
+			#]
+		}
+		updateResource[# system.toJsonString() #]
+	}Goto idle
+	
+	State sendData{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	sending data to someone", unibo.comm22.utils.ColorsOut.MAGENTA)#]
+		delay 1000
+		updateResource[# system.toJsonString() #]
+	}Goto idle
+	
+	State replyData{
+		onMsg (getledstate : getledstate(_)){
+			[# var DATA = system.getCurrLedState().toString() #]
+			replyTo getledstate with givedata : givedata($DATA)
+		}
+		onMsg (getcontainterstate : getcontainerstate(_)){
+			[# var DATA = system.getAllCurrentBoxWeight().toString() #]
+			replyTo getledstate with givedata : givedata($DATA)
+		}
+		onMsg (gettrolleyposition : gettrolleyposition(_)){
+			[# var DATA = system.getCurrPosition().toString() #]
+			replyTo getledstate with givedata : givedata($DATA)
+		}
+		onMsg (gettrolleystate : gettrolleystate(_)){
+			[# var DATA = system.getCurrState().toString() #]
+			replyTo getledstate with givedata : givedata($DATA)
+		}
+	}Goto idle
+	
+	State end {
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	bye", unibo.comm22.utils.ColorsOut.MAGENTA)#]
+		terminate 0
+	}
+}
+
