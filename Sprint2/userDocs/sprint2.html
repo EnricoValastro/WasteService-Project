@@ -485,6 +485,8 @@
             <br>
             <img src="./resources/img/application_properties.png" width="50%" height="30%"> <br>
             <h4>Realizzazione dell'applicazione</h4>
+
+            <h5>Parte sviluppata in Java</h5>
             <kc>SpringBoot</kc> si basa sul pattern <i>Model-View-Controller</i> (MVC) che permette di separare la logica dell'applicazione dalla sua presentazione. <br> 
             Quando è stato creato il progetto, in maniera del tutto automatica è stata generata la classe <kc>Application</kc> che rappresenta il main della nostra applicazione. <br>
 
@@ -632,8 +634,47 @@ Infine richiamo il metodo <a href="#sendMsg"><kc>sendMsg()</kc></a> per inviare 
 }</pre>
 Tale metodo restituisce la pagina <i>update.html</i> aggiornata con i nuovi parametri.
 <br>
-Il codice della classe <kc>UtilsController</kc> è consultabile al seguente link <a href="./resources/java/UtilsController.java">UtilsController.java</a>.<br><br>
-        </div>
+Il codice della classe <kc>UtilsController</kc> è consultabile al seguente link <a href="./resources/java/UtilsController.java">UtilsController.java</a>.<br>
+    <h5>Parte sviluppata in javascript</h5>
+    All'interno del file <i>update.html</i> è presente il codice javascript che permette di gestire la pagina web. Il file <i>wsminimal.js</i> 
+    si occupa di creare una socket attraverso la funzione <i>connect()</i> all'indirizzo <i>ws://localhost:8085/socket</i> assicurandosi che vi sia aperta un unica connessione. 
+    Assegniamo a <i>socket.onmessage</i> una funzione che prende in input un evento di tipo <kc>MessageEvent</kc> in modo da recuperare il messaggio inviatoci dall'attore <kc>SystemStateManager</kc>.
+    
+    Quindi creiamo un oggetto JSON a partire dal messaggio e salviamo il valore della chiave in una variabile javascript per ogni coppia chiave-valore che il messaggio contiene.
+
+    Quindi attraverso la funzione <kc>setMessageToWindow(...)</kc>, contenuta nel file <i>ioutils.js</i>, assegno il valore di una determinata "chiave" al div corrispondente ottenuto tramite l'ID.
+
+    <pre>
+<key>function</key> connect(){
+    ...
+
+    <key>socket</key> = <key>new</key> WebSocket(addr);
+
+    <key>socket</key>.<key>onmessage</key> = <key>function</key>(event){
+        msg = <key>event</key>.data;
+
+        <key>let</key> container = <key>JSON</key>.parse(msg);
+
+        <key>let</key> gMax = container['boxMaxWeight']['GLASS'];
+        <key>let</key> pMax = container['boxMaxWeight']['PLASTIC'];
+
+        ...
+
+        setMessageToWindow(glassmax, gMax.toString());
+        setMessageToWindow(plasticmax, pMax.toString());
+
+        ...
+    }
+}</pre>
+Per mostrare la mappa della stanza è stato sviluppato un ulteriore file javascript <i>generate.js</i> che si occupa di creare la mappa in maniera dinamica a partire dalle coordinate dei punti d'interesse.
+Il file <i>update.html</i> contiene anche uno script con la funzione <kc>generateTable()</kc> che crea la mappa vuota. 
+<br><br>
+Ai seguenti link è possibile consultare il codice javascript sviluppato per la pagina web <i>update.html</i>: <br>
+<a href="./resources/js">ioutils.js</a>.<br>
+<a href="./resources/js">wsminimal.js</a>.<br>
+<a href="./resources/js">generate.js</a>.<br>
+        
+</div>
 
         <h2>Test Plan</h2>
         <div class="remarkTest">

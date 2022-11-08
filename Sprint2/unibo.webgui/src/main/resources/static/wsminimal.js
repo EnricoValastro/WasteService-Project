@@ -6,7 +6,7 @@ var socket;
 
 function connect() {
     var host = document.location.host;
-    var pathname = "/"                   //document.location.pathname;
+    var pathname = "/"
     var addr = "ws://" + host + pathname + "socket";
     // Assicura che sia aperta un unica connessione
     if (socket !== undefined && socket.readyState !== WebSocket.CLOSED) {
@@ -21,10 +21,8 @@ function connect() {
     }
 
     socket.onmessage = function (event) {
-        //alert(`Got Message: ${event.data}`);
         msg = event.data;
 
-        //alert(`Got Message: ${msg}`);
         console.log("ws-status:" + msg);
 
         let container = JSON.parse(msg);
