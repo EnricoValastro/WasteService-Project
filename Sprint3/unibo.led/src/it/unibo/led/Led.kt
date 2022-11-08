@@ -21,6 +21,9 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
+						
+									led = utility.LedFactory.createLed()
+									led.turnOff()
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -76,7 +79,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 					sysaction { //it:State
 				 	 		//sysaction { //it:State
 				 	 		  stateTimer = TimerActor("timer_blinkon", 
-				 	 			scope, context!!, "local_tout_led_blinkon", 250.toLong() )
+				 	 			scope, context!!, "local_tout_led_blinkon", 200.toLong() )
 				 	 		//}
 					}	 	 
 					 transition(edgeName="t03",targetState="blinkoff",cond=whenTimeout("local_tout_led_blinkon"))   
@@ -92,7 +95,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 					sysaction { //it:State
 				 	 		//sysaction { //it:State
 				 	 		  stateTimer = TimerActor("timer_blinkoff", 
-				 	 			scope, context!!, "local_tout_led_blinkoff", 250.toLong() )
+				 	 			scope, context!!, "local_tout_led_blinkoff", 200.toLong() )
 				 	 		//}
 					}	 	 
 					 transition(edgeName="t06",targetState="blinkon",cond=whenTimeout("local_tout_led_blinkoff"))   
