@@ -34,7 +34,7 @@
                       <h6>Current Weight:</h6>
                     </div>
                     <div class="border rounded border-dark col-2">
-                      <span id="plasticCurrent">...</span>
+                      <span id="plasticCurrent" th:text="${plasticcurrent}">...</span>
                     </div>
                 </div>
                 <div class="d-flex flex-row p-2">
@@ -42,7 +42,7 @@
                     <h6>Max Weight:</h6>
                   </div>
                   <div class=" border rounded border-dark col-2">
-                    <span id="plasticMax">...</span>
+                    <span id="plasticMax" th:text="${plasticmax}">...</span>
                   </div>
                 </div>
               </div>
@@ -53,7 +53,7 @@
                     <h6>Current Weight:</h6>
                   </div>
                   <div class=" border rounded border-dark col-2">
-                    <span id="glassCurrent">...</span>
+                    <span id="glassCurrent" th:text="${glasscurrent}">...</span>
                   </div>
                 </div>
                 <div class="d-flex flex-row p-2">
@@ -61,7 +61,7 @@
                     <h6>Max Weight:</h6>
                   </div>
                   <div class=" border rounded border-dark col-2">
-                    <span id="glassMax">...</span>
+                    <span id="glassMax" th:text="${glassmax}">...</span>
                   </div>
                 </div>
               </div>
@@ -81,7 +81,7 @@
                     <h6>Current State:</h6>
                   </div>
                   <div class="col-2 border rounded border-dark">
-                    <span id="trolleystate">...</span>
+                    <span id="trolleystate" th:text="${trolleystate}">...</span>
                   </div>
                 </div>
                 <div class="d-flex flex-row p-2">
@@ -89,7 +89,7 @@
                     <h6>Position:</h6>
                   </div>
                   <div class="col-2 border rounded border-dark">
-                    <span id="trolleyposition">...</span>
+                    <span id="trolleyposition" th:text="${trolleyposition}">...</span>
                   </div>
                 </div>
               </div>
@@ -113,7 +113,7 @@
           </div>
         </div>
         <div class="mt-2 ">
-          <b><span id="ledstate">...</span></b>
+          <b><span id="ledstate" th:text="${ledstate}">...</span></b>
         </div>
 
       </div>

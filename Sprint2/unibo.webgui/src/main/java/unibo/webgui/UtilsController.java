@@ -14,13 +14,21 @@ import unibo.webgui.utils.UtilsGUI;
 @Controller
 public class UtilsController{
 
+    @Value("${webgui.addr}")
     String addr;
+    @Value("${container.glasscurrent}")
     String glasscurrent;
+    @Value("${container.plasticcurrent}")
     String plasticcurrent;
+    @Value("${container.glassmax}")
     String glassmax;
+    @Value("${container.plasticmax}")
     String plasticmax;
+    @Value("${container.trolleystate}")
     String trolleystate;
+    @Value("${container.trolleyposition}")
     String trolleyposition;
+    @Value("${container.ledstate}")
     String ledstate;
 
     protected String buildThePage(Model viewmodel) {

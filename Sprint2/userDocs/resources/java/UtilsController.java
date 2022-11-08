@@ -14,42 +14,31 @@ import unibo.webgui.utils.UtilsGUI;
 @Controller
 public class UtilsController{
 
-    protected String mainPage = "webGUI";
-
-    protected String updatePage = "update";
-
     @Value("${webgui.addr}")
     String addr;
-
     @Value("${container.glasscurrent}")
     String glasscurrent;
-
     @Value("${container.plasticcurrent}")
     String plasticcurrent;
-
-    @Value("${container.plasticmax}")
-    String plasticmax;
-
     @Value("${container.glassmax}")
     String glassmax;
-
+    @Value("${container.plasticmax}")
+    String plasticmax;
     @Value("${container.trolleystate}")
     String trolleystate;
-
     @Value("${container.trolleyposition}")
     String trolleyposition;
-
     @Value("${container.ledstate}")
     String ledstate;
 
     protected String buildThePage(Model viewmodel) {
         setConfigParams(viewmodel);
-        return mainPage;
+        return "webGUI";
     }
 
     protected String buildTheUpdatePage(Model viewmodel){
         setConfigParams(viewmodel);
-        return updatePage;
+        return "update";
     }
 
     protected void setConfigParams(Model viewmodel){

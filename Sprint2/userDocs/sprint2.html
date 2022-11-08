@@ -419,7 +419,7 @@
             <img src="./resources/img/Spring_Initializr.png" width="50%" height="30%">
             <br>
             Dopo aver scaricato il file <i>.zip</i> è stato necessario decomprimerlo e importarlo nel nostro IDE come progetto <ks>Gradle</ks>, dove abbiamo potuto notare la struttura che il framework <i>SpringBoot</i> ha creato per noi. <br>
-            Dopo di che andiamo ad aggiungere al file <kc>build.gradle</kc> le ulteriori dipendenze che ci serviranno per il progetto, oltre a quelle già generate al momento della creazione del progetto. <br>
+            Dopo di che abbiamo aggiunto al file <kc>build.gradle</kc> le ulteriori dipendenze che serviranno per il progetto, oltre a quelle già generate al momento della creazione dello stesso. <br>
             <br>
             <img src="./resources/img/build.gralde.png" width="50%" height="30%"> <br>
             <br>
@@ -429,7 +429,7 @@
             <br>
             <img src="./resources/img/application_properties.png" width="50%" height="30%"> <br>
             <h4>Realizzazione dell'applicazione</h4>
-            SpringBoot si basa sul pattern <i>Model-View-Controller</i> (MVC) che permette di separare la logica dell'applicazione dalla sua presentazione. <br> 
+            <kc>SpringBoot</kc> si basa sul pattern <i>Model-View-Controller</i> (MVC) che permette di separare la logica dell'applicazione dalla sua presentazione. <br> 
             Quando è stato creato il progetto, in maniera del tutto automatica è stata generata la classe <kc>Application</kc> che rappresenta il main della nostra applicazione. <br>
 
             <pre>
@@ -440,7 +440,7 @@
     }
 }</pre>
         La classe <kc>Application</kc> è annotata con <kc>@SpringBootApplication</kc> che è un'annotazione che consente di abilitare la configurazione automatica di SpringBoot. <br>
-        In generale, l'applicazione funziona anche senza aver definito un Controller, poichè al momento dell'avvio della classe main, SpringBoot va a "cercare" un file <kc>index.html</kc> all'interno della cartella <kc>resources/static</kc> e lo mostra all'utente. <br>
+        In generale, l'applicazione funziona anche senza aver definito un Controller, poichè al momento dell'avvio della classe <kc>main</kc>, SpringBoot va a "cercare" un file <kc>index.html</kc> all'interno della cartella <kc>resources/static</kc> e lo mostra all'utente. <br>
         Poichè nel nostro caso faremo utilizzo di un Controller, il cui codice verrà descritto più avanti, abbiamo creato all'interno della cartella <kc>resources/static</kc> un file <a href="./resources/html/webGUI.html">webGUI.html</a> che contiene un form, 
         il quale permette di instaurare una connessione Coap all'indirizzo e alla porta del contesto in cui si trova il <kc>SystemStateManager</kc>.
         Dopo di che il progetto è stato realizzato consultando il software <a href="https://github.com/anatali/issLab2022/tree/main/webRobot22">webRobot22</a> fornitoci dal committente in cui troviamo un'interfaccia Java costruita nel seguente modo.
@@ -450,7 +450,7 @@
     <key>void</key> sendToAll (<key>String</key> message);
 }</pre>
         
-        All'interno del software fornitoci vi è anche una classe di supporto in cui è possibile trovare il codice per creare una connessione <i>Coap</i> e una connessione <i>TCP</i>. 
+        All'interno dello stesso software vi è anche una classe di supporto in cui è possibile trovare il codice per creare una connessione <i>Coap</i> e una connessione <i>TCP</i>. 
         <pre>
 <key>public</key> <key>class</key> UtilsGUI {
     <key>private</key> <key>static</key> Interaction2021 conn;
@@ -465,19 +465,22 @@
     }
 }</pre>
 
-        In questo modeo si ottiente un oggetto di tipo <kc>CoapConnection</kc> e dunque una connessione verso l'indirizzo e il path che è la combinazione del nome del contesto e del nome dell'attore che si trova in quel determinato contesto e a cui noi facciamo riferimento, il <kc>SystemStateManager</kc>. <br>
+        In questo modo si ottiente un oggetto di tipo <kc>CoapConnection</kc> e dunque una connessione verso l'indirizzo e il path che è la combinazione del nome del contesto e del nome dell'attore a cui noi facciamo riferimento e che si trova in quel determinato contesto, il <kc>SystemStateManager</kc>. <br>
         <pre>
 <key>public</key> <key>static</key> void connectWithUtilsUsingTcp(<key>String</key> addr)() {
     <key>String</key> x[] = addr.trim().split(":");
     <key>connTCP</key> = TcpClientSupport.connect(x[0], Integer.parseInt(x[1]), 10);
 }</pre>
-        Tale metodo viene utilizzato in particolar modo per risolvere un problema posto in fase di analisi. Infatti nel caso in cui la GUI si collega dopo tanto tempo, 
+        Tale metodo, invece, viene utilizzato in particolar modo per risolvere un problema posto in fase di analisi. Infatti nel caso in cui la GUI si collega dopo tanto tempo, 
         si ha il bisogno comunque di mostrare lo stato attuale del sistema. Per questo tramite la connessione <i>TCP</i> viene inviato un <kc>Dispatch</kc> al <kc>SystemStateManager</kc>, facendo quello che ci viene richiesto dagli analisti, ovvero fetch dei dati. 
-        <pre>
+        <div id="sendMsg">
+            <pre>
 <key>public</key> <key>void</key> sendMsg(){
     <key>String</key> msg = "msg(getdata, dispatch, webgui, systemstatemanager, getdata(_), 1)";
     <key>connTCP</key>.forward(msg);
 }</pre>
+        </div>
+        
         La classe <kc>UtilsGUI</kc> è consultabile al seguente link <a href="./resources/java/UtilsGUI.java">UtilsGUI.java</a>.<br><br>
         Affinchè l'applicazione Spring inoltri le richieste di un client al server, è necessario registrare un gestore utilizzando una classe di configurazione che implementa l'interfaccia <kc>WebSocketConfigurer</kc>      
         <pre>
@@ -523,8 +526,57 @@ Nel nostro caso ci avvaliamo della classe <kc>WebSocketHandler</kc> per reinviar
 
 Il codice della classe <kc>UtilsCoapObserver</kc> è consultabile al seguente link <a href="./resources/java/UtilsCoapObserver.java">UtilsCoapObserver.java</a>.<br><br>
 
-Precedentemente abbiamo detto che nel progetto è stato fatto uso di un <i>Controller</i>, il quale è definito nella classe <kc>UtilsController</kc> che viene dunque annotata con <kc>@Controller</kc> e che viene eseguita dall'applicazione Spring. 
+Precedentemente abbiamo detto che nel progetto è stato fatto uso di un <i>Controller</i>, il quale è definito nella classe <kc>UtilsController</kc> annotata con <kc>@Controller</kc> e che viene eseguita dall'applicazione Spring. 
+Al controller viene trasferito un oggetto di tipo Model gestito mediante la Java template engine <kc>Theamleaf</kc>. <br>   
+Attraverso l'annotazione <kc>@Value</kc> assegniamo a delle variabili i valori definiti nel file <kc>application.properties</kc>.
+<pre>
+<key2>@Value("${webgui.addr}")</key2>
+<key>String</key> addr;
 
+<key2>@Value("$container.glassmax")</key2>
+<key>String</key> glassmax;
+
+...
+</pre>
+Quando ci colleghiamo all'indirizzo <i>http://localhost:8085</i> viene richiamato il metodo <kc>entry</kc>, annotato con <kc>@GetMapping</kc>, che restituisce la pagina HTML <i>webGUI.html</i> 
+e passa come parametro il modello <kc>viewmodel</kc> alla quale vengono aggiungente le variabili definite in precedenza, tramite il metodo <kc>setConfigParams</kc>.
+
+<pre>
+<key2>@GetMapping</key2>
+<key>public</key> <key>String</key> entry(Model viewmodel) {
+    <key>return</key> buildThePage(viewmodel);
+}</pre>
+
+<pre>
+<key>public</key> <key>String</key> buildThePage(Model viewmodel) {
+    setConfigParams(viewmodel);
+    <key>return</key> "webGUI";
+}</pre>
+
+<pre>
+<key>public</key> <key>void</key> setConfigParams(Model viewmodel) {
+    viewmodel.addAttribute("addr", addr);
+    viewmodel.addAttribute("glassmax", glassmax);
+    ...
+}</pre>
+
+Quando all'interno della pagina <i>webGUI.html</i> clicchiamo sul tasto <kc>Connect</kc>, il form in cui è contenuto attiva all'interno della classe <i>UtilsController</i> il metodo 
+<kc>update</kc> annotato con <kc>@PostMapping</kc> che prende in input i parametri passati dal form. Nello specifico viene preso in input l'indirizzo IP del contesto e il numero di porta in cui si trova il <i>SystemStateManager</i>.
+All'interno di questo metodo creiamo verso quell'indirizzo una connessione Tcp e una connessione Coap. Viene dunque registrato un <i>Observer</i> sulla connessione Coap che permette di ricevere le notifiche di stato del <i>SystemStateManager</i>, in quanto è una risorsa Coap osservabile.
+Infine richiamo il metodo <a href="#sendMsg"><kc>sendMsg()</kc></a> per inviare sulla connessione Tcp un messaggio di tipo <kc>Dispatch</kc> al <i>SystemStateManager</i>, come definito qualche parametro fa.
+<pre>
+<key2>@PostMapping</key2>
+<key>public</key> <key>String</key> update(Model viewmodel, <key2>@RequestParam</key2> <key>String</key> ipaddr) {
+    addr = ipaddr;
+    viewmodel.addAttribute("addr", addr);
+    <key>UtilsGUI</key>.connectWithUtilsUsingTcp(ipaddr);
+    <key>UtilsGUI</key>.connectWithUtilsUsingCoap(ipaddr).observeResource(<key>new</key> UtilsCoapObserver());
+    <key>UtilsGUI</key>.sendMsg();
+    <key>return</key> buildTheUpdatePage(viewmodel);
+}</pre>
+Tale metodo restituisce la pagina <i>update.html</i> aggiornata con i nuovi parametri.
+<br>
+Il codice della classe <kc>UtilsController</kc> è consultabile al seguente link <a href="./resources/java/UtilsController.java">UtilsController.java</a>.<br><br>
         </div>
 
         <h2>Test Plan</h2>
