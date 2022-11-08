@@ -667,7 +667,19 @@ Il codice della classe <kc>UtilsController</kc> è consultabile al seguente link
     }
 }</pre>
 In questo modo ogni volta che il <i>SystemStateManager</i> invia un messaggio di stato, la pagina web viene aggiornata con i nuovi valori, mostrando il peso attuale dei container, lo stato e la posizione del <i>transportTrolley</i>. <br>
-Per mostrare la mappa della stanza è stato sviluppato un ulteriore file javascript <kc>generate.js</kc> che si occupa di creare la mappa in maniera dinamica a partire dalle coordinate dei punti d'interesse.
+Per mostrare la mappa della stanza è stato sviluppato un ulteriore file javascript <kc>generate.js</kc> che si occupa di creare la mappa in maniera dinamica a partire dalle coordinate dei punti d'interesse che si trovano all'interno del file <kc>WasteServiceSystemConfig.json</kc> e che otteniamo, in maniera sincrona, tramite <ks>jQuery</ks> come mostrato dal codice seguente.
+<pre>
+<key>$.</key><key>ajax</key>({
+    <key>dataType</key>: "json",
+    <key>url</key>: "./WasteServiceSystemConfig.json",
+    <key>data</key>: null,
+    <key>async</key>: false,
+    <key>success</key>: function(data) {
+        <key>$</key>.<key>each</key>(data, function (k, v) {
+            dataFromJson[k] = v
+        })
+    }
+});</pre> 
 Ogni qual volta si ha un cambiamento di stato, in particolar modo quando la posizione del transportTrolley cambia, la mappa della stanza viene aggiornata indicando con un colore diverso la 
 cella corrispondente in cui si trova. 
 <br><br>

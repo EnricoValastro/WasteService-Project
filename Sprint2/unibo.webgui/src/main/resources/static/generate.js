@@ -1,7 +1,22 @@
-const home = [0,0]
-const indoor = [0,8]
-const plastic = [10,8]
-const glass = [10,0]
+let dataFromJson = {}
+
+$.ajax({
+    dataType: "json",
+    url: "./WasteServiceSystemConfig.json",
+    data: null,
+    async: false,
+    success: function(data) {
+        $.each(data, function (k, v) {
+            dataFromJson[k] = v
+        })
+    }
+});
+
+const home = dataFromJson.LOCATION.HOME
+const indoor = dataFromJson.LOCATION.INDOOR
+const plastic = dataFromJson.LOCATION.PLASTICBOX
+const glass = dataFromJson.LOCATION.GLASSBOX
+
 
 function generateTable() {
     let table = document.createElement("table")
