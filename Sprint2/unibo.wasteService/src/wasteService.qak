@@ -18,6 +18,13 @@ Dispatch updatetrolley	  : updatetrolley(POS, STAT)
 Dispatch updateled		  : updateled(STAT)
 Dispatch getdata		  : getdata(_)
 
+/* Data Request */
+Request getledstate 	  	: getledstate(_)
+Request gettrolleyposition 	: gettrolleyposition(_)
+Request gettrolleystate 	: gettrolleystate(_)
+Request getcontainterstate 	: getcontainerstate(_)
+Reply   givedata 			: givedata(DATA)
+
 /* Deposit Request Messages */
 Request  storewaste   : storewaste(MAT, QUA)
 Reply 	 loadaccept   : loadaccept(_)
@@ -435,11 +442,15 @@ QActor systemstatemanager context ctxwasteservice{
 	State idle {
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.MAGENTA)#]
 		
-	}Transition t0 whenMsg    updatecontainer  	-> updateContainerState
-					whenMsg   updatetrolley 	-> updateTrolleyState
-					whenMsg	  updateled			-> updateLedState
-					whenMsg	  getdata			-> sendData
-					whenMsg   exit            	-> end
+	}Transition t0 whenMsg    	updatecontainer    -> updateContainerState
+					whenMsg   	updatetrolley 	   -> updateTrolleyState
+					whenMsg	  	updateled		   -> updateLedState
+					whenMsg	  	getdata			   -> sendData
+					whenRequest getledstate 	   -> replyData
+					whenRequest getcontainterstate -> replyData
+					whenRequest gettrolleystate    -> replyData
+					whenRequest gettrolleyposition -> replyData
+					whenMsg   	exit               -> end
 					
 	
 	State updateContainerState{
@@ -495,6 +506,25 @@ QActor systemstatemanager context ctxwasteservice{
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	sending data to someone", unibo.comm22.utils.ColorsOut.MAGENTA)#]
 		delay 1000
 		updateResource[# system.toJsonString() #]
+	}Goto idle
+	
+	State replyData{
+		onMsg (getledstate : getledstate(_)){
+			[# var DATA = system.getCurrLedState().toString() #]
+			replyTo getledstate with givedata : givedata($DATA)
+		}
+		onMsg (getcontainterstate : getcontainerstate(_)){
+			[# var DATA = system.getAllCurrentBoxWeight().toString() #]
+			replyTo getledstate with givedata : givedata($DATA)
+		}
+		onMsg (gettrolleyposition : gettrolleyposition(_)){
+			[# var DATA = system.getCurrPosition().toString() #]
+			replyTo getledstate with givedata : givedata($DATA)
+		}
+		onMsg (gettrolleystate : gettrolleystate(_)){
+			[# var DATA = system.getCurrState().toString() #]
+			replyTo getledstate with givedata : givedata($DATA)
+		}
 	}Goto idle
 	
 	State end {
