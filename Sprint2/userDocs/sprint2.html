@@ -485,6 +485,8 @@
             <br>
             <img src="./resources/img/application_properties.png" width="50%" height="30%"> <br>
             <h4>Realizzazione dell'applicazione</h4>
+
+            <h5>Parte sviluppata in Java</h5>
             <kc>SpringBoot</kc> si basa sul pattern <i>Model-View-Controller</i> (MVC) che permette di separare la logica dell'applicazione dalla sua presentazione. <br> 
             Quando è stato creato il progetto, in maniera del tutto automatica è stata generata la classe <kc>Application</kc> che rappresenta il main della nostra applicazione. <br>
 
@@ -497,8 +499,8 @@
 }</pre>
         La classe <kc>Application</kc> è annotata con <kc>@SpringBootApplication</kc> che è un'annotazione che consente di abilitare la configurazione automatica di SpringBoot. <br>
         In generale, l'applicazione funziona anche senza aver definito un Controller, poichè al momento dell'avvio della classe <kc>main</kc>, SpringBoot va a "cercare" un file <kc>index.html</kc> all'interno della cartella <kc>resources/static</kc> e lo mostra all'utente. <br>
-        Poichè nel nostro caso faremo utilizzo di un Controller, il cui codice verrà descritto più avanti, abbiamo creato all'interno della cartella <kc>resources/static</kc> un file <a href="./resources/html/webGUI.html">webGUI.html</a> che contiene un form, 
-        il quale permette di instaurare una connessione Coap all'indirizzo e alla porta del contesto in cui si trova il <kc>SystemStateManager</kc>.
+        Poichè nel nostro caso faremo utilizzo di un Controller, il cui codice verrà descritto più avanti, abbiamo creato all'interno della cartella <kc>resources/static</kc> un file <a href="./resources/html/webGUI.html"><kc>webGUI.html</kc></a> che contiene un form, 
+        il quale permette di instaurare una connessione <i>CoAP</i> all'indirizzo e alla porta del contesto in cui si trova il <kc>SystemStateManager</kc>.
         Dopo di che il progetto è stato realizzato consultando il software <a href="https://github.com/anatali/issLab2022/tree/main/webRobot22">webRobot22</a> fornitoci dal committente in cui troviamo un'interfaccia Java costruita nel seguente modo.
         
         <pre>
@@ -506,7 +508,7 @@
     <key>void</key> sendToAll (<key>String</key> message);
 }</pre>
         
-        All'interno dello stesso software vi è anche una classe di supporto in cui è possibile trovare il codice per creare una connessione <i>Coap</i> e una connessione <i>TCP</i>. 
+        All'interno dello stesso software vi è anche una classe di supporto in cui è possibile trovare il codice per creare una connessione <i>CoAP</i> e una connessione <i>TCP</i>. 
         <pre>
 <key>public</key> <key>class</key> UtilsGUI {
     <key>private</key> <key>static</key> Interaction2021 conn;
@@ -570,7 +572,7 @@ Nel nostro caso ci avvaliamo della classe <kc>WebSocketHandler</kc> per reinviar
 
     Il codice della classe <kc>WebSocketHandler</kc> è consultabile al seguente link <a href="./resources/java/WebSocketHandler.java">WebSocketHandler.java</a>.<br><br>
 
-    La classe <kc>UtilsCoapObserver</kc> è una classe di supporto che viene utilizzata per gestire le notifiche <i>Coap</i> che arrivano dal <kc>SystemStateManager</kc>. Essa implementa la classe <kc>CoapHandler</kc> e ha i metodi <kc>onLoad</kc> e <kc>onError</kc> che vengono richiamati quando si ha un cambiamento di stato o si verifica un errore.
+    La classe <kc>UtilsCoapObserver</kc> è una classe di supporto che viene utilizzata per gestire le notifiche <i>CoAP</i> che arrivano dal <kc>SystemStateManager</kc>. Essa implementa la classe <kc>CoapHandler</kc> e ha i metodi <kc>onLoad</kc> e <kc>onError</kc> che vengono richiamati quando si ha un cambiamento di stato o si verifica un errore.
     <pre>
 <key>public</key> <key>class</key> UtilsCoapObserver <key>implements</key> CoapHandler {
     
@@ -594,8 +596,8 @@ Attraverso l'annotazione <kc>@Value</kc> assegniamo a delle variabili i valori d
 
 ...
 </pre>
-Quando ci colleghiamo all'indirizzo <i>http://localhost:8085</i> viene richiamato il metodo <kc>entry</kc>, annotato con <kc>@GetMapping</kc>, che restituisce la pagina HTML <i>webGUI.html</i> 
-e passa come parametro il modello <kc>viewmodel</kc> alla quale vengono aggiungente le variabili definite in precedenza, tramite il metodo <kc>setConfigParams</kc>.
+Quando ci colleghiamo all'indirizzo <ks>http://localhost:8085</ks> viene richiamato il metodo <kc>entry</kc>, annotato con <kc>@GetMapping</kc>, che restituisce la pagina HTML <kc>webGUI.html</kc> 
+e passa come parametro il modello <kc>viewmodel</kc> alla quale vengono aggiunte le variabili definite in precedenza, tramite il metodo <kc>setConfigParams</kc>.
 
 <pre>
 <key2>@GetMapping</key2>
@@ -616,9 +618,9 @@ e passa come parametro il modello <kc>viewmodel</kc> alla quale vengono aggiunge
     ...
 }</pre>
 
-Quando all'interno della pagina <i>webGUI.html</i> clicchiamo sul tasto <kc>Connect</kc>, il form in cui è contenuto attiva all'interno della classe <i>UtilsController</i> il metodo 
+Quando all'interno della pagina <kc>webGUI.html</kc> clicchiamo sul tasto <ks>Connect</ks>, il form in cui è contenuto attiva all'interno della classe <i>UtilsController</i> il metodo 
 <kc>update</kc> annotato con <kc>@PostMapping</kc> che prende in input i parametri passati dal form. Nello specifico viene preso in input l'indirizzo IP del contesto e il numero di porta in cui si trova il <i>SystemStateManager</i>.
-All'interno di questo metodo creiamo verso quell'indirizzo una connessione Tcp e una connessione Coap. Viene dunque registrato un <i>Observer</i> sulla connessione Coap che permette di ricevere le notifiche di stato del <i>SystemStateManager</i>, in quanto è una risorsa Coap osservabile.
+All'interno di questo metodo creiamo verso quell'indirizzo una connessione <i>Tcp</i>> e una connessione <i>CoAP</i>. Viene dunque registrato un <i>Observer</i> sulla connessione <i>CoAP</i> che permette di ricevere le notifiche di stato del <i>SystemStateManager</i>, in quanto è una risorsa CoAP osservabile.
 Infine richiamo il metodo <a href="#sendMsg"><kc>sendMsg()</kc></a> per inviare sulla connessione Tcp un messaggio di tipo <kc>Dispatch</kc> al <i>SystemStateManager</i>, come definito qualche parametro fa.
 <pre>
 <key2>@PostMapping</key2>
@@ -630,10 +632,84 @@ Infine richiamo il metodo <a href="#sendMsg"><kc>sendMsg()</kc></a> per inviare 
     <key>UtilsGUI</key>.sendMsg();
     <key>return</key> buildTheUpdatePage(viewmodel);
 }</pre>
-Tale metodo restituisce la pagina <i>update.html</i> aggiornata con i nuovi parametri.
+Tale metodo restituisce la pagina <kc>update.html</kc> aggiornata con i nuovi parametri.
 <br>
-Il codice della classe <kc>UtilsController</kc> è consultabile al seguente link <a href="./resources/java/UtilsController.java">UtilsController.java</a>.<br><br>
-        </div>
+Il codice della classe <kc>UtilsController</kc> è consultabile al seguente link <a href="./resources/java/UtilsController.java">UtilsController.java</a>.<br>
+    <h5>Parte sviluppata in javascript</h5>
+    All'interno del file <kc>update.html</kc> è presente il codice javascript che permette di gestire la pagina web. Il file <kc>wsminimal.js</kc> 
+    si occupa di creare una socket attraverso la funzione <i>connect()</i> all'indirizzo <ks>ws://localhost:8085/socket</ks> assicurandosi che vi sia aperta un unica connessione. 
+    Assegniamo a <kc>socket.onmessage</kc> una funzione che prende in input un evento di tipo <kc>MessageEvent</kc> in modo da recuperare il messaggio inviatoci dall'attore <kc>SystemStateManager</kc>.
+    
+    Quindi creiamo un oggetto JSON a partire dal messaggio e salviamo in una variabile per ogni coppia chiave-valore il valore contenuto nel messaggio.
+
+    Quindi attraverso la funzione <kc>setMessageToWindow</kc>, contenuta nel file <kc>ioutils.js</kc>, assegno il valore di una determinata "chiave" al <i>div</i> corrispondente ottenuto tramite l'ID.
+
+    <pre>
+<key>function</key> connect(){
+    ...
+
+    <key>socket</key> = <key>new</key> WebSocket(addr);
+
+    <key>socket</key>.<key>onmessage</key> = <key>function</key>(event){
+        msg = <key>event</key>.data;
+
+        <key>let</key> container = <key>JSON</key>.parse(msg);
+
+        <key>let</key> gMax = container['boxMaxWeight']['GLASS'];
+        <key>let</key> pMax = container['boxMaxWeight']['PLASTIC'];
+
+        ...
+
+        setMessageToWindow(glassmax, gMax.toString());
+        setMessageToWindow(plasticmax, pMax.toString());
+
+        ...
+    }
+}</pre>
+In questo modo ogni volta che il <i>SystemStateManager</i> invia un messaggio di stato, la pagina web viene aggiornata con i nuovi valori, mostrando il peso attuale dei container, lo stato e la posizione del <i>transportTrolley</i>. <br>
+Per mostrare la mappa della stanza è stato sviluppato un ulteriore file javascript <kc>generate.js</kc> che si occupa di creare la mappa in maniera dinamica a partire dalle coordinate dei punti d'interesse.
+Ogni qual volta si ha un cambiamento di stato, in particolar modo quando la posizione del transportTrolley cambia, la mappa della stanza viene aggiornata indicando con un colore diverso la 
+cella corrispondente in cui si trova. 
+<br><br>
+In questo Sprint, inoltre, ci siamo occupati di predisporre la GUI per la visualizzazione delle notifiche da parte del Led. Dai requisiti forniti dal commitente risulta chiaro che il Led deve essere spento quando il <i>transportTrolley</i> 
+si trova nella posizione di <ks>HOME</ks> e nello stato di <ks>IDLE</ks>. Deve essere acceso quando lo stato del trolley è <ks>STOPPED</ks>, <ks>PICKINGUP</ks> o <ks>DROPPINGOUT</ks> e deve lampeggiare quando lo stato è <ks>MOVING</ks> e la posizione è <ks>ONTHEROAD</ks>.
+Per fare ciò abbiamo inserito all'interno del file <kc>update.html</kc> due "div" ciascuno con un ID diverso, al cui interno troviamo un ulteriore "div" che contiene lo stile di un cerchio grigio con cui rappresentiamo il led spento.
+All'interno del file <kc>wsminimal.js</kc> a seconda dei casi descritti precedentemente abbiamo aggiunto il seguente codice:
+<pre>
+<key>let</key> flag = 1
+
+<key>if</key>(position.toString() == "HOME" && trolley.toString() == "IDLE"){
+    <key>led2</key>.<key>classList</key>.add("d-none")
+    <key>led1</key>.<key>classList</key>.remove("d-none")
+    <key>circle</key>.<key>style</key>.background = "grey"
+}
+
+<key>if</key>(trolley.toString() == "STOPPED" || trolley.toString() == "PICKINGUP" || trolley.toString() == "DROPPINGOUT"){
+    <key>led2</key>.<key>classList</key>.add("d-none")
+    <key>led1</key>.<key>classList</key>.remove("d-none")
+    <key>circle</key>.<key>style</key>.background = "green"
+}
+
+<key>if</key>(trolley.toString() == "MOVING" && position.toString() == "ONTHEROAD"){
+    <key>led1</key>.<key>classList</key>.add("d-none")
+    <key>led2</key>.<key>classList</key>.remove("d-none")
+    <key>setInterval</key>(<key>function</key> () {         //funzione che permette di far lampeggiare il led
+        <key>if</key>((flag%2)==0){
+            <key>circle</key>.<key>style</key>.background = "green"
+        }
+        <key>else</key>{
+            <key>circle</key>.<key>style</key>.background = "grey"
+        }
+        <key>flag</key>++
+    },300)
+}</pre>
+Ai seguenti link è possibile consultare il codice javascript sviluppato per la pagina web <kc>update.html</kc><br>
+<a href="./resources/js/ioutils.js">ioutils.js</a>.<br>
+<a href="./resources/js/wsminimal.js">wsminimal.js</a>.<br>
+<a href="./resources/js/generate.js">generate.js</a>.<br>
+        <br>
+Il codice del file <kc>update.html</kc> è disponibile al seguente link: <a href="./resources/html/update.html">update.html</a>.<br>
+</div>
 
         <h2>Test Plan</h2>
         <div class="remarkTest">

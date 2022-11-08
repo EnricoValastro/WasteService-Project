@@ -24,6 +24,10 @@ QActor led context ctxpi {
 		var flagBlink = false
 	#]
 	State s0 initial{
+		[#
+			led = utility.LedFactory.createLed()
+			led.turnOff()
+		#]
 		
 	}Goto idle
 	
@@ -50,13 +54,13 @@ QActor led context ctxpi {
 			[# flagBlink = true #]
 		}
 		[#led.turnOn()#]
-	}Transition t0 whenTime 250 -> blinkoff
+	}Transition t0 whenTime 200 -> blinkoff
 					whenMsg turnon -> on
 					whenMsg turnoff -> off
 	
 	State blinkoff {
 		[#led.turnOff()#]
-	}Transition t0 whenTime 250 -> blinkon
+	}Transition t0 whenTime 200 -> blinkon
 					whenMsg turnon -> on
 					whenMsg turnoff -> off
 }
