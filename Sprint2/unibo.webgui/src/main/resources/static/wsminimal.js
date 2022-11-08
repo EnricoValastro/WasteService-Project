@@ -5,6 +5,7 @@ wsminimal.js
 var socket;
 
 function connect() {
+
     var host = document.location.host;
     var pathname = "/"
     var addr = "ws://" + host + pathname + "socket";
@@ -13,12 +14,6 @@ function connect() {
         alert("WARNING: Connessione WebSocket già stabilita");
     }
     socket = new WebSocket(addr);
-
-    function sendMessage(message) {
-        var jsonMsg = JSON.stringify({ 'name': message });
-        socket.send(jsonMsg);
-        console.log("Sent Message: " + jsonMsg);
-    }
 
     socket.onmessage = function (event) {
         msg = event.data;
@@ -68,6 +63,39 @@ function connect() {
         if(position.toString() == "GLASSBOX"){
             div.innerHTML = ""
             generateTableGlass();
+        }
+
+        let led1 = document.getElementById("led1")
+        let led2 = document.getElementById("led2")
+        let circle = document.getElementById("circle")
+        let circle2 = document.getElementById("circle2")
+        var flag = 1
+
+        if(position.toString() == "HOME" && trolley.toString() == "IDLE"){
+            led2.classList.add("d-none")
+            led1.classList.remove("d-none")
+            circle.style.background = "grey"
+        }
+
+        if(trolley.toString() == "STOPPED" || trolley.toString() == "PICKINGUP" || trolley.toString() == "DROPPINGOUT"){
+            led2.classList.add("d-none")
+            led1.classList.remove("d-none")
+            circle.style.background = "green"
+        }
+
+        if(trolley.toString() == "MOVING" && position.toString() == "ONTHEROAD"){
+            led1.classList.add("d-none")
+            led2.classList.remove("d-none")
+
+            setInterval(function () {
+                if((flag %2) == 0){
+                    circle2.style.background = "green"
+                }
+                else{
+                    circle2.style.background = "grey"
+                }
+                flag++
+            }, 300)
         }
     };
 
