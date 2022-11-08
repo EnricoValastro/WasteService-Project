@@ -1,5 +1,5 @@
 /*
-minimal.js
+wsminimal.js
 */
 
 var socket;

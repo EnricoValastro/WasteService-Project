@@ -34,7 +34,7 @@
                       <h6>Current Weight:</h6>
                     </div>
                     <div class="border rounded border-dark col-2">
-                      <span id="plasticCurrent">...</span>
+                      <span id="plasticCurrent" text="${plasticcurrent}">...</span>
                     </div>
                 </div>
                 <div class="d-flex flex-row p-2">
@@ -42,7 +42,7 @@
                     <h6>Max Weight:</h6>
                   </div>
                   <div class=" border rounded border-dark col-2">
-                    <span id="plasticMax">...</span>
+                    <span id="plasticMax" text="${plasticmax}">...</span>
                   </div>
                 </div>
               </div>
@@ -53,7 +53,7 @@
                     <h6>Current Weight:</h6>
                   </div>
                   <div class=" border rounded border-dark col-2">
-                    <span id="glassCurrent">...</span>
+                    <span id="glassCurrent" text="${glasscurrent}">...</span>
                   </div>
                 </div>
                 <div class="d-flex flex-row p-2">
@@ -61,7 +61,7 @@
                     <h6>Max Weight:</h6>
                   </div>
                   <div class=" border rounded border-dark col-2">
-                    <span id="glassMax">...</span>
+                    <span id="glassMax" text="${glassmax}">...</span>
                   </div>
                 </div>
               </div>
@@ -81,7 +81,7 @@
                     <h6>Current State:</h6>
                   </div>
                   <div class="col-2 border rounded border-dark">
-                    <span id="trolleystate">...</span>
+                    <span id="trolleystate" text="${trolleystate}">...</span>
                   </div>
                 </div>
                 <div class="d-flex flex-row p-2">
@@ -89,13 +89,16 @@
                     <h6>Position:</h6>
                   </div>
                   <div class="col-2 border rounded border-dark">
-                    <span id="trolleyposition">...</span>
+                    <span id="trolleyposition" text="${trolleyposition}">...</span>
                   </div>
                 </div>
               </div>
               <div id="table" class="col-6 p-1 m-1">
 
               </div>
+            <!--  <div class="d-flex flex-column card border border-1 border-dark p-2 m-1 col-5">
+
+              </div>-->
             </div>
           </div>
 
@@ -113,7 +116,7 @@
           </div>
         </div>
         <div class="mt-2 ">
-          <b><span id="ledstate">...</span></b>
+          <b><span id="ledstate" text="${ledstate}">...</span></b>
         </div>
 
       </div>
@@ -131,9 +134,9 @@
 
 <script src="vendors/jquery/jquery.min.js"></script>
 <script src="sockjs.min.js"></script>
-<script src="ioutils.js"></script>
-<script src="generate_change.js"></script>
-<script src="wsminimal.js"></script>
+<script src="io_utils.js"></script>
+<script src="table.js"></script>
+<script src="minimal.js"></script>
 <script>connect()</script>
 <script>generateTable()</script>
 </body>
