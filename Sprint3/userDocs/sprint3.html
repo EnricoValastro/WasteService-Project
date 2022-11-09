@@ -282,21 +282,113 @@
             </ul>
         </div>
 
-        <h2>Problem analysis</h2>
+        <h2>Checkpoint Sprint2</h2>
         <div class="remark">
             <h3>Sprint2 result</h3>
-            Al termine dello <a href="../../Sprint2/userDocs/sprint2.html">Sprint2</a>, l'architettura logica è la seguente: <br></br>
+            Al termine dello <a href="../../Sprint2/userDocs/sprint2.html">Sprint2</a>, l'architettura logica del sistema è la seguente: <br></br>
             <img src="../../Sprint2/userDocs/resources/img/ArchLogicSprint2Final.png" alt="" style="width: 60%; height: 60%">
             <br>
         </div>
+
+        <h2>Problem analysis</h2>
+    
         <div class="remark">
             <h3>Led</h3>
+            Dall'analisi dei requisiti, si evince che il <kc>Led</kc> è un componente fisico, connesso ad un <kc>RaspberryPI</kc>, che deve <i>Accendersi</i>, <i>Spegnersi</i> o <i>Lampeggiare</i> in funzione 
+            dello stato del componente <kc>TransportTrolley</kc>. <br>
+            Si aprono, quindi, diverse problematiche. In particolare, sarà necessario comprendere:
+            <ul>
+                <li>Come fa il <i>Led</i> ad accendersi, spegnersi o lampeggiare. </li>
+                <li>Come fa il <i>Led</i> a sapere quando è il momento di eseguire una delle tre azioni.</li>
+                <li>Come è possibile rappresentare e mantenere lo stato del <i>Led</i>.</li>
+            </ul>
+            
+            <h4>Azioni del Led</h4>
+            Per accendere e spegnere il <i>Led</i> collegato al <kc>RaspberryPI</kc>, è possibile utilizzare il software fornito dal committente. <br>
+            In particolare ci sono stati forniti due file <ks>Bash</ks>, <a href="https://github.com/anatali/issLab2022/blob/main/it.unibo.raspIntro2022/code/bash/led25GpioTurnOn.sh">led25GpioTurnOn.sh</a> e <a href="https://github.com/anatali/issLab2022/blob/main/it.unibo.raspIntro2022/code/bash/led25GpioTurnOff.sh">led25GpioTurnOff.sh</a>. <br>
+            Oltre a questi due file, che permettono di operare sul <i>Led</i> a livello fisico, il committente ci ha fornito anche il del software, 
+            <a href="https://github.com/anatali/issLab2022/tree/main/it.unibo.radarSystem22.domain">it.unibo.radarSystem22.domain</a>, che permette di 
+            definire dei componenti di base legati ai dispositivi di I/O (<i>Led</i>, <i>Sonar</i>). <br>
+            Tali componenti componenti sono descritti dalle seguenti interfacce:
+
+            <pre>
+<key>public interface</key> ILed {
+    <key>public void</key> turnOn();
+    <key>public void</key> turnOff();
+    <key>public boolean</key> getState();
+}</pre>
+
+            <pre>
+<key>public interface</key> ISonar {
+    <key>public void</key> activate();
+    <key>public void</key> deactivate();
+    <key>public IDistance</key> getDistance();
+    <key>public boolean</key> isActive();
+}</pre>
+
+            Il software fornito dal committente permette l'utilizzio di dispositivi simulati (<ks>Mock-object</ks>) e dispositivi reali. <br>
+            Per fare ciò viene introdotta una classe astratta, comune alle due tipologie, che funge da <ks>Factory</ks> per quel tipo di dispositivo. <br>
+            La classe astratta <a href="https://github.com/anatali/issLab2022/blob/main/it.unibo.radarSystem22.domain/src/it/unibo/radarSystem22/domain/models/LedModel.java">LedModel.java</a> 
+            introduce il metodo <i>astratto</i> <kc>LedActivate</kc> a cui è demandato il compito di accendere/spegnere il <i>Led</i>.
+            <pre>
+<key>public abstract class</key> LedModel <key>implements</key> ILed{
+    <key>private boolean</key> state = false;
+    
+    <key>public static</key> ILed create() {
+        ...
+    }
+    <key>public static</key> ILed createLedMock(){ <key>return new</key> LedMock(); }
+    <key>public static</key> ILed createLedConcrete(){ <key>return new</key> LedConcrete(); }
+    
+    <key>protected abstract void</key> ledActivate( <key>boolean</key> val);
+    
+    <key>protected void</key> setState( <key>boolean</key> val ) {
+        state = val;
+        ledActivate( state );
+    }
+    @Override
+    <key>public void</key> turnOn(){ setState( true ); }
+    @Override
+    <key>public void</key> turnOff() { setState( false ); }
+    @Override
+    <key>public boolean</key> getState(){  return state;  }
+}</pre>
+
+            Tale classe astratta è estesa dalle classi <a href="https://github.com/anatali/issLab2022/blob/main/it.unibo.radarSystem22.domain/src/it/unibo/radarSystem22/domain/mock/LedMock.java">LedMock.java</a> e <a href="https://github.com/anatali/issLab2022/blob/main/it.unibo.radarSystem22.domain/src/it/unibo/radarSystem22/domain/concrete/LedConcrete.java">LedConcrete.java</a> che implementano rispettivamente i dispositivi simulati e reali. <br>
+            Il comportamento del <kc>LedMock</kc> è già definito dal <kc>LedModel</kc>, in quanto questo tiene traccia dello statto del <i>Led</i> in una variabile. <br>
+            <pre>
+<key>public class</key> LedMock <key>extends</key> LedModel <key>implements</key> ILed{
+    @Override
+    <key>protected void</key> ledActivate( <key>boolean</key> val) {
+        ColorsOut.outappl("LedMock state=" + getState(), ColorsOut.MAGENTA );
+    }
+}</pre>
+            Per quanto riguarda il <kc>LedConcrete</kc>, esso realizza la logica di gestione di un Led reale avvalendosi dei file <ks>Bash</ks> forniti dal committente. <br>
+            <pre>
+<key>public class</key> LedConcrete <key>extends</key> LedModel <key>implements</key> ILed{
+    <key>private</key> Runtime rt  = Runtime.getRuntime();
+    @Override
+    <key>protected void</key> ledActivate(<key>boolean</key> val) {
+        <key>try</key> {
+            <key>if</key>( val ) rt.exec( "sudo bash led25GpioTurnOn.sh" );
+            <key>else</key>      rt.exec( "sudo bash led25GpioTurnOff.sh" );
+        } <key>catch</key> (IOException e) { ... }
+    }
+}</pre>
+            Considerando che il software fornito dal committente è perfettamente funzionante, consigliamo agli sviluppatori di utilizzare tale software per la gestione del <i>Led</i>. 
+            Tuttavia, dal momento che il componente <i>Led</i> deve essere in grado di interagire con gli altri componenti del sistema, consigliamo agli sviluppatori di modellare il <i>Led</i> 
+            come un <ks>attore QAk</ks> che incapsula le funzionalità del software fornito dal committente. In questo modo si può dotare il <i>Led</i> dell'abilità di comunicare a scambio di messaggi. <br>
+
+
+
+            <h4>Interazione tra i componenti</h4>
+
             
             <h4>Stato del Led</h4>
             Dall'analisi dei requisiti è emerso che il committente vuole che sia mostrato lo stato del Led nella <kc>GUI</kc>. Per fare ciò è necessario gestire e mantanere lo stato del Led. 
             Inoltre, dall'analisi dei requisiti è emerso che lo stato del Led può essere rappresentato dal seguente enumerativo:
             <pre>
-<key>enum class</key> CurrStateLed{ <i>ON</i>, <i>OFF</i>, <i>BLINK</i>}</pre>
+<key>enum class</key> CurrStateLed{ <i>ON</i>, <i>OFF</i>, <i>BLINKING</i>}</pre>
             Lo stato può essere mantenuto in due modi differenti:
             <ul>
                 <li>Cablare lo stato del Led all'interno del componente Led.</li>
@@ -315,7 +407,7 @@
             <h5>Data class</h5>
             Questa soluzione prevede di mantenere lo stato del Led in una <ks>data class Kotlin</ks>, togliendo in questo modo la responsabilità al Led.
             <pre>
-<key>enum class</key> CurrStateLed { <i>ON</i>, <i>OFF</i>, <i>BLINK</i> }
+<key>enum class</key> CurrStateLed { <i>ON</i>, <i>OFF</i>, <i>BLINKING</i> }
 <key>data class</key> SystemState (
         <key>private var</key> currLedState : CurrStateLed
 ) {
@@ -328,15 +420,15 @@
             Affinchè questo avvenga, il Led attraverso l'invio di messaggi, dirà al SystemStateManager i suoi cambiamenti si stato.
             <pre>
 <key>Dispatch</key> updateled : updateled(STATE)</pre>
+        </div>
 
+        <div class="remark">
             <h3>Sonar</h3>
             Dall'analisi dei requisiti è emerso che il Sonar verrà usato come un 'alarm device'. Si deve capire come fermare il trolley nel caso di un'allarme 
             e come fargli riprendere il movimento. <br>
             Per fermare il trolley, è necessario che il Sonar invii un messaggio al <kc>TransportTrolley</kc> che lo gestirà. <br> 
             Come avviene l'interazione? <br>
             Che tipo di messaggi manda il Sonar? <br>
-
-
         </div>
         
 
