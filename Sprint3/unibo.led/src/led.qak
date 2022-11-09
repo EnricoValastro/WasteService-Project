@@ -11,10 +11,10 @@ Dispatch sonardeactivate : info(ARG)
 
 
 Context ctxwasteservice ip[host="127.0.0.1" port=8055]
-Context ctxpi ip [host="localhost" port=8090 ]
+Context ctxpi ip [host="localhost" port=8065 ] 
 
-CodedQActor sonarsimulator  context ctxpi className "sonarSimulator"  
-CodedQActor sonardatasource context ctxpi className "sonarHCSR04Support2021"
+//CodedQActor sonarsimulator  context ctxpi className "sonarSimulator"  
+//CodedQActor sonardatasource context ctxpi className "sonarHCSR04Support2021"
 
 ExternalQActor systemstatemanager context ctxwasteservice
 
@@ -24,6 +24,7 @@ QActor led context ctxpi {
 		var flagBlink = false
 	#]
 	State s0 initial{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.YELLOW)#]
 		[#
 			led = utility.LedFactory.createLed()
 			led!!.turnOff()
@@ -31,18 +32,21 @@ QActor led context ctxpi {
 		
 	}Goto idle
 	
+			
 	State idle {
-		
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.YELLOW)#]
 	}Transition t0 whenMsg blink -> blinkon
 					whenMsg turnon -> on
 					whenMsg turnoff -> off
 	State on {
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	TurnOn Led", unibo.comm22.utils.ColorsOut.YELLOW)#]
 		[#led!!.turnOn()#]
 		[# flagBlink = false #]
 		forward systemstatemanager -m updateled : updateled(ON)
 	}Goto idle
 	
 	State off {
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	TurnOff Led", unibo.comm22.utils.ColorsOut.YELLOW)#]
 		[#led!!.turnOff()#]
 		[# flagBlink = false #]
 		forward systemstatemanager -m updateled : updateled(OFF)
@@ -50,21 +54,23 @@ QActor led context ctxpi {
 	
 	State blinkon {
 		if[# flagBlink == false#]{
-			forward systemstatemanager -m updateled : updateled(BLINK)
+			[# unibo.comm22.utils.ColorsOut.outappl("$name	|	Blink Led", unibo.comm22.utils.ColorsOut.YELLOW)#]
+			forward systemstatemanager -m updateled : updateled(BLINKING)
 			[# flagBlink = true #]
 		}
 		[#led!!.turnOn()#]
-	}Transition t0 whenTime 200 -> blinkoff
+	}Transition t0 whenTime 300 -> blinkoff
 					whenMsg turnon -> on
 					whenMsg turnoff -> off
 	
 	State blinkoff {
 		[#led!!.turnOff()#]
-	}Transition t0 whenTime 200 -> blinkon
+	}Transition t0 whenTime 300 -> blinkon
 					whenMsg turnon -> on
 					whenMsg turnoff -> off
 }
 
+/* 
 QActor sonar context ctxpi{
 	[#
 		val simulate = true
@@ -96,3 +102,4 @@ QActor sonar context ctxpi{
 		[#System.exit(0)#]
 	}
 }
+*/

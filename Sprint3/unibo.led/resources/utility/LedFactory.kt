@@ -14,16 +14,13 @@ class LedFactory {
         private var ledGui : Boolean = true
 
 
-        fun configure(){
+        private fun configure(){
             var config = File("DomainSystemConfig.json").readText(StandardCharsets.UTF_8)
             var jsonObj = JSONObject(config)
             simulation = jsonObj.getBoolean("SIMULATION")
             ledGui = jsonObj.getBoolean("LEDGUI")
             DomainSystemConfig.ledGui = ledGui
             DomainSystemConfig.simulation = simulation
-            println(simulation )
-            println(ledGui)
-
         }
 
         fun createLed() : ILed {

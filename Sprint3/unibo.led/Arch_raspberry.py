@@ -23,10 +23,5 @@ with Diagram('raspberryArch', show=False, outformat='png', graph_attr=graphattr)
           systemstatemanager=Custom('systemstatemanager(ext)','./qakicons/externalQActor.png')
      with Cluster('ctxpi', graph_attr=nodeattr):
           led=Custom('led','./qakicons/symActorSmall.png')
-          sonar=Custom('sonar','./qakicons/symActorSmall.png')
-          sonarsimulator=Custom('sonarsimulator(coded)','./qakicons/codedQActor.png')
-          sonardatasource=Custom('sonardatasource(coded)','./qakicons/codedQActor.png')
      led >> Edge(color='blue', style='solid', xlabel='updateled', fontcolor='blue') >> systemstatemanager
-     sonar >> Edge(color='blue', style='solid', xlabel='sonaractivate', fontcolor='blue') >> sonarsimulator
-     sonar >> Edge(color='blue', style='solid', xlabel='sonaractivate', fontcolor='blue') >> sonardatasource
 diag

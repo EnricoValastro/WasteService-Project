@@ -21,6 +21,8 @@ with Diagram('wasteserviceArch', show=False, outformat='png', graph_attr=graphat
      sys = Custom('','./qakicons/system.png')
      with Cluster('ctxbasicrobot', graph_attr=nodeattr):
           pathexec=Custom('pathexec(ext)','./qakicons/externalQActor.png')
+     with Cluster('ctxpi', graph_attr=nodeattr):
+          led=Custom('led(ext)','./qakicons/externalQActor.png')
      with Cluster('ctxwasteservice', graph_attr=nodeattr):
           wasteservice=Custom('wasteservice','./qakicons/symActorSmall.png')
           transporttrolleycore=Custom('transporttrolleycore','./qakicons/symActorSmall.png')
@@ -34,9 +36,12 @@ with Diagram('wasteserviceArch', show=False, outformat='png', graph_attr=graphat
      wasteservice >> Edge(color='blue', style='solid', xlabel='gotohome', fontcolor='blue') >> transporttrolleycore
      wasteservice >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> systemstatemanager
      transporttrolleycore >> Edge(color='magenta', style='solid', xlabel='moveto', fontcolor='magenta') >> transporttrolleymover
+     transporttrolleycore >> Edge(color='blue', style='solid', xlabel='blink', fontcolor='blue') >> led
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='updatetrolley', fontcolor='blue') >> systemstatemanager
      transporttrolleycore >> Edge(color='magenta', style='solid', xlabel='execaction', fontcolor='magenta') >> transporttrolleyexecutor
+     transporttrolleycore >> Edge(color='blue', style='solid', xlabel='turnon', fontcolor='blue') >> led
      transporttrolleycore >> Edge( xlabel='local_dropoutdone', **eventedgeattr, fontcolor='red') >> sys
+     transporttrolleycore >> Edge(color='blue', style='solid', xlabel='turnoff', fontcolor='blue') >> led
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> wasteservice
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> transporttrolleycore
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> transporttrolleyexecutor

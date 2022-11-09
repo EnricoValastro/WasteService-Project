@@ -21,6 +21,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.YELLOW) 
 						
 									led = utility.LedFactory.createLed()
 									led!!.turnOff()
@@ -33,6 +34,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 				}	 
 				state("idle") { //this:State
 					action { //it:State
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.YELLOW) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -44,6 +46,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 				}	 
 				state("on") { //this:State
 					action { //it:State
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	TurnOn Led", unibo.comm22.utils.ColorsOut.YELLOW) 
 						led!!.turnOn() 
 						 flagBlink = false  
 						forward("updateled", "updateled(ON)" ,"systemstatemanager" ) 
@@ -56,6 +59,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 				}	 
 				state("off") { //this:State
 					action { //it:State
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	TurnOff Led", unibo.comm22.utils.ColorsOut.YELLOW) 
 						led!!.turnOff() 
 						 flagBlink = false  
 						forward("updateled", "updateled(OFF)" ,"systemstatemanager" ) 
@@ -69,7 +73,8 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 				state("blinkon") { //this:State
 					action { //it:State
 						if(  flagBlink == false 
-						 ){forward("updateled", "updateled(BLINK)" ,"systemstatemanager" ) 
+						 ){ unibo.comm22.utils.ColorsOut.outappl("$name	|	Blink Led", unibo.comm22.utils.ColorsOut.YELLOW) 
+						forward("updateled", "updateled(BLINKING)" ,"systemstatemanager" ) 
 						 flagBlink = true  
 						}
 						led!!.turnOn() 
@@ -79,7 +84,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 					sysaction { //it:State
 				 	 		//sysaction { //it:State
 				 	 		  stateTimer = TimerActor("timer_blinkon", 
-				 	 			scope, context!!, "local_tout_led_blinkon", 200.toLong() )
+				 	 			scope, context!!, "local_tout_led_blinkon", 300.toLong() )
 				 	 		//}
 					}	 	 
 					 transition(edgeName="t03",targetState="blinkoff",cond=whenTimeout("local_tout_led_blinkon"))   
@@ -95,7 +100,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 					sysaction { //it:State
 				 	 		//sysaction { //it:State
 				 	 		  stateTimer = TimerActor("timer_blinkoff", 
-				 	 			scope, context!!, "local_tout_led_blinkoff", 200.toLong() )
+				 	 			scope, context!!, "local_tout_led_blinkoff", 300.toLong() )
 				 	 		//}
 					}	 	 
 					 transition(edgeName="t06",targetState="blinkon",cond=whenTimeout("local_tout_led_blinkoff"))   
