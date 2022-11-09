@@ -23,7 +23,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 					action { //it:State
 						
 									led = utility.LedFactory.createLed()
-									led.turnOff()
+									led!!.turnOff()
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -44,7 +44,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 				}	 
 				state("on") { //this:State
 					action { //it:State
-						led.turnOn() 
+						led!!.turnOn() 
 						 flagBlink = false  
 						forward("updateled", "updateled(ON)" ,"systemstatemanager" ) 
 						//genTimer( actor, state )
@@ -56,7 +56,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 				}	 
 				state("off") { //this:State
 					action { //it:State
-						led.turnOff() 
+						led!!.turnOff() 
 						 flagBlink = false  
 						forward("updateled", "updateled(OFF)" ,"systemstatemanager" ) 
 						//genTimer( actor, state )
@@ -72,7 +72,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 						 ){forward("updateled", "updateled(BLINK)" ,"systemstatemanager" ) 
 						 flagBlink = true  
 						}
-						led.turnOn() 
+						led!!.turnOn() 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -88,7 +88,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 				}	 
 				state("blinkoff") { //this:State
 					action { //it:State
-						led.turnOff() 
+						led!!.turnOff() 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
