@@ -5,12 +5,12 @@ plugins {
 }
 
 group = 'unibo'
-version = '1.0'
+version = '2.0'
 sourceCompatibility = '11'
 
 repositories {
 	mavenCentral()
-	flatDir { dirs{'../unibolibs'}}
+	flatDir {dirs{'../unibolibs'}}
 }
 
 dependencies {

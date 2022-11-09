@@ -48,6 +48,7 @@ public class WebSocketHandler extends AbstractWebSocketHandler implements IWsHan
             ColorsOut.outerr("WebSocketHandler | sendToAll String ERROR:"+e.getMessage());
         }
     }
+
     public void sendToAll(TextMessage message) {
         Iterator<WebSocketSession> iter = sessions.iterator();
         while( iter.hasNext() ){

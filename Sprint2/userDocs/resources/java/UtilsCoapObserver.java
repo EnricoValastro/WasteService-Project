@@ -4,7 +4,7 @@ import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 import unibo.comm22.utils.ColorsOut;
 
-public class UtilsCoapObserver implements CoapHandler{
+public class UtilsCoapObserver implements CoapHandler {
 
     @Override
     public void onLoad(CoapResponse response) {

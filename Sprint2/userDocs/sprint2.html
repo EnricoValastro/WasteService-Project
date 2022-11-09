@@ -468,20 +468,20 @@
 
             <h3>GUI</h3>
             <h4>Operazioni Preliminari</h4>
-            Come suggerito dagli analisti, si è deciso di progettare la <kc>GUI</kc> come una Web App, sfruttando a pieno le potenzialità del framework <kc>SpringBoot</kc>. Si è optato per questa soluzione perchè risulta essere quella più versatile che permette di accedere alla <i>GUI</i> da qualsiasi dispositivo. 
+            Come suggerito dagli analisti, abbiamo deciso di progettare la <kc>GUI</kc> come una Web App, sfruttando a pieno le potenzialità del framework <kc>SpringBoot</kc>. E' stata adottata questa soluzione perchè risulta essere quella più versatile e che permette di accedere alla <i>GUI</i> da qualsiasi dispositivo. 
             <br>
             Per iniziare è bastato collegarsi al sito <a href="https://start.spring.io">Spring.io</a>, il quale ci ha permesso di creare il progetto, scegliendone innanzitutto il tipo (Gradle o Maven), la versione Java da utilizzare e le dipendenze necessarie da "aggiungere" al progetto come mostrato in figura. Premuto il tasto <ks>GENERATE</ks> si ottiene un file <ks>.zip</ks> che contiene l'intero progetto. <br>
             <br>
             <img src="./resources/img/Spring_Initializr.png" width="50%" height="30%">
             <br>
-            Dopo aver scaricato il file <i>.zip</i> è stato necessario decomprimerlo e importarlo nel nostro IDE come progetto <ks>Gradle</ks>, dove abbiamo potuto notare la struttura che il framework <i>SpringBoot</i> ha creato per noi. <br>
+            Dopo aver scaricato il file <i>.zip</i> è stato necessario decomprimerlo ed importarlo nel nostro IDE come progetto <ks>Gradle</ks>, dove abbiamo potuto notare la struttura che il framework <i>SpringBoot</i> ha creato per noi. <br>
             Dopo di che abbiamo aggiunto al file <kc>build.gradle</kc> le ulteriori dipendenze che serviranno per il progetto, oltre a quelle già generate al momento della creazione dello stesso. <br>
             <br>
             <img src="./resources/img/build.gralde.png" width="50%" height="30%"> <br>
             <br>
-            Il file <i>build.gralde</i> dell'applicazione è consultabile al seguente link <a href="./resources/gradle/build.gradle">build.gradle</a>.
+            Il file <i>build.gradle</i> dell'applicazione è consultabile al seguente link <a href="./resources/gradle/build.gradle">build.gradle</a>.
             <br>
-            Il passo successivo è stato quello di definire all'interno del file <kc>application.properties</kc> la porta sulla quale gira la nostra applicazione, il nome dell'applicazione e il banner che verrà mostrato all'avvio. <br>
+            Il passo successivo è stato quello di definire all'interno del file <kc>application.properties</kc> la porta sulla quale gira la nostra applicazione, il nome dell'applicazione ed il banner che verrà mostrato all'avvio. <br>
             <br>
             <img src="./resources/img/application_properties.png" width="50%" height="30%"> <br>
             <h4>Realizzazione dell'applicazione</h4>
@@ -494,13 +494,13 @@
 <key2>@SpringBootApplication</key2>
 <key>public</key> <key>class</key> Application {
     <key>public</key> <key>static</key> <key>void</key> main(String[] args) {
-        SpringApplication.run(Application.<key>class</key>, args);
+        SpringApplication.run(WebguiApplication.class, args);
     }
 }</pre>
         La classe <kc>Application</kc> è annotata con <kc>@SpringBootApplication</kc> che è un'annotazione che consente di abilitare la configurazione automatica di SpringBoot. <br>
         In generale, l'applicazione funziona anche senza aver definito un Controller, poichè al momento dell'avvio della classe <kc>main</kc>, SpringBoot va a "cercare" un file <kc>index.html</kc> all'interno della cartella <kc>resources/static</kc> e lo mostra all'utente. <br>
         Poichè nel nostro caso faremo utilizzo di un Controller, il cui codice verrà descritto più avanti, abbiamo creato all'interno della cartella <kc>resources/static</kc> un file <a href="./resources/html/webGUI.html"><kc>webGUI.html</kc></a> che contiene un form, 
-        il quale permette di instaurare una connessione <i>CoAP</i> all'indirizzo e alla porta del contesto in cui si trova il <kc>SystemStateManager</kc>.
+        il quale permette di instaurare una connessione <i>CoAP</i> all'indirizzo ed alla porta del contesto in cui si trova il <kc>SystemStateManager</kc>.
         Dopo di che il progetto è stato realizzato consultando il software <a href="https://github.com/anatali/issLab2022/tree/main/webRobot22">webRobot22</a> fornitoci dal committente in cui troviamo un'interfaccia Java costruita nel seguente modo.
         
         <pre>
@@ -620,8 +620,8 @@ e passa come parametro il modello <kc>viewmodel</kc> alla quale vengono aggiunte
 
 Quando all'interno della pagina <kc>webGUI.html</kc> clicchiamo sul tasto <ks>Connect</ks>, il form in cui è contenuto attiva all'interno della classe <i>UtilsController</i> il metodo 
 <kc>update</kc> annotato con <kc>@PostMapping</kc> che prende in input i parametri passati dal form. Nello specifico viene preso in input l'indirizzo IP del contesto e il numero di porta in cui si trova il <i>SystemStateManager</i>.
-All'interno di questo metodo creiamo verso quell'indirizzo una connessione <i>Tcp</i>> e una connessione <i>CoAP</i>. Viene dunque registrato un <i>Observer</i> sulla connessione <i>CoAP</i> che permette di ricevere le notifiche di stato del <i>SystemStateManager</i>, in quanto è una risorsa CoAP osservabile.
-Infine richiamo il metodo <a href="#sendMsg"><kc>sendMsg()</kc></a> per inviare sulla connessione Tcp un messaggio di tipo <kc>Dispatch</kc> al <i>SystemStateManager</i>, come definito qualche parametro fa.
+All'interno di questo metodo creiamo verso quell'indirizzo una connessione <i>Tcp</i> e una connessione <i>CoAP</i>. Viene dunque registrato un <i>Observer</i> sulla connessione <i>CoAP</i> che permette di ricevere le notifiche di stato del <i>SystemStateManager</i>, in quanto è una risorsa CoAP osservabile.
+Infine richiamiamo il metodo <a href="#sendMsg"><kc>sendMsg()</kc></a> per inviare sulla connessione Tcp un messaggio di tipo <kc>Dispatch</kc> al <i>SystemStateManager</i>, come definito qualche parametro fa.
 <pre>
 <key2>@PostMapping</key2>
 <key>public</key> <key>String</key> update(Model viewmodel, <key2>@RequestParam</key2> <key>String</key> ipaddr) {
@@ -642,7 +642,7 @@ Il codice della classe <kc>UtilsController</kc> è consultabile al seguente link
     
     Quindi creiamo un oggetto JSON a partire dal messaggio e salviamo in una variabile per ogni coppia chiave-valore il valore contenuto nel messaggio.
 
-    Quindi attraverso la funzione <kc>setMessageToWindow</kc>, contenuta nel file <kc>ioutils.js</kc>, assegno il valore di una determinata "chiave" al <i>div</i> corrispondente ottenuto tramite l'ID.
+    Quindi attraverso la funzione <kc>setMessageToWindow</kc>, contenuta nel file <kc>ioutils.js</kc>, assegniamo il valore di una determinata "chiave" al <i>div</i> corrispondente ottenuto tramite l'ID.
 
     <pre>
 <key>function</key> connect(){
@@ -667,7 +667,7 @@ Il codice della classe <kc>UtilsController</kc> è consultabile al seguente link
     }
 }</pre>
 In questo modo ogni volta che il <i>SystemStateManager</i> invia un messaggio di stato, la pagina web viene aggiornata con i nuovi valori, mostrando il peso attuale dei container, lo stato e la posizione del <i>transportTrolley</i>. <br>
-Per mostrare la mappa della stanza è stato sviluppato un ulteriore file javascript <kc>generate.js</kc> che si occupa di creare la mappa in maniera dinamica a partire dalle coordinate dei punti d'interesse che si trovano all'interno del file <kc>WasteServiceSystemConfig.json</kc> e che otteniamo, in maniera sincrona, tramite <ks>jQuery</ks> come mostrato dal codice seguente.
+Per mostrare la mappa della stanza è stato sviluppato un ulteriore file javascript <kc>generate.js</kc> che si occupa di creare la mappa in maniera dinamica a partire dalle coordinate dei punti d'interesse che si trovano all'interno del file <a href="./resources/json/wasteServiceSystemConfig.json"><kc>WasteServiceSystemConfig.json</kc></a> e che otteniamo, in maniera sincrona, tramite <ks>jQuery</ks> come mostrato dal codice seguente.
 <pre>
 <key>$.</key><key>ajax</key>({
     <key>dataType</key>: "json",
@@ -684,7 +684,7 @@ Ogni qual volta si ha un cambiamento di stato, in particolar modo quando la posi
 cella corrispondente in cui si trova. 
 <br><br>
 In questo Sprint, inoltre, ci siamo occupati di predisporre la GUI per la visualizzazione delle notifiche da parte del Led. Dai requisiti forniti dal commitente risulta chiaro che il Led deve essere spento quando il <i>transportTrolley</i> 
-si trova nella posizione di <ks>HOME</ks> e nello stato di <ks>IDLE</ks>. Deve essere acceso quando lo stato del trolley è <ks>STOPPED</ks>, <ks>PICKINGUP</ks> o <ks>DROPPINGOUT</ks> e deve lampeggiare quando lo stato è <ks>MOVING</ks> e la posizione è <ks>ONTHEROAD</ks>.
+si trova nella posizione di <b><i>HOME</i></b> e nello stato di <b><i>IDLE</i></b>. Deve essere acceso quando lo stato del trolley è <b><i>STOPPED</i></b>, <b><i>PICKINGUP</i></b> o <b><i>DROPPINGOUT</i></b> e deve lampeggiare quando lo stato è <b><i>MOVING</i></b> e la posizione è <b><i>ONTHEROAD</i></b>.
 Per fare ciò abbiamo inserito all'interno del file <kc>update.html</kc> due "div" ciascuno con un ID diverso, al cui interno troviamo un ulteriore "div" che contiene lo stile di un cerchio grigio con cui rappresentiamo il led spento.
 All'interno del file <kc>wsminimal.js</kc> a seconda dei casi descritti precedentemente abbiamo aggiunto il seguente codice:
 <pre>
@@ -743,7 +743,14 @@ Il codice del file <kc>update.html</kc> è disponibile al seguente link: <a href
         <h2>Checkpoint Sprint2</h2>
         <div class="remark">
             A seguito dell'analisi del problema e delle successive fasi di progetto e sviluppo l'architettura logica è stata così ridefinita: <br>
-            <img src="./resources/img/ArchLogicSprint2Final.png" alt="" style="width: 60%; height: 60%">
+            <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                <img src="./resources/img/ArchLogicSprint2Final.png" alt="" style="width:60% ; height:60% ;">
+                <div style="display: flex; flex-direction:column;">
+                <a href="./resources/qak/wasteService.qak">wasteService.qak</a>
+                <a href="./resources/java/UtilsController.java">UtilsController.java</a>
+                <a href="./resources/python/smartdevice.py">smartdevice.py</a>
+                </div>
+            </div>
         </div>
         
         <div class="remark">
