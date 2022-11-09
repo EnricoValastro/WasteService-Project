@@ -21,6 +21,8 @@ class LedFactory {
             ledGui = jsonObj.getBoolean("LEDGUI")
             DomainSystemConfig.ledGui = ledGui
             DomainSystemConfig.simulation = simulation
+            println(simulation )
+            println(ledGui)
 
         }
 

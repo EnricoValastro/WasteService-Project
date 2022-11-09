@@ -1,3 +1,4 @@
 {
-  "SIMULATION": true
+  "SIMULATION"  : true,
+  "LEDGUI"      : true
 }
