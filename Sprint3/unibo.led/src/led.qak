@@ -26,7 +26,7 @@ QActor led context ctxpi {
 	State s0 initial{
 		[#
 			led = utility.LedFactory.createLed()
-			led.turnOff()
+			led!!.turnOff()
 		#]
 		
 	}Goto idle
@@ -37,13 +37,13 @@ QActor led context ctxpi {
 					whenMsg turnon -> on
 					whenMsg turnoff -> off
 	State on {
-		[#led.turnOn()#]
+		[#led!!.turnOn()#]
 		[# flagBlink = false #]
 		forward systemstatemanager -m updateled : updateled(ON)
 	}Goto idle
 	
 	State off {
-		[#led.turnOff()#]
+		[#led!!.turnOff()#]
 		[# flagBlink = false #]
 		forward systemstatemanager -m updateled : updateled(OFF)
 	}Goto idle
@@ -53,13 +53,13 @@ QActor led context ctxpi {
 			forward systemstatemanager -m updateled : updateled(BLINK)
 			[# flagBlink = true #]
 		}
-		[#led.turnOn()#]
+		[#led!!.turnOn()#]
 	}Transition t0 whenTime 200 -> blinkoff
 					whenMsg turnon -> on
 					whenMsg turnoff -> off
 	
 	State blinkoff {
-		[#led.turnOff()#]
+		[#led!!.turnOff()#]
 	}Transition t0 whenTime 200 -> blinkon
 					whenMsg turnon -> on
 					whenMsg turnoff -> off
