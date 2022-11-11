@@ -1,0 +1,21 @@
+version: '1.0'
+services: 
+    wasteservice:
+        image: wasteservice-1.0
+        ports:
+            - 8055:8055/tcp
+            - 8055:8055/udp
+    robot:
+        image: basicrobot22-2.0
+        ports:
+            - 8020:8020/tcp
+            - 8020:8020/udp 
+        depends_on:
+            - wasteservice       
+    WebGUI:
+        image: webgui-2.0
+        ports:
+            - 8085:8085/tcp
+            - 8085:8085/udp
+        depends_on:
+            - wasteservice
