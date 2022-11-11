@@ -178,6 +178,7 @@ QActor transporttrolleycore context ctxwasteservice{
 	State pickupMove{
 		request transporttrolleymover -m moveto : moveto(INDOOR)
 		forward led -m blink : blink(_)
+		forward systemstatemanager -m updateled : updateled(BLINKING)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
 	}Transition t0 whenReply moveok -> pickupExec
 					whenReply moveko -> moveErr
@@ -185,6 +186,7 @@ QActor transporttrolleycore context ctxwasteservice{
 	State pickupExec{
 		request transporttrolleyexecutor -m execaction : execaction(PICKUP)
 		forward led -m turnon : turnon(_)
+		forward systemstatemanager -m updateled : updateled(ON)
 		forward systemstatemanager -m updatetrolley : updatetrolley(INDOOR, PICKINGUP)
 		
 	}Transition t0 whenReply execok -> pickupRes
@@ -211,6 +213,7 @@ QActor transporttrolleycore context ctxwasteservice{
 		}
 		request transporttrolleymover -m moveto : moveto($POS)
 		forward led -m blink : blink(_)
+		forward systemstatemanager -m updateled : updateled(BLINKING)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
 		
 	}Transition t0 whenReply moveok -> dropoutExec
@@ -219,6 +222,7 @@ QActor transporttrolleycore context ctxwasteservice{
 	State dropoutExec{
 		request transporttrolleyexecutor -m execaction : execaction(DROPOUT)
 		forward led -m turnon : turnon(_)
+		forward systemstatemanager -m updateled : updateled(ON)
 		forward systemstatemanager -m updatetrolley : updatetrolley($POS, DROPPINGOUT)
 	}Transition t0 whenReply execok -> dropoutRes
 					whenReply execko -> execErr
@@ -233,12 +237,14 @@ QActor transporttrolleycore context ctxwasteservice{
 	State backHome{
 		request transporttrolleymover -m moveto : moveto(HOME)
 		forward led -m blink : blink(_)
+		forward systemstatemanager -m updateled : updateled(BLINKING)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
 	}Transition t0 whenReply moveok -> backHomeRes
 					whenReply moveko -> moveErr
 
 	State backHomeRes{
 		forward led -m turnoff : turnoff(_)
+		forward systemstatemanager -m updateled : updateled(OFF)
 		forward systemstatemanager -m updatetrolley : updatetrolley(HOME, IDLE)
 
 	}Goto idle
