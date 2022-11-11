@@ -42,20 +42,17 @@ QActor led context ctxpi {
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	TurnOn Led", unibo.comm22.utils.ColorsOut.YELLOW)#]
 		[#led!!.turnOn()#]
 		[# flagBlink = false #]
-		forward systemstatemanager -m updateled : updateled(ON)
 	}Goto idle
 	
 	State off {
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	TurnOff Led", unibo.comm22.utils.ColorsOut.YELLOW)#]
 		[#led!!.turnOff()#]
 		[# flagBlink = false #]
-		forward systemstatemanager -m updateled : updateled(OFF)
 	}Goto idle
 	
 	State blinkon {
 		if[# flagBlink == false#]{
 			[# unibo.comm22.utils.ColorsOut.outappl("$name	|	Blink Led", unibo.comm22.utils.ColorsOut.YELLOW)#]
-			forward systemstatemanager -m updateled : updateled(BLINKING)
 			[# flagBlink = true #]
 		}
 		[#led!!.turnOn()#]

@@ -382,7 +382,14 @@
 
 
             <h4>Interazione tra i componenti</h4>
-
+            Come detto in analisi dei requisiti il <i>Led</i> deve accendersi , spegnersi o brillare in base alle posizioni del <kc>TransportTrolley</kc>. 
+            Quindi è logico che il <i>Led</i>, essendo un attuatore del sistema, debba essere controllato da qualcuno (<i>TransportTrolley</i>). <br>
+            Sarà il <i>TransportTrolley</i>, in base alla sua posizione in quel momento, a dire al <i>Led</i> di cambiare stato.
+            <pre>
+<key2>Dispatch</key2> blink 	         : blink(_)
+<key2>Dispatch</key2> turnon 	 : turnon(_)
+<key2>Dispatch</key2> turnoff 	 : turnoff(_)
+            </pre>
             
             <h4>Stato del Led</h4>
             Dall'analisi dei requisiti è emerso che il committente vuole che sia mostrato lo stato del Led nella <kc>GUI</kc>. Per fare ciò è necessario gestire e mantanere lo stato del Led. 
@@ -416,10 +423,22 @@
 }</pre>
             Sebbene questa soluzione sia più complessa da implementare, è quella che consigliamo agli sviluppatori in quanto permette di disaccoppiare la gestione dello stato dalle funzionalità del Led.
             <h4>Gestione dello stato del Led</h4>
-            Per quanto riguarda la gestione dello stato del Led, essa viene effettuata da un componente creato ad-hoc, il <kc>SystemStateManager</kc> , che si occupa di mantenere lo stato del sistema. <br>
-            Affinchè questo avvenga, il Led attraverso l'invio di messaggi, dirà al SystemStateManager i suoi cambiamenti si stato.
-            <pre>
-<key>Dispatch</key> updateled : updateled(STATE)</pre>
+            Il sistema deve essere consapevole dello stato del <i>Led</i>, per fare questo si potrebbe procedere in diversi modi: <br> <br>
+
+            <ul>
+                <li>Un Primo modo potrebbe essere che il <i>Led</i> quando cambia stato(ON,OFF,BLINK) invia un messaggio di notifica al <kc>SystemStateManager</kc>. <br>
+                Questa soluzione sebbena sia semplice e non causi particolari problemi rende il <i>Led</i> consapevole del sistema che ha attorno e quindi sarebbe poco riusabile.</li>
+                <li>Si potrebbe utilizzare il protocollo <kc>MQTT</kc>, il quale prevede che il <i>Led</i> sia il publisher di un canale <i>MQTT</i>. Ciò implica che dall'altro lato
+                    qualcuno debba leggere questo stato (<i>SystemStateManager</i>). <br>
+                    Una problematica che potrebbe insorgere usando questa opzione è che il <i>SystemStateManager</i> (che prima era solo un "contenitore" di stati) adesso dovrebbe registrarsi su un 
+                    canale <i>MQTT</i> da cui riceverà lo stato del <i>Led</i>. <br>
+                </li>
+                <li>Infine un ultimo modo potrebbere essere che: essendo il <i>Led</i> un attuatore verrà comandato da qualcuno(<i>TransportTrolley</i>) per accendersi, spegnersi o brillare. Quindi il <kc>TransportTrolleCore</kc>
+                    è a conoscenza implicitamente dello stato del <i>Led</i>, poichè se comunica al <i>Led</i> il messaggio turnOn, sa che lui si troverà nello stato ON.
+                    Potrebbe quindi essere il <i>TransportTrolleyCore</i> ad aggiornare lo stato del <i>Led</i>. Quindi quando, ad esempio, il <i>TransportTrolleyCore</i> dice 
+                    al <i>Led</i> turnOff , subito dopo manda un messaggio al <i>SystemStateManager</i> dicendogli update led (OFF) e così via. <br>
+                    Questa soluzione è la più semplice da implementare e non causa particolari problemi. <br>
+                </li>
         </div>
 
         <div class="remark">
