@@ -2,7 +2,7 @@
 ## Dockerfile for unibo.basicrobot22
 ## ----------------------------------------------------------
 
-FROM openjdk:12.0.2
+FROM openjdk:11.0.14
 EXPOSE 8020
 ## ADD extracts the tar
 ADD ./build/distributions/unibo.basicrobot22-2.0.tar /
@@ -14,7 +14,7 @@ COPY ./*.json ./
 ## RUN apt-get update -y
 ## RUN apt-get install -y wiringpi
 ## RUN sudo apt-get install -y python
-
+RUN ls
 CMD ["bash", "unibo.basicrobot22"]
 
 ## gradlew distTar
