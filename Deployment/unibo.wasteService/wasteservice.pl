@@ -1,7 +1,7 @@
 %====================================================================================
 % wasteservice description   
 %====================================================================================
-context(ctxbasicrobot, "127.0.0.1",  "TCP", "8020").
+context(ctxbasicrobot, "robot",  "TCP", "8020").
 context(ctxwasteservice, "localhost",  "TCP", "8055").
  qactor( pathexec, ctxbasicrobot, "external").
   qactor( wasteservice, ctxwasteservice, "it.unibo.wasteservice.Wasteservice").

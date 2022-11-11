@@ -44,3 +44,19 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+application {
+	// Define the main class for the application.
+	mainClass = 'unibo.webgui.WebguiApplication'
+}
+
+jar {
+	println("building jar")
+	from sourceSets.main.allSource
+	manifest {
+		attributes 'Main-Class': "$mainClassName"
+	}
+}
+
+
+
+

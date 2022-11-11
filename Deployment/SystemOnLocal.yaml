@@ -11,11 +11,4 @@ services:
             - 8020:8020/tcp
             - 8020:8020/udp 
         depends_on:
-            - wasteservice       
-    WebGUI:
-        image: webgui-2.0
-        ports:
-            - 8085:8085/tcp
-            - 8085:8085/udp
-        depends_on:
             - wasteservice
