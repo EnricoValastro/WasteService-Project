@@ -46,6 +46,7 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 					action { //it:State
 						request("moveto", "moveto(INDOOR)" ,"transporttrolleymover" )  
 						forward("blink", "blink(_)" ,"led" ) 
+						forward("updateled", "updateled(BLINKING)" ,"systemstatemanager" ) 
 						forward("updatetrolley", "updatetrolley(ONTHEROAD,MOVING)" ,"systemstatemanager" ) 
 						//genTimer( actor, state )
 					}
@@ -59,6 +60,7 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 					action { //it:State
 						request("execaction", "execaction(PICKUP)" ,"transporttrolleyexecutor" )  
 						forward("turnon", "turnon(_)" ,"led" ) 
+						forward("updateled", "updateled(ON)" ,"systemstatemanager" ) 
 						forward("updatetrolley", "updatetrolley(INDOOR,PICKINGUP)" ,"systemstatemanager" ) 
 						//genTimer( actor, state )
 					}
@@ -96,6 +98,7 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 						}
 						request("moveto", "moveto($POS)" ,"transporttrolleymover" )  
 						forward("blink", "blink(_)" ,"led" ) 
+						forward("updateled", "updateled(BLINKING)" ,"systemstatemanager" ) 
 						forward("updatetrolley", "updatetrolley(ONTHEROAD,MOVING)" ,"systemstatemanager" ) 
 						//genTimer( actor, state )
 					}
@@ -109,6 +112,7 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 					action { //it:State
 						request("execaction", "execaction(DROPOUT)" ,"transporttrolleyexecutor" )  
 						forward("turnon", "turnon(_)" ,"led" ) 
+						forward("updateled", "updateled(ON)" ,"systemstatemanager" ) 
 						forward("updatetrolley", "updatetrolley($POS,DROPPINGOUT)" ,"systemstatemanager" ) 
 						//genTimer( actor, state )
 					}
@@ -133,6 +137,7 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 					action { //it:State
 						request("moveto", "moveto(HOME)" ,"transporttrolleymover" )  
 						forward("blink", "blink(_)" ,"led" ) 
+						forward("updateled", "updateled(BLINKING)" ,"systemstatemanager" ) 
 						forward("updatetrolley", "updatetrolley(ONTHEROAD,MOVING)" ,"systemstatemanager" ) 
 						//genTimer( actor, state )
 					}
@@ -145,6 +150,7 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				state("backHomeRes") { //this:State
 					action { //it:State
 						forward("turnoff", "turnoff(_)" ,"led" ) 
+						forward("updateled", "updateled(OFF)" ,"systemstatemanager" ) 
 						forward("updatetrolley", "updatetrolley(HOME,IDLE)" ,"systemstatemanager" ) 
 						//genTimer( actor, state )
 					}

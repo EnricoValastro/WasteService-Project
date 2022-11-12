@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html >
+	<head>
+		<meta charset="UTF-8">
+		<title>WebGLScene</title>
+		<link rel="stylesheet" href="css/style.css">
+		<script src="/socket.io/socket.io.js"></script> 
+	</head>
+
+	<body>
+
+ 
+		<canvas id="canvas"></canvas>
+
+		<div id="plug" class="shameless-plug"><span>MIRROR  &nbsp; </span>
+		<span> by <a href="https://pierfrancescosoffritti.com/" target="blank">Pierfrancesco Soffritti</a>
+		and <a href="https://www.unibo.it/sitoweb/antonio.natali" target="blank">Antonio Natali </a></span></div>
+
+		<svg id="forklift-icon" style="width:24px;height:24px" viewBox="0 0 24 24">
+			<path fill="#FFF" d="M6,4V11H4C2.89,11 2,11.89 2,13V17A3,3 0 0,0 5,20A3,3 0 0,0 8,17H10A3,3 0 0,0 13,20A3,3 0 0,0 16,17V13L12,4H6M17,5V19H22V17.5H18.5V5H17M7.5,5.5H11.2L14.5,13H7.5V5.5M5,15.5A1.5,1.5 0 0,1 6.5,17A1.5,1.5 0 0,1 5,18.5A1.5,1.5 0 0,1 3.5,17A1.5,1.5 0 0,1 5,15.5M13,15.5A1.5,1.5 0 0,1 14.5,17A1.5,1.5 0 0,1 13,18.5A1.5,1.5 0 0,1 11.5,17A1.5,1.5 0 0,1 13,15.5Z" />
+		</svg>
+
+		<svg id="lamp-icon" style="width:24px;height:24px" viewBox="0 0 24 24">
+			<path fill="#FFF" d="M15,2L17,9H7L9,2M11,10H13V20H16V22H8V20H11V10Z" />
+		</svg>
+
+		<svg id="tractor-icon" style="width:24px;height:24px" viewBox="0 0 24 24">
+			<path fill="#FFF" d="M5,4V11.26C3.2,11.9 2,13.6 2,15.5C2,18 4,20 6.5,20C8.79,20 10.71,18.28 10.97,16H15.17C15.06,16.32 15,16.66 15,17A3,3 0 0,0 18,20A3,3 0 0,0 21,17C21,16.66 20.94,16.32 20.82,16H22V13C22,11.89 21.11,11 20,11H15.04L13.65,4H5M7,6H12L13,11V14H10.74C10.16,12.38 8.71,11.23 7,11.03V6M6.5,13.25A2.25,2.25 0 0,1 8.75,15.5A2.25,2.25 0 0,1 6.5,17.75A2.25,2.25 0 0,1 4.25,15.5A2.25,2.25 0 0,1 6.5,13.25M18,15.5A1.5,1.5 0 0,1 19.5,17A1.5,1.5 0 0,1 18,18.5A1.5,1.5 0 0,1 16.5,17A1.5,1.5 0 0,1 18,15.5Z" />
+		</svg>
+
+		<svg id="washing-machine-icon" style="width:24px;height:24px" viewBox="0 0 24 24">
+			<path fill="#FFF" d="M14.83,11.17C16.39,12.73 16.39,15.27 14.83,16.83C13.27,18.39 10.73,18.39 9.17,16.83L14.83,11.17M6,2H18A2,2 0 0,1 20,4V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V4A2,2 0 0,1 6,2M7,4A1,1 0 0,0 6,5A1,1 0 0,0 7,6A1,1 0 0,0 8,5A1,1 0 0,0 7,4M10,4A1,1 0 0,0 9,5A1,1 0 0,0 10,6A1,1 0 0,0 11,5A1,1 0 0,0 10,4M12,8A6,6 0 0,0 6,14A6,6 0 0,0 12,20A6,6 0 0,0 18,14A6,6 0 0,0 12,8Z" />
+		</svg>
+
+		<svg id="fork-icon" style="width:24px;height:24px" viewBox="0 0 24 24">
+			<path fill="#FFF" d="M5.12,21.29L3.71,19.88L13.36,10.22L13.16,10C12.38,9.23 12.38,7.97 13.16,7.19L17.5,2.82L18.43,3.74L15.19,7L16.15,7.94L19.39,4.69L20.31,5.61L17.06,8.85L18,9.81L21.26,6.56L22.18,7.5L17.81,11.84C17.03,12.62 15.77,12.62 15,11.84L14.78,11.64L5.12,21.29Z" />
+		</svg>
+
+		<svg id="shovel-icon" style="width:24px;height:24px" viewBox="0 0 24 24">
+			<path fill="#FFF" d="M15.1,1.81L12.27,4.64C11.5,5.42 11.5,6.69 12.27,7.47L13.68,8.88L9.13,13.43L6.31,10.6L4.89,12C-0.06,17 3.5,20.5 3.5,20.5C3.5,20.5 7,24 12,19.09L13.41,17.68L10.61,14.88L15.15,10.34L16.54,11.73C17.32,12.5 18.59,12.5 19.37,11.73L22.2,8.9L15.1,1.81M17.93,10.28L16.55,8.9L15.11,7.46L13.71,6.06L15.12,4.65L19.35,8.88L17.93,10.28Z" />
+		</svg>
+
+		<svg id="carrot-icon" style="width:24px;height:24px" viewBox="0 0 24 24">
+			<path fill="#FFF" d="M16,10L15.8,11H13.5A0.5,0.5 0 0,0 13,11.5A0.5,0.5 0 0,0 13.5,12H15.6L14.6,17H12.5A0.5,0.5 0 0,0 12,17.5A0.5,0.5 0 0,0 12.5,18H14.4L14,20A2,2 0 0,1 12,22A2,2 0 0,1 10,20L9,15H10.5A0.5,0.5 0 0,0 11,14.5A0.5,0.5 0 0,0 10.5,14H8.8L8,10C8,8.8 8.93,7.77 10.29,7.29L8.9,5.28C8.59,4.82 8.7,4.2 9.16,3.89C9.61,3.57 10.23,3.69 10.55,4.14L11,4.8V3A1,1 0 0,1 12,2A1,1 0 0,1 13,3V5.28L14.5,3.54C14.83,3.12 15.47,3.07 15.89,3.43C16.31,3.78 16.36,4.41 16,4.84L13.87,7.35C15.14,7.85 16,8.85 16,10Z" />
+		</svg>
+
+		<script src="./js/utils/utils.js"></script>
+		<script src="./js/libs/Tween.js"></script>
+
+		<script type="module" src="./js/mainNoControl.js"></script>
+ 
+	</body>
+</html>

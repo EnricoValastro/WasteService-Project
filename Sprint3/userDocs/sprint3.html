@@ -376,7 +376,14 @@
 
 
             <h4>Interazione tra i componenti</h4>
-
+            Come detto in analisi dei requisiti il <i>Led</i> deve accendersi , spegnersi o brillare in base alle posizioni del <kc>TransportTrolley</kc>. 
+            Quindi è logico che il <i>Led</i>, essendo un attuatore del sistema, debba essere controllato da qualcuno (<i>TransportTrolley</i>). <br>
+            Sarà il <i>TransportTrolley</i>, in base alla sua posizione in quel momento, a dire al <i>Led</i> di cambiare stato.
+            <pre>
+<key2>Dispatch</key2> blink 	         : blink(_)
+<key2>Dispatch</key2> turnon 	 : turnon(_)
+<key2>Dispatch</key2> turnoff 	 : turnoff(_)
+            </pre>
             
             <h4>Stato del Led</h4>
             Dall'analisi dei requisiti è emerso che il committente vuole che sia mostrato lo stato del Led nella <kc>GUI</kc>. Per fare ciò è necessario gestire e mantanere lo stato del Led. 
@@ -410,10 +417,22 @@
 }</pre>
             Sebbene questa soluzione sia più complessa da implementare, è quella che consigliamo agli sviluppatori in quanto permette di disaccoppiare la gestione dello stato dalle funzionalità del Led.
             <h4>Gestione dello stato del Led</h4>
-            Per quanto riguarda la gestione dello stato del Led, essa viene effettuata da un componente creato ad-hoc, il <kc>SystemStateManager</kc> , che si occupa di mantenere lo stato del sistema. <br>
-            Affinchè questo avvenga, il Led attraverso l'invio di messaggi, dirà al SystemStateManager i suoi cambiamenti si stato.
-            <pre>
-<key>Dispatch</key> updateled : updateled(STATE)</pre>
+            Il sistema deve essere consapevole dello stato del <i>Led</i>, per fare questo si potrebbe procedere in diversi modi: <br> <br>
+
+            <ul>
+                <li>Un Primo modo potrebbe essere che il <i>Led</i> quando cambia stato(ON,OFF,BLINK) invia un messaggio di notifica al <kc>SystemStateManager</kc>. <br>
+                Questa soluzione sebbena sia semplice e non causi particolari problemi rende il <i>Led</i> consapevole del sistema che ha attorno e quindi sarebbe poco riusabile.</li>
+                <li>Si potrebbe utilizzare il protocollo <kc>MQTT</kc>, il quale prevede che il <i>Led</i> sia il publisher di un canale <i>MQTT</i>. Ciò implica che dall'altro lato
+                    qualcuno debba leggere questo stato (<i>SystemStateManager</i>). <br>
+                    Una problematica che potrebbe insorgere usando questa opzione è che il <i>SystemStateManager</i> (che prima era solo un "contenitore" di stati) adesso dovrebbe registrarsi su un 
+                    canale <i>MQTT</i> da cui riceverà lo stato del <i>Led</i>. <br>
+                </li>
+                <li>Infine un ultimo modo potrebbere essere che: essendo il <i>Led</i> un attuatore verrà comandato da qualcuno(<i>TransportTrolley</i>) per accendersi, spegnersi o brillare. Quindi il <kc>TransportTrolleCore</kc>
+                    è a conoscenza implicitamente dello stato del <i>Led</i>, poichè se comunica al <i>Led</i> il messaggio turnOn, sa che lui si troverà nello stato ON.
+                    Potrebbe quindi essere il <i>TransportTrolleyCore</i> ad aggiornare lo stato del <i>Led</i>. Quindi quando, ad esempio, il <i>TransportTrolleyCore</i> dice 
+                    al <i>Led</i> turnOff , subito dopo manda un messaggio al <i>SystemStateManager</i> dicendogli update led (OFF) e così via. <br>
+                    Questa soluzione è la più semplice da implementare e non causa particolari problemi. Consigliamo agli sviluppatori di usare quest'ultima <br>
+                </li>
         </div>
 
         <div class="remark">
@@ -523,11 +542,108 @@
             <img src="" alt="" style="width:60% ; height:60% ;">
         </div>
         <h2>Project</h2>
-        <div class="remark"></div>
+        <div class="remark">
+            <h3>Led</h3>
+            Come consigliato dagli analisti useremo il software fornito dal committente per la gestione del <i>Led</i>. <br>
+            Dal momento però che il componente <i>Led</i> deve essere in grado di interagire con gli altri componenti del sistema, 
+            gli analisti ci hanno consigliato di modellare il <i>Led</i> come un attore QAk che incapsula le funzionalità del software fornito dal committente. In questo modo si può dotare il <i>Led</i> dell'abilità di comunicare a scambio di messaggi. <br>
+        <h4>Led Component</h4>
+        Come detto in fase di analisi del problema sarà il <i>TransportTrolley</i> a dire al <i>Led</i> quando fare il cambiamento di stato. Questo avviene attraverso l'invio di messaggi al <i>Led</i>. <br>
+            <pre>
+<key2>State</key2> pickupMove{
+        ...
+     <key2>forward</key2> led <key2>-m</key2> blink : blink(_)
+        ...
+}<key2>Transition</key2> t0 whenReply ...
 
+<key2>State</key2> pickupExec{
+    ...
+ <key2>forward</key2> led <key2>-m</key2> turnon : turnon(_)
+    ...
+}<key2>Transition</key2> t0 whenReply ...
 
+<key2>State</key2> dropoutMove{
+    ...
+ <key2>forward</key2> led <key2>-m</key2> blink : blink(_)
+    ...
+}<key2>Transition</key2> t0 whenReply ...
+
+<key2>State</key2> dropoutExec{
+    ...
+ <key2>forward</key2> led <key2>-m</key2> turnon : turnon(_)
+    ...
+}<key2>Transition</key2> t0 whenReply ...
+
+<key2>State</key2> backHome{
+    ...
+ <key2>forward</key2> led <key2>-m</key2> blink : blink(_)
+    ...
+}<key2>Transition</key2> t0 whenReply ...
+
+<key2>State</key2> backHomeRes{
+    <key2>forward</key2> led <key2>-m</key2> turnoff : turnoff(_)
+    ...
+
+}<key2>Goto</key2> idle
+            </pre>
+        
+        Per quanto riguarda lo stato del <i>Led</i>, come consigliato dagli analisti, abbiamo deciso di mantenere lo stato del <i>Led</i> 
+        in una <ks>data class Kotlin</ks>, permettendo così di disaccoppiare la gestione dello stato dalle funzionalità del <i>Led</i>. <br>
+
+        Per quanto riguarda la gestione dello stato del Led, come consigliato dagli analisti, abbiamo sviluppato il progetto in modo tale che , quando
+        il TransportTrolleCore dice al Led di (spegnersi, accendersi, brillare) , subito dopo manda un messaggio al SystemStateManager dicendogli update led (STATE). <br>
+        In questo modo il sistema tiene traccia dello stato del Led, infatti successivamente, come detto nello Sprint2, sarà il SystemStateManager a comunicare con la <i>GUI</i>,
+        dove vedremo lo stato del Led. <br>
+        <pre>
+<key2>State</key2> pickupMove{
+        ...
+     <key2>forward</key2> systemstatemanager <key2>-m</key2> updateled : updateled(BLINKING)
+        ...
+}<key2>Transition</key2> t0 whenReply ...
+
+<key2>State</key2> pickupExec{
+    ...
+ <key2>forward</key2> systemstatemanager <key2>-m</key2> updateled : updateled(ON)
+    ...
+}<key2>Transition</key2> t0 whenReply ...
+
+<key2>State</key2> dropoutMove{
+    ...
+ <key2>forward</key2> systemstatemanager <key2>-m</key2> updateled : updateled(BLINKING)
+    ...
+}<key2>Transition</key2> t0 whenReply ...
+
+<key2>State</key2> dropoutExec{
+    ...
+ <key2>forward</key2> systemstatemanager <key2>-m</key2> updateled : updateled(ON)
+    ...
+}<key2>Transition</key2> t0 whenReply ...
+
+<key2>State</key2> backHome{
+    ...
+ <key2>forward</key2> systemstatemanager <key2>-m</key2> updateled : updateled(BLINKING)
+    ...
+}<key2>Transition</key2> t0 whenReply ...
+
+<key2>State</key2> backHomeRes{
+    <key2>forward</key2> systemstatemanager <key2>-m</key2> updateled : updateled(OFF)
+    ...
+
+}<key2>Goto</key2> idle
+            </pre>
+
+            Il codice completo è consultabile nel file <a href="./resources/qak/wasteService.qak">wasteService.qak</a>. <br>
+       
+            </div>
+            <div class="remark">
+                <h3>Sonar</h3>
+                </div>
+ 
         <h2>Test Plan</h2>
         <div class="remarkTest"></div>
+
+        <h2>Architettura finale del Sistema</h2>
+        <div class="remark"></div>
 
         <div style="display: flex; flex-direction: row; justify-content: space-around;">
             <div><a href="../../Sprint2/userDocs/sprint2.html"> <-- Sprint2</a></div>

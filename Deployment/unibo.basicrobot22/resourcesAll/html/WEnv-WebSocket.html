@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<meta charset = "utf-8" />
+<title>WEnv-WebSocket</title>
+<body>
+<script src="https://cdn.jsdelivr.net/webjars/org.webjars/jquery/2.1.0/jquery.js"></script>
+
+
+<script language = "javascript" type = "text/javascript">
+var output;
+
+var wsUri = "ws://localhost:8091/";
+websocket = new WebSocket(wsUri);
+
+ function init() {
+  output = document.getElementById("output");
+  setWebSocket();
+ }
+
+ function setWebSocket() {
+  websocket.onopen    = function(evt) { console.log(evt); show("CONNECTED " + evt.target.url) };
+  websocket.onclose   = function(evt) { show("DISCONNECTED"); };
+  websocket.onmessage = function(evt) { show('<span style = "color: blue;">RECEIVED: ' + evt.data+'</span>'); };
+  websocket.onerror   = function(evt) { show('<span style = "color: red;">ERROR:</span> ' + evt.data); };
+ }
+
+  function doMove(move, time) {
+      const moveJson = '{"robotmove":"'+ move + '", "time":'+time+'}'
+      console.log( moveJson  )
+      if (websocket && (websocket.bufferedAmount == 0) ) { websocket.send(moveJson) }
+  }
+
+      function show(message) {
+         var pre = document.createElement("p");
+         pre.style.wordWrap = "break-word";
+         pre.innerHTML = message;
+         output.appendChild(pre);
+      }
+
+      window.addEventListener("load", init);
+   </script>
+
+<script>
+$(function () {
+	$( "#lsocket" ).click(function() { doMove("turnLeft", 300);     })
+	$( "#rsocket" ).click(function() { doMove("turnRight", 300);    })
+	$( "#wsocket" ).click(function() { doMove("moveForward", 1200); })
+	$( "#ssocket" ).click(function() { doMove("moveBackward", 1200);})
+	$( "#hsocket" ).click(function() { doMove("alarm", 100);        })
+});
+</script>
+<h2>WEnv-WebSocket</h2>
+
+<button id="wsocket" >moveForward</button> &nbsp;&nbsp;  <button id="ssocket" >moveBackward</button> &nbsp;&nbsp;
+<button id="hsocket" >halt</button> &nbsp;&nbsp;  <button id="lsocket" >turnLeft</button>  &nbsp;&nbsp;   <button id="rsocket" >turnRight</button>
+
+<div id = "output"></div>
+</body>
+</html>

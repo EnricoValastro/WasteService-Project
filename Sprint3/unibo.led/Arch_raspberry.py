@@ -23,5 +23,4 @@ with Diagram('raspberryArch', show=False, outformat='png', graph_attr=graphattr)
           systemstatemanager=Custom('systemstatemanager(ext)','./qakicons/externalQActor.png')
      with Cluster('ctxpi', graph_attr=nodeattr):
           led=Custom('led','./qakicons/symActorSmall.png')
-     led >> Edge(color='blue', style='solid', xlabel='updateled', fontcolor='blue') >> systemstatemanager
 diag

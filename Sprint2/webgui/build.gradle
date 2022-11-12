@@ -2,6 +2,9 @@ plugins {
 	id 'org.springframework.boot' version '2.7.5'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 	id 'java'
+	id 'application'
+	id 'eclipse'
+
 }
 
 group = 'unibo'
@@ -40,3 +43,20 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+application {
+	// Define the main class for the application.
+	mainClass = 'unibo.webgui.WebguiApplication'
+}
+
+jar {
+	println("building jar")
+	from sourceSets.main.allSource
+	manifest {
+		attributes 'Main-Class': "$mainClassName"
+	}
+}
+
+
+
+
