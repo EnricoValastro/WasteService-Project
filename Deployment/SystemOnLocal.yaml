@@ -1,4 +1,4 @@
-version: '1.0'
+version: '3.3'
 services: 
     wasteservice:
         image: wasteservice-1.0
@@ -12,3 +12,14 @@ services:
             - 8020:8020/udp 
         depends_on:
             - wasteservice
+    wenv:
+        image: wenv-1.0
+        ports:
+            8090:8090/tcp
+            8091:8091/tcp
+            8090:8090/udp
+            8091:8091/udp
+        depends_on:
+            - robot
+            - wasteservice
+
