@@ -306,10 +306,10 @@
             <h4>Azioni del Led</h4>
             Per accendere e spegnere il <i>Led</i> collegato al <kc>RaspberryPI</kc>, è possibile utilizzare il software fornito dal committente. <br>
             In particolare ci sono stati forniti due file <ks>Bash</ks>, <a href="https://github.com/anatali/issLab2022/blob/main/it.unibo.raspIntro2022/code/bash/led25GpioTurnOn.sh">led25GpioTurnOn.sh</a> e <a href="https://github.com/anatali/issLab2022/blob/main/it.unibo.raspIntro2022/code/bash/led25GpioTurnOff.sh">led25GpioTurnOff.sh</a>. <br>
-            Oltre a questi due file, che permettono di operare sul <i>Led</i> a livello fisico, il committente ci ha fornito anche il del software, 
+            Oltre a questi due file, che permettono di operare sul <i>Led</i> a livello fisico, il committente ci ha fornito anche la libreria generata dal software del progetto 
             <a href="https://github.com/anatali/issLab2022/tree/main/it.unibo.radarSystem22.domain">it.unibo.radarSystem22.domain</a>, che permette di 
             definire dei componenti di base legati ai dispositivi di I/O (<i>Led</i>, <i>Sonar</i>). <br>
-            Tali componenti componenti sono descritti dalle seguenti interfacce:
+            Il componente <i>Led</i> è descritto dalla seguente interfaccia.
 
             <pre>
 <key>public interface</key> ILed {
@@ -317,16 +317,10 @@
     <key>public void</key> turnOff();
     <key>public boolean</key> getState();
 }</pre>
-
-            <pre>
-<key>public interface</key> ISonar {
-    <key>public void</key> activate();
-    <key>public void</key> deactivate();
-    <key>public IDistance</key> getDistance();
-    <key>public boolean</key> isActive();
-}</pre>
-
-            Il software fornito dal committente permette l'utilizzio di dispositivi simulati (<ks>Mock-object</ks>) e dispositivi reali. <br>
+            <div id="ledModel">
+                Il software fornito dal committente permette l'utilizzio di dispositivi simulati (<ks>Mock-object</ks>) e dispositivi reali. <br>
+            </div>
+            
             Per fare ciò viene introdotta una classe astratta, comune alle due tipologie, che funge da <ks>Factory</ks> per quel tipo di dispositivo. <br>
             La classe astratta <a href="https://github.com/anatali/issLab2022/blob/main/it.unibo.radarSystem22.domain/src/it/unibo/radarSystem22/domain/models/LedModel.java">LedModel.java</a> 
             introduce il metodo <i>astratto</i> <kc>LedActivate</kc> a cui è demandato il compito di accendere/spegnere il <i>Led</i>.
@@ -424,11 +418,101 @@
 
         <div class="remark">
             <h3>Sonar</h3>
-            Dall'analisi dei requisiti è emerso che il Sonar verrà usato come un 'alarm device'. Si deve capire come fermare il trolley nel caso di un'allarme 
-            e come fargli riprendere il movimento. <br>
-            Per fermare il trolley, è necessario che il Sonar invii un messaggio al <kc>TransportTrolley</kc> che lo gestirà. <br> 
-            Come avviene l'interazione? <br>
-            Che tipo di messaggi manda il Sonar? <br>
+            Il <kc>Sonar</kc> è un dispositivo di input, esso può essere modellato come un "processo" che una volta attivato genera informazioni sugli ostacoli che rileva. <br>
+            L'informazione generata dal <i>Sonar</i> è, sostanzialmente, una <i>distanza</i>. Il concetto di distanza è formalizzatto 
+            dall'interfaccia <kc>IDistance</kc>:
+            <pre>
+<key>public interface</key> IDistance {
+    <key>public int</key> getVal(   );
+    <key>public</key> String toString(   );
+}</pre>
+
+            Tale interfaccia è implementata dalla classe <kc>Distance</kc>, che rappresenta quindi il concetto di distanza. <br>
+            <pre>
+<key>public class</key> Distance <key>implements</key> IDistance{
+    <key>private int</key> v;
+        <key>public</key> Distance(<key>int</key> d) { v=d;       }
+        @Override
+        <key>public int</key> getVal() { <key>return</key> v; }
+        @Override
+        <key>public</key> String toString(){ <key>return</key> ""+v; }
+}</pre>
+
+            Una volta compreso che tipo di dato viene generato dal <i>Sonar</i>, è necessario comprendere come faccia il <i>Sonar</i> a generare 
+            tali dati, come questi dati possano essere fruibili ai componenti del sistema e come essi saranno utilizzati per soddisfare i requisiti del committente. <br>
+
+            <h4>Materiale fornito dal committente</h4>
+            Al fine di gestire i dati generati dal <i>Sonar</i> fisico e possibile utilizzare il software fornito dal committente. <br>
+            In particolare, ci è stato fornito un software scritto in linguaggio <ks>C</ks>, <a href="./resources/C/SonarAlone.c">SonarAlone.c</a>, che stampa su standard output la distanza attualmente rilevata dal sonar. <br>
+            Oltre a questo, il committente ci ha fornito la libreria generata dal software contenuto nel progetto 
+            <a href="https://github.com/anatali/issLab2022/tree/main/it.unibo.radarSystem22.domain">it.unibo.radarSystem22.domain</a> che permette di definire dei componenti di base legati ai dispositivi di I/O (Led, Sonar). <br>
+            Il componente <i>Sonar</i> è descritto dalla seguente interfaccia:
+
+            <pre>
+<key>public interface</key> ISonar {
+    <key>public void</key> activate();
+    <key>public void</key> deactivate();
+    <key>public IDistance</key> getDistance();
+    <key>public boolean</key> isActive();
+}</pre>
+
+            Anche in questo caso, come per il <a href="#ledModel">Led</a> è possibile utilizzare dispositivi simulati e dispositivi reali. <br>
+            Per fare ciò viene introdotta la classe astratta <a href="https://github.com/anatali/issLab2022/blob/main/it.unibo.radarSystem22.domain/src/it/unibo/radarSystem22/domain/models/SonarModel.java">SonarModel.java</a>. <br>
+            Il codice relativo alla produzione dei dati, viene incapsulato nel metodo <ks>abstract</ks> <ks>sonarProduce</ks> che dovrà 
+            essere definito in modo diverso dal <kc>SonarMock</kc> e dal <kc>SonarConcrete</kc>, così come il metodo di inizializzazione <ks>sonarSetUps</ks>:
+
+            <pre>
+<key>protected abstract void</key> sonarSetUp() ;
+<key>protected abstract void</key> sonarProduce( );</pre>
+            
+            La classe astratta <kc>SonarModel</kc> fornisce anche i metodi per attivare e deattivare il sonar:
+
+            <pre>
+@Override
+<key>public void</key> deactivate() { stopped = <key>true</key>; }</pre>
+
+            <pre>
+@Override
+<key>public void</key> activate() {
+  stopped = <key>false</key>;
+  <key>new</key> Thread() {
+    <key>public void</key> run() {
+      <key>while</key>( ! stopped  ) { sonarProduce(); }
+    }
+  }.start();
+}</pre>
+
+            I dati prodotti dal <i>Sonar</i> possono essere consumati a livello applicativo, utilizzando il metodo <ks>getDistance</ks> offerto 
+            dalla classe astratta <kc>SonarModel.java</kc>:
+
+            <pre>
+@Override
+<key>public</key> IDistance getDistance() {
+    <key>return</key> curVal; 
+}</pre>
+
+            Le classi <kc>SonarMock</kc> e <kc>SonarConcrete</kc> implementano i metodi <ks>sonarSetUp</ks> e <ks>sonarProduce</ks> di <kc>SonarModel.java</kc>. <br>
+            In particolare, il <i>SonarMock</i> genera valori di distanza da "90" a "0" e se la variabile di configurazione <kc>testing</kc> è attiva genera un solo valore che legge dal file di configurazione:
+             <a href="https://github.com/anatali/issLab2022/blob/main/it.unibo.radarSystem22.domain/src/it/unibo/radarSystem22/domain/mock/SonarMock.java">SonarMock.java</a>
+            <br>
+            La classe <i>SonarConcrete</i> realizza la logica di gestione del sonar fisico, avvalendosi del software <i>SonarAlone.c</i> fornito dal committente: <a href="https://github.com/anatali/issLab2022/blob/main/it.unibo.radarSystem22.domain/src/it/unibo/radarSystem22/domain/concrete/SonarConcrete.java">SonarConcrete.java</a>
+            <br>
+            Dal momento che il <i>Sonar</i> deve essere in grado di comunicare i dati generati al resto del sistema, esso dovrebbe essere 
+            capace di lavora a scambio di messaggi. Per questo motivo il <i>Sonar</i> dovrebbe essere modellato e implementato come un attore QAk. <br>
+            Sarà quindi necessario incapsulare all'interno di un attore QAk il componente <i>ISonar</i>. Inoltre, l'attore QAk del <i>Sonar</i>, così costruito 
+            dovrà fare "polling" dei dati generati dal <i>ISonar</i>. <br>
+            <br>
+            Oltre a quanto detto fin'ora, il committente ci ha fornito anche un software che implementa un attore QAk per il sonar. Tale software, 
+            consultabile in <a href="https://github.com/anatali/issLab2022/tree/main/unibo.sonarqak22">unibo.sonarqak22</a>, permette di creare una <ks>pipe</ks>
+            come quella mostrata in figura: <br>
+            <img src="./resources/img/pipe.png" alt="" style="width: 45%; height: 45%;">
+            <br><br>
+            I dati generati da <i>firstActorInPipe</i> (un sonarsimulator come sonarDataGen) sono memorizzati dal <i>datalogger</i>, filtrati dal <i>datacleaner</i> e gestiti dal <i>distancefilter</i>.
+            In <i>unibo.sonarqak22</i> è possibile trovare anche il codice dei <ks>CodedQActor</ks> <kc>sonarsimulator</kc> e <kc>sonardatasource</kc> che sono rispettivamente implementati nelle classi 
+            <a href="https://github.com/anatali/issLab2022/blob/main/unibo.sonarqak22/resources/sonarHCSR04Support2021.kt">sonarHCSR04Support2021.kt</a> e <a href="https://github.com/anatali/issLab2022/blob/main/unibo.sonarqak22/resources/sonarSimulator.kt">sonarSimulator.kt</a>
+            <br><br>
+            Per implementare il <i>Sonar</i> consigliamo agli sviluppatori di utilizzare il software <i>unibo.sonarqak22</i> in modo da abbattere i tempi di sviluppo. <br>
+
         </div>
         
 
