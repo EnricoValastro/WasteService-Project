@@ -22,6 +22,7 @@ class Sonarqak22varesi ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					action { //it:State
 						 unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.YELLOW) 
 						utility.configureTheSonar( sonarActorName  )
+						forward("sonaractivate", "info(ok)" ,"sonarqak22varesi" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

@@ -40,5 +40,6 @@ fun configTheSystem(){
     DomainSystemConfig.sonarDistanceMax = jsonObj.getInt("SONARDISTANCEMAX")
     DomainSystemConfig.sonarObservable  = jsonObj.getBoolean("SONAROBSERVABLE")
     DomainSystemConfig.testingDistance  = jsonObj.getInt("TESTINGDISTANCE")
+    println(DomainSystemConfig.simulation)
 }
 

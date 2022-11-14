@@ -9,7 +9,7 @@ Dispatch sonardeactivate : info(ARG)
 Event    sonar           : distance( V )   			//emitted by sonardatasource	
 Event    sonardata 		 : distance( V )   			//for the application level
 
-Context ctxwasteservice ip [host="127.0.0.1" port=8055]
+Context ctxwasteservice ip [host="172.20.10.3" port=8055]
 Context ctxpi ip [host="localhost" port=8065 ]
 
 
@@ -75,6 +75,7 @@ QActor sonarqak22varesi context ctxpi{
 	State s0 initial {
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.YELLOW)#]
 		run  utility.configureTheSonar(sonarActorName) 
+		forward sonarqak22varesi -m sonaractivate : info(ok)
 		
 	}
 	Transition t0 whenMsg sonaractivate   -> activateTheSonar

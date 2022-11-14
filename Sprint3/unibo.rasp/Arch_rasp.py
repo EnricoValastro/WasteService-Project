@@ -24,6 +24,7 @@ with Diagram('raspArch', show=False, outformat='png', graph_attr=graphattr) as d
           sonarqak22varesi=Custom('sonarqak22varesi','./qakicons/symActorSmall.png')
           sonardatasource=Custom('sonardatasource(coded)','./qakicons/codedQActor.png')
           datacleaner=Custom('datacleaner(coded)','./qakicons/codedQActor.png')
+     sonarqak22varesi >> Edge(color='blue', style='solid', xlabel='sonaractivate', fontcolor='blue') >> sonarqak22varesi
      sonarqak22varesi >> Edge(color='blue', style='solid', xlabel='sonaractivate', fontcolor='blue') >> sonardatasource
      sys >> Edge(color='red', style='dashed', xlabel='sonar', fontcolor='red') >> sonarqak22varesi
      sonarqak22varesi >> Edge(color='blue', style='solid', xlabel='sonardeactivate', fontcolor='blue') >> sonardatasource

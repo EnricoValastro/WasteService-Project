@@ -13,7 +13,7 @@ class sonarSupport2022(name : String ) : ActorBasic( name ) {
     override suspend fun actorBody(msg: IApplMessage) {
 
         if( msg.msgId() == "sonaractivate"){
-            `it.unibo`.radarSystem22.domain.utils.DomainSystemConfig.simulation = true
+
             sonar = `it.unibo`.radarSystem22.domain.DeviceFactory.createSonar()
             sonar.activate()
             doRead()

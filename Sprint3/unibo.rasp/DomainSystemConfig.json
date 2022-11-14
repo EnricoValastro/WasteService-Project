@@ -2,7 +2,7 @@
   "SIMULATION"        : false,
   "TESTING"           : false,
   "SONARTYPE"         : "HCSR04",
-  "SONARDELAY"        : 200,
+  "SONARDELAY"        : 400,
   "SONARDISTANCEMAX"  : 120,
   "SONAROBSERVABLE"   : false,
   "TESTINGDISTANCE"   : 30,
