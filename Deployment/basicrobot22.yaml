@@ -1,13 +1,13 @@
 version: '3.3'
 services:
   wenv:
-    image: wenv-1.0
+    image: docker.io/alerei94/wenv-1.0
     ports:
       - 8090:8090 
       - 8091:8091/tcp
       - 8091:8091/udp
   robot:
-    image: basicrobot22-2.0
+    image: docker.io/alerei94/basicrobot22-2.0
     ports:
       - 8020:8020/tcp
       - 8020:8020/udp
