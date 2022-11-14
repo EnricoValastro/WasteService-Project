@@ -133,6 +133,7 @@ class Pathexec ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 						}
 						if( checkMsgContent( Term.createTerm("alarm(X)"), Term.createTerm("alarm(X)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
+								println("Pathexec	|	stopped")
 								answer("dopath", "dopathstopped", "dopathstopped($PathStillTodo)"   )  
 						}
 						//genTimer( actor, state )

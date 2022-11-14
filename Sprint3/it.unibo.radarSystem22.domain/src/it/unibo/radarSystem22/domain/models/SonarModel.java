@@ -4,12 +4,13 @@ import it.unibo.radarSystem22.domain.Distance;
 import it.unibo.radarSystem22.domain.concrete.SonarHCSR04Concrete;
 import it.unibo.radarSystem22.domain.interfaces.*;
 import it.unibo.radarSystem22.domain.mock.SonarMock;
+import it.unibo.radarSystem22.domain.utils.BasicUtils;
 import it.unibo.radarSystem22.domain.utils.ColorsOut;
 import it.unibo.radarSystem22.domain.utils.DomainSystemConfig;
 
 
 
-public abstract class SonarModel  implements ISonar{  
+public abstract class SonarModel  implements ISonar{
 protected  IDistance curVal = new Distance(90);	 
 protected boolean stopped   = true;
 
@@ -64,7 +65,7 @@ protected boolean stopped   = true;
 				while( ! stopped  ) {
 					//Colors.out("SonarModel | call produce", Colors.GREEN);
 					sonarProduce(  );
-					//Utils.delay(RadarSystemConfig.sonarDelay);
+					BasicUtils.delay(DomainSystemConfig.sonarDelay);
 				}
 				ColorsOut.out("SonarModel | ENDS" );
 		    }
