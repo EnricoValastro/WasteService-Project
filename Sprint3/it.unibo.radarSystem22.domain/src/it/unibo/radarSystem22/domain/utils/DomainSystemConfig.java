@@ -16,7 +16,7 @@ public class DomainSystemConfig {
  	public static  boolean ledGui        = false;
 	public static  boolean webCam        = false;
  
-	public static int sonarDelay          =  100;     
+	public static int sonarDelay          =  2000;
 	public static int sonarDistanceMax    =  150;     
 	public static boolean sonarObservable =  false;     
 	public static int DLIMIT              =  15;     

@@ -24,6 +24,7 @@ class sonarSupport2022(name : String ) : ActorBasic( name ) {
     }
 
     suspend fun doRead(   ){
+        println("sonarSupport2022 doRead")
         var data = 0
         GlobalScope.launch{	//to allow message handling
             while( sonar.isActive ){
@@ -39,7 +40,7 @@ class sonarSupport2022(name : String ) : ActorBasic( name ) {
                 }catch(e: Exception){
                     println("sonarSupport2022 doRead ERROR: $e "   )
                 }
-                delay( 800 ) 	//Avoid too fast generation
+                delay( 2000 ) 	//Avoid too fast generation
             }
         }
     }
