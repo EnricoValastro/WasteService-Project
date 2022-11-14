@@ -37,7 +37,6 @@ with Diagram('wasteserviceArch', show=False, outformat='png', graph_attr=graphat
      wasteservice >> Edge(color='blue', style='solid', xlabel='dropout', fontcolor='blue') >> transporttrolleycore
      wasteservice >> Edge(color='blue', style='solid', xlabel='gotohome', fontcolor='blue') >> transporttrolleycore
      wasteservice >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> systemstatemanager
-     transporttrolleycore >> Edge(color='blue', style='solid', xlabel='sonaractivate', fontcolor='blue') >> sonarqak22varesi
      transporttrolleycore >> Edge(color='magenta', style='solid', xlabel='moveto', fontcolor='magenta') >> transporttrolleymover
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='blink', fontcolor='blue') >> led
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='updateled', fontcolor='blue') >> systemstatemanager

@@ -22,7 +22,6 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 				state("init") { //this:State
 					action { //it:State
 						 unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.BLUE) 
-						forward("sonaractivate", "info(ok)" ,"sonarqak22varesi" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

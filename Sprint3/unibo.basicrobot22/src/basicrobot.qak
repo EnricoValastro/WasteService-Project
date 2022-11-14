@@ -259,6 +259,7 @@ QActor pathexec context ctxbasicrobot{
 			replyTo dopath with dopathfail : dopathfail( $PathStillTodo )	
 		}
 		onMsg(alarm : alarm(X) ){
+			println("Pathexec	|	stopped")
 			replyTo dopath with dopathstopped : dopathstopped( $PathStillTodo )
 		}
 		

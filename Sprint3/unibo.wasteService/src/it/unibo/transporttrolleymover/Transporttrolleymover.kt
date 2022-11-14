@@ -99,7 +99,9 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("dopathstopped(ARG)"), Term.createTerm("dopathstopped(ARG)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								 PATHSTILLTODO = payloadArg(0)  
+								 
+												PATHSTILLTODO = payloadArg(0)
+												unibo.comm22.utils.ColorsOut.outappl("$name	|	stopped, still to do: $PATHSTILLTODO", unibo.comm22.utils.ColorsOut.BLUE)	
 								forward("trolleystop", "trolleystop(_)" ,"transporttrolleycore" ) 
 						}
 						//genTimer( actor, state )

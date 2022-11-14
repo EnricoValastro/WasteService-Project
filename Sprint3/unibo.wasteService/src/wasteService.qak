@@ -63,7 +63,7 @@ Dispatch trolleyresume : trolleyresume(_)
 
 
 Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
-Context ctxpi ip[host="127.0.0.1" port=8065]
+Context ctxpi ip[host="raspberrypi.local" port=8065]
 Context ctxwasteservice ip [host="localhost" port=8055]
 
 ExternalQActor led context ctxpi
@@ -176,7 +176,7 @@ QActor transporttrolleycore context ctxwasteservice{
 	
 	State init initial{
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.BLUE)#]
-		forward sonarqak22varesi -m sonaractivate : info(ok)
+		
 	}Goto idle
 
 	State idle{
@@ -379,7 +379,10 @@ QActor transporttrolleymover context ctxwasteservice{
 				
 	State stop{
 		onMsg(dopathstopped : dopathstopped(ARG)){
-			[# PATHSTILLTODO = payloadArg(0) #]
+			[# 
+				PATHSTILLTODO = payloadArg(0)
+				unibo.comm22.utils.ColorsOut.outappl("$name	|	stopped, still to do: $PATHSTILLTODO", unibo.comm22.utils.ColorsOut.BLUE)	
+			#]
 			forward transporttrolleycore -m trolleystop : trolleystop(_)
 			
 		}
