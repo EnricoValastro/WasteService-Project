@@ -11,3 +11,4 @@ context(ctxwasteservice, "localhost",  "TCP", "8055").
   qactor( transporttrolleymover, ctxwasteservice, "it.unibo.transporttrolleymover.Transporttrolleymover").
   qactor( transporttrolleyexecutor, ctxwasteservice, "it.unibo.transporttrolleyexecutor.Transporttrolleyexecutor").
   qactor( systemstatemanager, ctxwasteservice, "it.unibo.systemstatemanager.Systemstatemanager").
+  qactor( sonarfilter, ctxwasteservice, "it.unibo.sonarfilter.Sonarfilter").

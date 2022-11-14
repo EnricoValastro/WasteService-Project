@@ -50,6 +50,9 @@ Dispatch blink 		 : blink(_)
 Dispatch turnon 	 : turnon(_)
 Dispatch turnoff 	 : turnoff(_)
 
+/* Sonar data */
+Event    sonardata 		 : distance( V )
+
 Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
 Context ctxpi ip[host="127.0.0.1" port=8065]
 Context ctxwasteservice ip [host="localhost" port=8055]
@@ -553,3 +556,65 @@ QActor systemstatemanager context ctxwasteservice{
 	}
 }
 
+/* *********************************************************************************************
+ * ---------------------------------------------------------------------------------------------
+ * Component addicted to filter sonar data
+ * ---------------------------------------------------------------------------------------------
+ **********************************************************************************************/
+ 
+QActor sonarfilter context ctxwasteservice{
+	
+	[#
+		val DLIMIT = utility.SonarFilterConfig.configSonarFromFile()
+		var stopFlag = false
+		var distance : Int = 0
+	#]
+	
+	
+	State init initial{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+	}Goto idle
+	
+	State idle{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+	}Transition t0 whenEvent sonardata -> handleSonarData
+	
+	State handleSonarData{
+		onMsg(sonardata : distance( V )){
+			
+			[#
+				try{
+					distance = payloadArg(0).toInt()
+				}catch(e : Exception){ 
+					unibo.comm22.utils.ColorsOut.outappl("$name	|	some err...", unibo.comm22.utils.ColorsOut.YELLOW)
+				}	
+			#]	
+		}
+		if[# distance <= DLIMIT #]{
+			if[# !stopFlag #]{
+				//emit stop
+				[# stopFlag = true #]
+			}
+		}
+		else{
+			if[# stopFlag #]{
+				//emit resume
+				[# stopFlag = false #]
+			}
+		}
+	}Transition t0 whenEvent sonardata -> handleSonarData
+					whenMsg exit -> end
+					
+	State end {
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	bye", unibo.comm22.utils.ColorsOut.YELLOW) #]
+		terminate 0 
+	}
+	
+}
+ 
+ 
+ 
+ 
+ 
+ 
+ 

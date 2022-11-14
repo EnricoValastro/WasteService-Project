@@ -1,0 +1,10 @@
+{
+  "SIMULATION"        : true,
+  "TESTING"           : false,
+  "SONARTYPE"         : "HCSR04",
+  "SONARDELAY"        : 200,
+  "SONARDISTANCEMAX"  : 120,
+  "SONAROBSERVABLE"   : false,
+  "TESTINGDISTANCE"   : 30,
+  "LEDGUI"      : true
+}

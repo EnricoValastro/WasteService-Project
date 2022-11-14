@@ -29,6 +29,7 @@ with Diagram('wasteserviceArch', show=False, outformat='png', graph_attr=graphat
           transporttrolleymover=Custom('transporttrolleymover','./qakicons/symActorSmall.png')
           transporttrolleyexecutor=Custom('transporttrolleyexecutor','./qakicons/symActorSmall.png')
           systemstatemanager=Custom('systemstatemanager','./qakicons/symActorSmall.png')
+          sonarfilter=Custom('sonarfilter','./qakicons/symActorSmall.png')
      sys >> Edge(color='red', style='dashed', xlabel='local_dropoutdone', fontcolor='red') >> wasteservice
      wasteservice >> Edge(color='blue', style='solid', xlabel='updatecontainer', fontcolor='blue') >> systemstatemanager
      wasteservice >> Edge(color='magenta', style='solid', xlabel='pickup', fontcolor='magenta') >> transporttrolleycore
@@ -48,4 +49,5 @@ with Diagram('wasteserviceArch', show=False, outformat='png', graph_attr=graphat
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> transporttrolleyexecutor
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> transporttrolleymover
      transporttrolleymover >> Edge(color='magenta', style='solid', xlabel='dopath', fontcolor='magenta') >> pathexec
+     sys >> Edge(color='red', style='dashed', xlabel='sonardata', fontcolor='red') >> sonarfilter
 diag

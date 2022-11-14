@@ -1,0 +1,111 @@
+System rasp
+
+Dispatch blink : blink(_)
+Dispatch turnon : turnon(_)
+Dispatch turnoff : turnoff(_)
+
+Dispatch sonaractivate   : info(ARG)
+Dispatch sonardeactivate : info(ARG)
+Event    sonar           : distance( V )   			//emitted by sonardatasource	
+Event    sonardata 		 : distance( V )   			//for the application level
+
+Context ctxpi ip [host="localhost" port=8065 ]
+
+CodedQActor sonardatasource context ctxpi className "sonarSupport2022" 
+CodedQActor datacleaner    	context ctxpi className "dataCleaner"
+
+//CodedQActor datalogger     context ctxpi className "dataLogger"
+//CodedQActor distancefilter context ctxpi className "distanceFilter"
+
+
+QActor led context ctxpi {
+	[# 
+		var led : `it.unibo`.radarSystem22.domain.interfaces.ILed? = null
+		var flagBlink = false
+	#]
+	State s0 initial{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+		[#
+			led = utility.LedFactory.createLed()
+			led!!.turnOff()
+		#]
+		
+	}Goto idle
+	
+	State idle {
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+	}Transition t0 whenMsg blink -> blinkon
+					whenMsg turnon -> on
+					whenMsg turnoff -> off
+	State on {
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	TurnOn Led", unibo.comm22.utils.ColorsOut.YELLOW)#]
+		[#led!!.turnOn()#]
+		[# flagBlink = false #]
+	}Goto idle
+	
+	State off {
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	TurnOff Led", unibo.comm22.utils.ColorsOut.YELLOW)#]
+		[#led!!.turnOff()#]
+		[# flagBlink = false #]
+	}Goto idle
+	
+	State blinkon {
+		if[# flagBlink == false#]{
+			[# unibo.comm22.utils.ColorsOut.outappl("$name	|	Blink Led", unibo.comm22.utils.ColorsOut.YELLOW)#]
+			[# flagBlink = true #]
+		}
+		[#led!!.turnOn()#]
+	}Transition t0 whenTime 300 -> blinkoff
+					whenMsg turnon -> on
+					whenMsg turnoff -> off
+	
+	State blinkoff {
+		[#led!!.turnOff()#]
+	}Transition t0 whenTime 300 -> blinkon
+					whenMsg turnon -> on
+					whenMsg turnoff -> off
+}
+
+QActor sonarqak22varesi context ctxpi{
+	[# 
+	   	val sonarActorName = "sonarqak22varesi"
+	#]
+	State s0 initial {
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+		run  utility.configureTheSonar(sonarActorName) 
+		
+	}
+	Transition t0 whenMsg sonaractivate   -> activateTheSonar
+			      whenMsg sonardeactivate -> deactivateTheSonar
+	
+	State activateTheSonar{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+		forward sonardatasource -m sonaractivate : info(ok)  
+
+	}
+	Transition t0  whenEvent sonar         		-> handleSonarData  
+	               whenMsg 	 sonardeactivate 	-> deactivateTheSonar
+	
+	State deactivateTheSonar{
+		forward sonardatasource -m sonardeactivate : info(ko)
+	}
+	Goto end
+ 
+  	State handleSonarData{
+  		 onMsg( sonar : distance(D) ){
+   		 	[# val D = payloadArg(0) #] 
+   		 	[# unibo.comm22.utils.ColorsOut.outappl("$name	|	emitting: ${D}", unibo.comm22.utils.ColorsOut.YELLOW)#] 
+  		 	emit sonardata : distance($D) //for the application
+  		 }
+  	}
+   	Transition t0 whenEvent sonar -> handleSonarData
+   				  whenMsg sonardeactivate -> deactivateTheSonar
+   		
+	State end{ 
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	BYE", unibo.comm22.utils.ColorsOut.YELLOW)#]
+		[# System.exit(0) #]
+	}
+}
+
+
+
