@@ -38,7 +38,7 @@ class Sonarfilter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t035",targetState="handleSonarData",cond=whenEvent("sonardata"))
+					 transition(edgeName="t050",targetState="handleSonarData",cond=whenEvent("sonardata"))
 				}	 
 				state("handleSonarData") { //this:State
 					action { //it:State
@@ -51,14 +51,19 @@ class Sonarfilter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name
 													unibo.comm22.utils.ColorsOut.outappl("$name	|	some err...", unibo.comm22.utils.ColorsOut.YELLOW)
 												}	
 						}
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	received $distance...", unibo.comm22.utils.ColorsOut.YELLOW) 
 						if(  distance <= DLIMIT  
 						 ){if(  !stopFlag  
-						 ){ stopFlag = true  
+						 ){ unibo.comm22.utils.ColorsOut.outappl("$name	|	alarm...", unibo.comm22.utils.ColorsOut.YELLOW) 
+						emit("alarm", "alarm(STOP)" ) 
+						 stopFlag = true  
 						}
 						}
 						else
 						 {if(  stopFlag  
-						  ){ stopFlag = false  
+						  ){ unibo.comm22.utils.ColorsOut.outappl("$name	|	resume...", unibo.comm22.utils.ColorsOut.YELLOW) 
+						 emit("local_resume", "local_resume(RESUME)" ) 
+						  stopFlag = false  
 						 }
 						 }
 						//genTimer( actor, state )
@@ -66,8 +71,8 @@ class Sonarfilter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t036",targetState="handleSonarData",cond=whenEvent("sonardata"))
-					transition(edgeName="t037",targetState="end",cond=whenDispatch("exit"))
+					 transition(edgeName="t051",targetState="handleSonarData",cond=whenEvent("sonardata"))
+					transition(edgeName="t052",targetState="end",cond=whenDispatch("exit"))
 				}	 
 				state("end") { //this:State
 					action { //it:State
