@@ -43,15 +43,15 @@ class Systemstatemanager ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t026",targetState="updateContainerState",cond=whenDispatch("updatecontainer"))
-					transition(edgeName="t027",targetState="updateTrolleyState",cond=whenDispatch("updatetrolley"))
-					transition(edgeName="t028",targetState="updateLedState",cond=whenDispatch("updateled"))
-					transition(edgeName="t029",targetState="sendData",cond=whenDispatch("getdata"))
-					transition(edgeName="t030",targetState="replyData",cond=whenRequest("getledstate"))
-					transition(edgeName="t031",targetState="replyData",cond=whenRequest("getcontainterstate"))
-					transition(edgeName="t032",targetState="replyData",cond=whenRequest("gettrolleystate"))
-					transition(edgeName="t033",targetState="replyData",cond=whenRequest("gettrolleyposition"))
-					transition(edgeName="t034",targetState="end",cond=whenDispatch("exit"))
+					 transition(edgeName="t041",targetState="updateContainerState",cond=whenDispatch("updatecontainer"))
+					transition(edgeName="t042",targetState="updateTrolleyState",cond=whenDispatch("updatetrolley"))
+					transition(edgeName="t043",targetState="updateLedState",cond=whenDispatch("updateled"))
+					transition(edgeName="t044",targetState="sendData",cond=whenDispatch("getdata"))
+					transition(edgeName="t045",targetState="replyData",cond=whenRequest("getledstate"))
+					transition(edgeName="t046",targetState="replyData",cond=whenRequest("getcontainterstate"))
+					transition(edgeName="t047",targetState="replyData",cond=whenRequest("gettrolleystate"))
+					transition(edgeName="t048",targetState="replyData",cond=whenRequest("gettrolleyposition"))
+					transition(edgeName="t049",targetState="end",cond=whenDispatch("exit"))
 				}	 
 				state("updateContainerState") { //this:State
 					action { //it:State

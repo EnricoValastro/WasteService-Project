@@ -44,6 +44,7 @@ Reply    execko      : execko(_)
 Request  dopath      : dopath(PATH)
 Reply    dopathdone  : dopathdone(ARG)
 Reply    dopathfail  : dopathfail(ARG)
+Reply 	 dopathstopped : dopathstopped(ARG)
 
 /* Led Message */
 Dispatch blink 		 : blink(_)
@@ -52,12 +53,21 @@ Dispatch turnoff 	 : turnoff(_)
 
 /* Sonar data */
 Event    sonardata 		 : distance( V )
+Dispatch sonaractivate   : info(ARG)
+
+/* Stop-Resume message */
+Event alarm  : alarm (X)
+Event local_resume : local_resume (X)
+Dispatch trolleystop   : trolleystop(_)
+Dispatch trolleyresume : trolleyresume(_)
+
 
 Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
-Context ctxpi ip[host="127.0.0.1" port=8065]
+Context ctxpi ip[host="raspberrypi.local" port=8065]
 Context ctxwasteservice ip [host="localhost" port=8055]
 
 ExternalQActor led context ctxpi
+ExternalQActor sonarqak22varesi context ctxpi
 ExternalQActor pathexec context ctxbasicrobot
 
 /* *********************************************************************************************
@@ -166,7 +176,7 @@ QActor transporttrolleycore context ctxwasteservice{
 	
 	State init initial{
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.BLUE)#]
-			
+		
 	}Goto idle
 
 	State idle{
@@ -184,6 +194,21 @@ QActor transporttrolleycore context ctxwasteservice{
 		forward systemstatemanager -m updateled : updateled(BLINKING)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
 	}Transition t0 whenReply moveok -> pickupExec
+					whenMsg trolleystop -> stopPickup
+					whenReply moveko -> moveErr
+
+	State stopPickup{
+		forward led -m turnon : turnon(_)
+		forward systemstatemanager -m updateled : updateled(ON)
+		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, STOPPED)
+	}Transition t0 whenMsg trolleyresume -> resumePickup
+	
+	State resumePickup{
+		forward led -m blink : blink(_)
+		forward systemstatemanager -m updateled : updateled(BLINKING)
+		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
+	}Transition t0 whenReply moveok -> pickupExec
+					whenMsg trolleystop -> stopPickup
 					whenReply moveko -> moveErr
 
 	State pickupExec{
@@ -220,6 +245,21 @@ QActor transporttrolleycore context ctxwasteservice{
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
 		
 	}Transition t0 whenReply moveok -> dropoutExec
+					whenMsg trolleystop -> stopDropout
+					whenReply moveko -> moveErr
+
+	State stopDropout{
+		forward led -m turnon : turnon(_)
+		forward systemstatemanager -m updateled : updateled(ON)
+		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, STOPPED)
+	}Transition t0 whenMsg trolleyresume -> resumeDropout
+	
+	State resumeDropout{
+		forward led -m blink : blink(_)
+		forward systemstatemanager -m updateled : updateled(BLINKING)
+		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
+	}Transition t0 whenReply moveok -> dropoutExec
+					whenMsg trolleystop -> stopPickup
 					whenReply moveko -> moveErr
 
 	State dropoutExec{
@@ -335,7 +375,26 @@ QActor transporttrolleymover context ctxwasteservice{
 		
 	}Transition t0 whenReply dopathdone -> lookForFix
 					whenReply dopathfail -> moveKo
+					whenReply dopathstopped -> stop
 				
+	State stop{
+		onMsg(dopathstopped : dopathstopped(ARG)){
+			[# 
+				PATHSTILLTODO = payloadArg(0)
+				unibo.comm22.utils.ColorsOut.outappl("$name	|	stopped, still to do: $PATHSTILLTODO", unibo.comm22.utils.ColorsOut.BLUE)	
+			#]
+			forward transporttrolleycore -m trolleystop : trolleystop(_)
+			
+		}
+	}Transition t0 whenEvent local_resume -> resume
+	
+	State resume{
+		request pathexec -m dopath : dopath($PATHSTILLTODO)
+		forward transporttrolleycore -m trolleyresume : trolleyresume(_)
+	}Transition t0 whenReply dopathdone -> lookForFix
+					whenReply dopathfail -> moveKo
+					whenReply dopathstopped -> stop
+	
 	State lookForFix{
 		[# unibo.kotlin.planner22Util.updateAfterPath(PATH) #]
 		[# someToFix = false #]
@@ -590,15 +649,18 @@ QActor sonarfilter context ctxwasteservice{
 				}	
 			#]	
 		}
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	received $distance...", unibo.comm22.utils.ColorsOut.YELLOW)#]
 		if[# distance <= DLIMIT #]{
 			if[# !stopFlag #]{
-				//emit stop
+				[# unibo.comm22.utils.ColorsOut.outappl("$name	|	alarm...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+				 emit alarm : alarm(STOP)
 				[# stopFlag = true #]
 			}
 		}
 		else{
 			if[# stopFlag #]{
-				//emit resume
+				[# unibo.comm22.utils.ColorsOut.outappl("$name	|	resume...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+				emit local_resume : local_resume (RESUME)
 				[# stopFlag = false #]
 			}
 		}

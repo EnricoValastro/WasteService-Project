@@ -54,7 +54,34 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 					sysaction { //it:State
 					}	 	 
 					 transition(edgeName="t08",targetState="pickupExec",cond=whenReply("moveok"))
-					transition(edgeName="t09",targetState="moveErr",cond=whenReply("moveko"))
+					transition(edgeName="t09",targetState="stopPickup",cond=whenDispatch("trolleystop"))
+					transition(edgeName="t010",targetState="moveErr",cond=whenReply("moveko"))
+				}	 
+				state("stopPickup") { //this:State
+					action { //it:State
+						forward("turnon", "turnon(_)" ,"led" ) 
+						forward("updateled", "updateled(ON)" ,"systemstatemanager" ) 
+						forward("updatetrolley", "updatetrolley(ONTHEROAD,STOPPED)" ,"systemstatemanager" ) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t011",targetState="resumePickup",cond=whenDispatch("trolleyresume"))
+				}	 
+				state("resumePickup") { //this:State
+					action { //it:State
+						forward("blink", "blink(_)" ,"led" ) 
+						forward("updateled", "updateled(BLINKING)" ,"systemstatemanager" ) 
+						forward("updatetrolley", "updatetrolley(ONTHEROAD,MOVING)" ,"systemstatemanager" ) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t012",targetState="pickupExec",cond=whenReply("moveok"))
+					transition(edgeName="t013",targetState="stopPickup",cond=whenDispatch("trolleystop"))
+					transition(edgeName="t014",targetState="moveErr",cond=whenReply("moveko"))
 				}	 
 				state("pickupExec") { //this:State
 					action { //it:State
@@ -67,8 +94,8 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t010",targetState="pickupRes",cond=whenReply("execok"))
-					transition(edgeName="t011",targetState="execErr",cond=whenReply("execko"))
+					 transition(edgeName="t015",targetState="pickupRes",cond=whenReply("execok"))
+					transition(edgeName="t016",targetState="execErr",cond=whenReply("execko"))
 				}	 
 				state("pickupRes") { //this:State
 					action { //it:State
@@ -105,8 +132,35 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t012",targetState="dropoutExec",cond=whenReply("moveok"))
-					transition(edgeName="t013",targetState="moveErr",cond=whenReply("moveko"))
+					 transition(edgeName="t017",targetState="dropoutExec",cond=whenReply("moveok"))
+					transition(edgeName="t018",targetState="stopDropout",cond=whenDispatch("trolleystop"))
+					transition(edgeName="t019",targetState="moveErr",cond=whenReply("moveko"))
+				}	 
+				state("stopDropout") { //this:State
+					action { //it:State
+						forward("turnon", "turnon(_)" ,"led" ) 
+						forward("updateled", "updateled(ON)" ,"systemstatemanager" ) 
+						forward("updatetrolley", "updatetrolley(ONTHEROAD,STOPPED)" ,"systemstatemanager" ) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t020",targetState="resumeDropout",cond=whenDispatch("trolleyresume"))
+				}	 
+				state("resumeDropout") { //this:State
+					action { //it:State
+						forward("blink", "blink(_)" ,"led" ) 
+						forward("updateled", "updateled(BLINKING)" ,"systemstatemanager" ) 
+						forward("updatetrolley", "updatetrolley(ONTHEROAD,MOVING)" ,"systemstatemanager" ) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t021",targetState="dropoutExec",cond=whenReply("moveok"))
+					transition(edgeName="t022",targetState="stopPickup",cond=whenDispatch("trolleystop"))
+					transition(edgeName="t023",targetState="moveErr",cond=whenReply("moveko"))
 				}	 
 				state("dropoutExec") { //this:State
 					action { //it:State
@@ -119,8 +173,8 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t014",targetState="dropoutRes",cond=whenReply("execok"))
-					transition(edgeName="t015",targetState="execErr",cond=whenReply("execko"))
+					 transition(edgeName="t024",targetState="dropoutRes",cond=whenReply("execok"))
+					transition(edgeName="t025",targetState="execErr",cond=whenReply("execko"))
 				}	 
 				state("dropoutRes") { //this:State
 					action { //it:State
@@ -144,8 +198,8 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t016",targetState="backHomeRes",cond=whenReply("moveok"))
-					transition(edgeName="t017",targetState="moveErr",cond=whenReply("moveko"))
+					 transition(edgeName="t026",targetState="backHomeRes",cond=whenReply("moveok"))
+					transition(edgeName="t027",targetState="moveErr",cond=whenReply("moveko"))
 				}	 
 				state("backHomeRes") { //this:State
 					action { //it:State

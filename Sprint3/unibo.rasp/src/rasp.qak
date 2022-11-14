@@ -9,7 +9,9 @@ Dispatch sonardeactivate : info(ARG)
 Event    sonar           : distance( V )   			//emitted by sonardatasource	
 Event    sonardata 		 : distance( V )   			//for the application level
 
+Context ctxwasteservice ip [host="127.0.0.1" port=8055]
 Context ctxpi ip [host="localhost" port=8065 ]
+
 
 CodedQActor sonardatasource context ctxpi className "sonarSupport2022" 
 CodedQActor datacleaner    	context ctxpi className "dataCleaner"

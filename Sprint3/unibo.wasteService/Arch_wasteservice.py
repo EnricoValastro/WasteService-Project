@@ -23,6 +23,7 @@ with Diagram('wasteserviceArch', show=False, outformat='png', graph_attr=graphat
           pathexec=Custom('pathexec(ext)','./qakicons/externalQActor.png')
      with Cluster('ctxpi', graph_attr=nodeattr):
           led=Custom('led(ext)','./qakicons/externalQActor.png')
+          sonarqak22varesi=Custom('sonarqak22varesi(ext)','./qakicons/externalQActor.png')
      with Cluster('ctxwasteservice', graph_attr=nodeattr):
           wasteservice=Custom('wasteservice','./qakicons/symActorSmall.png')
           transporttrolleycore=Custom('transporttrolleycore','./qakicons/symActorSmall.png')
@@ -40,8 +41,8 @@ with Diagram('wasteserviceArch', show=False, outformat='png', graph_attr=graphat
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='blink', fontcolor='blue') >> led
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='updateled', fontcolor='blue') >> systemstatemanager
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='updatetrolley', fontcolor='blue') >> systemstatemanager
-     transporttrolleycore >> Edge(color='magenta', style='solid', xlabel='execaction', fontcolor='magenta') >> transporttrolleyexecutor
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='turnon', fontcolor='blue') >> led
+     transporttrolleycore >> Edge(color='magenta', style='solid', xlabel='execaction', fontcolor='magenta') >> transporttrolleyexecutor
      transporttrolleycore >> Edge( xlabel='local_dropoutdone', **eventedgeattr, fontcolor='red') >> sys
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='turnoff', fontcolor='blue') >> led
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> wasteservice
@@ -49,5 +50,10 @@ with Diagram('wasteserviceArch', show=False, outformat='png', graph_attr=graphat
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> transporttrolleyexecutor
      transporttrolleycore >> Edge(color='blue', style='solid', xlabel='exit', fontcolor='blue') >> transporttrolleymover
      transporttrolleymover >> Edge(color='magenta', style='solid', xlabel='dopath', fontcolor='magenta') >> pathexec
+     transporttrolleymover >> Edge(color='blue', style='solid', xlabel='trolleystop', fontcolor='blue') >> transporttrolleycore
+     sys >> Edge(color='red', style='dashed', xlabel='local_resume', fontcolor='red') >> transporttrolleymover
+     transporttrolleymover >> Edge(color='blue', style='solid', xlabel='trolleyresume', fontcolor='blue') >> transporttrolleycore
      sys >> Edge(color='red', style='dashed', xlabel='sonardata', fontcolor='red') >> sonarfilter
+     sonarfilter >> Edge( xlabel='alarm', **eventedgeattr, fontcolor='red') >> sys
+     sonarfilter >> Edge( xlabel='local_resume', **eventedgeattr, fontcolor='red') >> sys
 diag

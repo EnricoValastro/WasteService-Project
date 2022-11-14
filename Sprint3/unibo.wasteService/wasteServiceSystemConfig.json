@@ -5,7 +5,7 @@
         "PLASTICBOX": [10, 8, 0],
         "GLASSBOX": [10, 0, 270]
     },
-    "MAXPB": 500,
-    "MAXGB": 500,
-    "DLIMIT": 40
+    "MAXPB": 1000,
+    "MAXGB": 1000,
+    "DLIMIT": 80
 }

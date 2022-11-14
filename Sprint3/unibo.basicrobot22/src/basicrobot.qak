@@ -253,8 +253,16 @@ QActor pathexec context ctxbasicrobot{
 		printCurrentMessage
 		[# var PathStillTodo = pathut.getPathTodo() #]
 		updateResource [# "pathstilltodo($PathStillTodo)" #]	
-		println("PATH FAILURE - SORRY. PathStillTodo=$PathStillTodo")
-		replyTo dopath with dopathfail : dopathfail( $PathStillTodo )
+		
+		onMsg(stepfail : stepfail(DURATION, CAUSE) ){
+			println("PATH FAILURE - SORRY. PathStillTodo=$PathStillTodo")
+			replyTo dopath with dopathfail : dopathfail( $PathStillTodo )	
+		}
+		onMsg(alarm : alarm(X) ){
+			println("Pathexec	|	stopped")
+			replyTo dopath with dopathstopped : dopathstopped( $PathStillTodo )
+		}
+		
 	}	
 	Goto s0
 
