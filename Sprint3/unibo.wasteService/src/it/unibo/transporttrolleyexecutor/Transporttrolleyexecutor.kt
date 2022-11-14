@@ -36,8 +36,8 @@ class Transporttrolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorB
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t024",targetState="actionEval",cond=whenRequest("execaction"))
-					transition(edgeName="t025",targetState="end",cond=whenDispatch("exit"))
+					 transition(edgeName="t039",targetState="actionEval",cond=whenRequest("execaction"))
+					transition(edgeName="t040",targetState="end",cond=whenDispatch("exit"))
 				}	 
 				state("actionEval") { //this:State
 					action { //it:State

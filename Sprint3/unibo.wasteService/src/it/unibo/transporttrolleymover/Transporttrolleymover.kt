@@ -46,8 +46,8 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t018",targetState="destinationEval",cond=whenRequest("moveto"))
-					transition(edgeName="t019",targetState="end",cond=whenDispatch("exit"))
+					 transition(edgeName="t028",targetState="destinationEval",cond=whenRequest("moveto"))
+					transition(edgeName="t029",targetState="end",cond=whenDispatch("exit"))
 				}	 
 				state("destinationEval") { //this:State
 					action { //it:State
@@ -91,8 +91,36 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t020",targetState="lookForFix",cond=whenReply("dopathdone"))
-					transition(edgeName="t021",targetState="moveKo",cond=whenReply("dopathfail"))
+					 transition(edgeName="t030",targetState="lookForFix",cond=whenReply("dopathdone"))
+					transition(edgeName="t031",targetState="moveKo",cond=whenReply("dopathfail"))
+					transition(edgeName="t032",targetState="stop",cond=whenReply("dopathstopped"))
+				}	 
+				state("stop") { //this:State
+					action { //it:State
+						if( checkMsgContent( Term.createTerm("dopathstopped(ARG)"), Term.createTerm("dopathstopped(ARG)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 PATHSTILLTODO = payloadArg(0)  
+								forward("trolleystop", "trolleystop(_)" ,"transporttrolleycore" ) 
+						}
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t033",targetState="resume",cond=whenEvent("local_resume"))
+				}	 
+				state("resume") { //this:State
+					action { //it:State
+						request("dopath", "dopath($PATHSTILLTODO)" ,"pathexec" )  
+						forward("trolleyresume", "trolleyresume(_)" ,"transporttrolleycore" ) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t034",targetState="lookForFix",cond=whenReply("dopathdone"))
+					transition(edgeName="t035",targetState="moveKo",cond=whenReply("dopathfail"))
+					transition(edgeName="t036",targetState="stop",cond=whenReply("dopathstopped"))
 				}	 
 				state("lookForFix") { //this:State
 					action { //it:State
@@ -158,8 +186,8 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t022",targetState="lookForFix",cond=whenReply("dopathdone"))
-					transition(edgeName="t023",targetState="moveKo",cond=whenReply("dopathfail"))
+					 transition(edgeName="t037",targetState="lookForFix",cond=whenReply("dopathdone"))
+					transition(edgeName="t038",targetState="moveKo",cond=whenReply("dopathfail"))
 				}	 
 				state("end") { //this:State
 					action { //it:State
