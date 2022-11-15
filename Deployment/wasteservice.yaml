@@ -1,0 +1,8 @@
+version: '3.3'
+services:
+  wasteservice:
+    image: docker.io/alerei94/wasteservice-1.0
+    ports:
+      - 8055:8055/tcp
+      - 8055:8055/udp
+   
