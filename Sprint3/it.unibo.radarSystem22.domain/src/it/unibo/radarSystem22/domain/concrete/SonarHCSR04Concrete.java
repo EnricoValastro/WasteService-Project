@@ -43,12 +43,9 @@ public class SonarHCSR04Concrete extends SonarModel implements ISonar{
 
 			if( data == null ) return;
 			int v = Integer.parseInt(data);
-			ColorsOut.out("SonarConcrete | v=" + v );
 			int lastSonarVal = curVal.getVal();
-			if( lastSonarVal != v && v < DomainSystemConfig.sonarDistanceMax) {	
-				//Eliminiamo dati del tipo 3430 //TODO: filtri in sottosistemi a stream
+			if( lastSonarVal != v && v < DomainSystemConfig.sonarDistanceMax) {
   	 			updateDistance( v );
-				System.out.println(v);
 			}
        }catch( Exception e) {
        		ColorsOut.outerr("SonarConcrete |  " + e.getMessage() );

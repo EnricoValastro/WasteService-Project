@@ -11,13 +11,13 @@ import org.json.JSONTokener;
 
 public class DomainSystemConfig {
 
-	public static  String  sonarType		 = "HCSR04";
+	public static  String  sonarType	 = "HCSR04";
 	public static  boolean simulation    = true;
  	public static  boolean ledGui        = false;
 	public static  boolean webCam        = false;
  
-	public static int sonarDelay          =  2000;
-	public static int sonarDistanceMax    =  150;     
+	public static int sonarDelay          =  1000;
+	public static int sonarDistanceMax    =  200;
 	public static boolean sonarObservable =  false;     
 	public static int DLIMIT              =  15;     
 	public static int testingDistance     =  DLIMIT - 2;     

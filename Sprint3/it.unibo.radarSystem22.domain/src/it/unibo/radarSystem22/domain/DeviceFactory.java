@@ -28,12 +28,7 @@ public class DeviceFactory {
 	}
 
 	public static ISonar createSonar() {
-		//Colors.out("DeviceFactory | createSonar simulated="+RadarSystemConfig.simulation);
-		if( DomainSystemConfig.simulation)  {
-			return SonarModel.createSonarMock();
-		}else { 
-			return SonarModel.createSonarConcrete();
-		}
+		return SonarModel.create();
 	}
  
 	//We do not have mock for RadarGui
