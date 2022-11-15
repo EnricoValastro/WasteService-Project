@@ -25,22 +25,20 @@ class sonarSupport2022(name : String ) : ActorBasic( name ) {
     }
 
     suspend fun doRead(   ){
-
+        var m1 = ""
+        lateinit var event : IApplMessage
         var data = 0
         GlobalScope.launch{	//to allow message handling
             while( sonar.isActive ){
                 data = sonar.distance.`val`
-                try{
-                    if( data <= 100 ){	//A first filter ...
-                        val m1 = "distance( ${data*2} )"
-                        val event = MsgUtil.buildEvent( "sonarSupport2022","sonar",m1)
+                if( data <= 100 ){	//A first filter ...
+                    m1 = "distance( ${data*2} )"
+                    event = MsgUtil.buildEvent( "sonarSupport2022","sonar",m1)
 
-                        emitLocalStreamEvent( event )		//not propagated to remote actors
-                        println("sonarSupport2022 doRead: $event "   )
-                    }
-                }catch(e: Exception){
-                    println("sonarSupport2022 doRead ERROR: $e "   )
+                    emitLocalStreamEvent( event )		//not propagated to remote actors
+                    println("sonarSupport2022 doRead: $event "   )
                 }
+
                 delay( 800 )
             }
         }

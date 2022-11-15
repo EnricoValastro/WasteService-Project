@@ -381,6 +381,7 @@ QActor transporttrolleymover context ctxwasteservice{
 		onMsg(dopathstopped : dopathstopped(ARG)){
 			[# 
 				PATHSTILLTODO = payloadArg(0)
+				
 				unibo.comm22.utils.ColorsOut.outappl("$name	|	stopped, still to do: $PATHSTILLTODO", unibo.comm22.utils.ColorsOut.BLUE)	
 			#]
 			forward transporttrolleycore -m trolleystop : trolleystop(_)
@@ -389,7 +390,9 @@ QActor transporttrolleymover context ctxwasteservice{
 	}Transition t0 whenEvent local_resume -> resume
 	
 	State resume{
+		[#unibo.comm22.utils.ColorsOut.outappl("$name	|	stopped, still to do: $PATHSTILLTODO", unibo.comm22.utils.ColorsOut.BLUE)#]
 		request pathexec -m dopath : dopath($PATHSTILLTODO)
+		
 		forward transporttrolleycore -m trolleyresume : trolleyresume(_)
 	}Transition t0 whenReply dopathdone -> lookForFix
 					whenReply dopathfail -> moveKo

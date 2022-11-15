@@ -126,16 +126,8 @@ class Pathexec ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 						 var PathStillTodo = pathut.getPathTodo()  
 						updateResourceRep( "pathstilltodo($PathStillTodo)"  
 						)
-						if( checkMsgContent( Term.createTerm("stepfail(DURATION,CAUSE)"), Term.createTerm("stepfail(DURATION,CAUSE)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								println("PATH FAILURE - SORRY. PathStillTodo=$PathStillTodo")
-								answer("dopath", "dopathfail", "dopathfail($PathStillTodo)"   )  
-						}
-						if( checkMsgContent( Term.createTerm("alarm(X)"), Term.createTerm("alarm(X)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								println("Pathexec	|	stopped")
-								answer("dopath", "dopathstopped", "dopathstopped($PathStillTodo)"   )  
-						}
+						println("Pathexec	|	stopped")
+						answer("dopath", "dopathstopped", "dopathstopped($PathStillTodo)"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

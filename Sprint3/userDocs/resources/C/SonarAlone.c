@@ -19,7 +19,7 @@ using namespace std;
 g++  SonarAlone.c -l wiringPi -o  SonarAlone
  */
 void setup() {
-	cout << "setUp " << endl;
+	//cout << "setUp " << endl;
 	wiringPiSetup();
 	pinMode(TRIG, OUTPUT);
 	pinMode(ECHO, INPUT);
@@ -52,9 +52,8 @@ int main(void) {
 	int cm ;
 	setup();
 	while(1) {
- 		cm = getCM();
-		//cout << "distance(" << cm  << ",forward,front)" << endl;
-		cout <<  cm   << endl;
+ 		cm = getCM(); 		
+		cout <<  cm   << endl ;  //flush after ending a new line
 		delay(30);
 	}
  	return 0;
