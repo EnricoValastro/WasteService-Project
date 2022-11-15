@@ -40,7 +40,7 @@ public class SonarHCSR04Concrete extends SonarModel implements ISonar{
 	protected void sonarProduce( ) {
         try {
 			String data = reader.readLine();
-
+			System.out.println(data);
 			if( data == null ) return;
 			int v = Integer.parseInt(data);
 			int lastSonarVal = curVal.getVal();
