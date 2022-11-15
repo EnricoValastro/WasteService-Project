@@ -54,7 +54,7 @@ int main(void) {
 	while(1) {
  		cm = getCM(); 		
 		cout <<  cm   << endl ;  //flush after ending a new line
-		delay(30);
+		delay(500);
 	}
  	return 0;
 }
