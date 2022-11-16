@@ -237,7 +237,7 @@ QActor pathexec context ctxbasicrobot{
 		updateResource [# "pathexecdostep($CurMoveTodo)" #]
 		request basicrobot -m step : step( $StepTime )
 	}	
-	Transition t0 whenEvent alarm     -> endWorkKo
+	Transition t0 whenEvent alarm     -> stop
  				  whenReply stepdone  -> nextMove  
 	              whenReply stepfail  -> endWorkKo                       
 	              
@@ -247,18 +247,21 @@ QActor pathexec context ctxbasicrobot{
 		updateResource [# "path $PathTodo done" #]	
 		replyTo dopath with dopathdone : dopathdone( ok )
 	}
-	Goto s0 
+	Goto s0
+	
+	State stop{
+		[# var PathStillTodo = pathut.getPathTodo() #]
+		[# println("Pathexec stopped	|	$PathStillTodo") #]
+		
+		replyTo dopath with dopathstopped : dopathstopped( $PathStillTodo )
+	}Transition t0 whenTime 2000 -> s0
+					whenReply  stepdone -> s0
  
 	State endWorkKo{
 		printCurrentMessage
 		[# var PathStillTodo = pathut.getPathTodo() #]
 		updateResource [# "pathstilltodo($PathStillTodo)" #]	
-		
-		
-		println("Pathexec	|	stopped")
-		replyTo dopath with dopathstopped : dopathstopped( $PathStillTodo )
-		
-		
+		replyTo dopath with dopathfail : dopathfail( $PathStillTodo )
 	}	
 	Goto s0
 

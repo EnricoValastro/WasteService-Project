@@ -116,3 +116,13 @@ application {
         attributes 'Main-Class': "$mainClassName"
     }
 }
+
+distributions {
+    main{
+        contents{
+            from "./DomainSystemConfig.json"
+            from "./rasp.pl"
+            from "./sysRules.pl"
+        }
+    }
+}

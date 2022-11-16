@@ -259,7 +259,7 @@ QActor transporttrolleycore context ctxwasteservice{
 		forward systemstatemanager -m updateled : updateled(BLINKING)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
 	}Transition t0 whenReply moveok -> dropoutExec
-					whenMsg trolleystop -> stopPickup
+					whenMsg trolleystop -> stopDropout
 					whenReply moveko -> moveErr
 
 	State dropoutExec{
@@ -283,6 +283,21 @@ QActor transporttrolleycore context ctxwasteservice{
 		forward systemstatemanager -m updateled : updateled(BLINKING)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
 	}Transition t0 whenReply moveok -> backHomeRes
+					whenMsg trolleystop -> stopBackHome
+					whenReply moveko -> moveErr
+
+	State stopBackHome{
+		forward led -m turnon : turnon(_)
+		forward systemstatemanager -m updateled : updateled(ON)
+		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, STOPPED)
+	}Transition t0 whenMsg trolleyresume -> resumeBackHome
+	
+	State resumeBackHome{
+		forward led -m blink : blink(_)
+		forward systemstatemanager -m updateled : updateled(BLINKING)
+		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
+	}Transition t0 whenReply moveok -> backHomeRes
+					whenMsg trolleystop -> stopBackHome
 					whenReply moveko -> moveErr
 
 	State backHomeRes{
@@ -382,7 +397,7 @@ QActor transporttrolleymover context ctxwasteservice{
 			[# 
 				PATHSTILLTODO = payloadArg(0)
 				
-				unibo.comm22.utils.ColorsOut.outappl("$name	|	stopped, still to do: $PATHSTILLTODO", unibo.comm22.utils.ColorsOut.BLUE)	
+				unibo.comm22.utils.ColorsOut.outappl("$name	|	stopped, path still to do: $PATHSTILLTODO", unibo.comm22.utils.ColorsOut.BLUE)	
 			#]
 			forward transporttrolleycore -m trolleystop : trolleystop(_)
 			
@@ -390,7 +405,9 @@ QActor transporttrolleymover context ctxwasteservice{
 	}Transition t0 whenEvent local_resume -> resume
 	
 	State resume{
-		[#unibo.comm22.utils.ColorsOut.outappl("$name	|	stopped, still to do: $PATHSTILLTODO", unibo.comm22.utils.ColorsOut.BLUE)#]
+		[# 
+			unibo.comm22.utils.ColorsOut.outappl("$name	|	resumed, : $PATHSTILLTODO", unibo.comm22.utils.ColorsOut.BLUE)
+		#]
 		request pathexec -m dopath : dopath($PATHSTILLTODO)
 		
 		forward transporttrolleycore -m trolleyresume : trolleyresume(_)
@@ -647,23 +664,23 @@ QActor sonarfilter context ctxwasteservice{
 			[#
 				try{
 					distance = payloadArg(0).toInt()
+					unibo.comm22.utils.ColorsOut.outappl("$name	|	handle data: $distance", unibo.comm22.utils.ColorsOut.YELLOW)
 				}catch(e : Exception){ 
 					unibo.comm22.utils.ColorsOut.outappl("$name	|	some err...", unibo.comm22.utils.ColorsOut.YELLOW)
 				}	
 			#]	
 		}
-		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	received $distance...", unibo.comm22.utils.ColorsOut.YELLOW)#]
 		if[# distance <= DLIMIT #]{
 			if[# !stopFlag #]{
-				[# unibo.comm22.utils.ColorsOut.outappl("$name	|	alarm...", unibo.comm22.utils.ColorsOut.YELLOW)#]
-				 emit alarm : alarm(STOP)
+				[# unibo.comm22.utils.ColorsOut.outappl("$name	|	emitting alarm...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+				 emit alarm : alarm(stop)
 				[# stopFlag = true #]
 			}
 		}
 		else{
 			if[# stopFlag #]{
-				[# unibo.comm22.utils.ColorsOut.outappl("$name	|	resume...", unibo.comm22.utils.ColorsOut.YELLOW)#]
-				emit local_resume : local_resume (RESUME)
+				[# unibo.comm22.utils.ColorsOut.outappl("$name	|	emitting resume...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+				emit local_resume : local_resume (resume)
 				[# stopFlag = false #]
 			}
 		}

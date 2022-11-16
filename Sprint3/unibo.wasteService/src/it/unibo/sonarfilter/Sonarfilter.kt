@@ -38,7 +38,7 @@ class Sonarfilter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t050",targetState="handleSonarData",cond=whenEvent("sonardata"))
+					 transition(edgeName="t055",targetState="handleSonarData",cond=whenEvent("sonardata"))
 				}	 
 				state("handleSonarData") { //this:State
 					action { //it:State
@@ -47,22 +47,22 @@ class Sonarfilter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name
 								
 												try{
 													distance = payloadArg(0).toInt()
+													unibo.comm22.utils.ColorsOut.outappl("$name	|	handle data: $distance", unibo.comm22.utils.ColorsOut.YELLOW)
 												}catch(e : Exception){ 
 													unibo.comm22.utils.ColorsOut.outappl("$name	|	some err...", unibo.comm22.utils.ColorsOut.YELLOW)
 												}	
 						}
-						 unibo.comm22.utils.ColorsOut.outappl("$name	|	received $distance...", unibo.comm22.utils.ColorsOut.YELLOW) 
 						if(  distance <= DLIMIT  
 						 ){if(  !stopFlag  
-						 ){ unibo.comm22.utils.ColorsOut.outappl("$name	|	alarm...", unibo.comm22.utils.ColorsOut.YELLOW) 
-						emit("alarm", "alarm(STOP)" ) 
+						 ){ unibo.comm22.utils.ColorsOut.outappl("$name	|	emitting alarm...", unibo.comm22.utils.ColorsOut.YELLOW) 
+						emit("alarm", "alarm(stop)" ) 
 						 stopFlag = true  
 						}
 						}
 						else
 						 {if(  stopFlag  
-						  ){ unibo.comm22.utils.ColorsOut.outappl("$name	|	resume...", unibo.comm22.utils.ColorsOut.YELLOW) 
-						 emit("local_resume", "local_resume(RESUME)" ) 
+						  ){ unibo.comm22.utils.ColorsOut.outappl("$name	|	emitting resume...", unibo.comm22.utils.ColorsOut.YELLOW) 
+						 emit("local_resume", "local_resume(resume)" ) 
 						  stopFlag = false  
 						 }
 						 }
@@ -71,8 +71,8 @@ class Sonarfilter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t051",targetState="handleSonarData",cond=whenEvent("sonardata"))
-					transition(edgeName="t052",targetState="end",cond=whenDispatch("exit"))
+					 transition(edgeName="t056",targetState="handleSonarData",cond=whenEvent("sonardata"))
+					transition(edgeName="t057",targetState="end",cond=whenDispatch("exit"))
 				}	 
 				state("end") { //this:State
 					action { //it:State

@@ -26,20 +26,21 @@ class sonarSupport2022(name : String ) : ActorBasic( name ) {
 
     suspend fun doRead(   ){
         var m1 = ""
+        var lastSonarVal : Int = sonar.distance.`val`
         lateinit var event : IApplMessage
         var data = 0
         GlobalScope.launch{	//to allow message handling
             while( sonar.isActive ){
                 data = sonar.distance.`val`
-                if( data <= 100 ){	//A first filter ...
+                if(data != lastSonarVal){	//A first filter ...
+                    lastSonarVal = data
                     m1 = "distance( ${data*2} )"
                     event = MsgUtil.buildEvent( "sonarSupport2022","sonar",m1)
-
                     emitLocalStreamEvent( event )		//not propagated to remote actors
-                    println("sonarSupport2022 doRead: $event "   )
+                    println("sonarSupport2022   |   read: $data, propagate: ${data*2} ")
                 }
 
-                delay( 800 )
+                delay( 500 ) //avoid to fast generation
             }
         }
     }

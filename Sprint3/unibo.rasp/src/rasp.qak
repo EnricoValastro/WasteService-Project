@@ -9,7 +9,7 @@ Dispatch sonardeactivate : info(ARG)
 Event    sonar           : distance( V )   			//emitted by sonardatasource	
 Event    sonardata 		 : distance( V )   			//for the application level
 
-Context ctxwasteservice ip [host="192.168.14.199" port=8055]
+Context ctxwasteservice ip [host="192.168.1.4" port=8055]
 Context ctxpi ip [host="localhost" port=8065 ]
 
 

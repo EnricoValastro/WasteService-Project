@@ -3,7 +3,7 @@
   "TESTING"           : false,
   "SONARTYPE"         : "HCSR04",
   "SONARDELAY"        : 1000,
-  "SONARDISTANCEMAX"  : 200,
+  "SONARDISTANCEMAX"  : 500,
   "SONAROBSERVABLE"   : false,
   "TESTINGDISTANCE"   : 30,
   "LEDGUI"            : false

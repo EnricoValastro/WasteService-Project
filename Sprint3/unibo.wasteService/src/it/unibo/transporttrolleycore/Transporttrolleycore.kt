@@ -159,7 +159,7 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 					sysaction { //it:State
 					}	 	 
 					 transition(edgeName="t021",targetState="dropoutExec",cond=whenReply("moveok"))
-					transition(edgeName="t022",targetState="stopPickup",cond=whenDispatch("trolleystop"))
+					transition(edgeName="t022",targetState="stopDropout",cond=whenDispatch("trolleystop"))
 					transition(edgeName="t023",targetState="moveErr",cond=whenReply("moveko"))
 				}	 
 				state("dropoutExec") { //this:State
@@ -199,7 +199,34 @@ class Transporttrolleycore ( name: String, scope: CoroutineScope  ) : ActorBasic
 					sysaction { //it:State
 					}	 	 
 					 transition(edgeName="t026",targetState="backHomeRes",cond=whenReply("moveok"))
-					transition(edgeName="t027",targetState="moveErr",cond=whenReply("moveko"))
+					transition(edgeName="t027",targetState="stopBackHome",cond=whenDispatch("trolleystop"))
+					transition(edgeName="t028",targetState="moveErr",cond=whenReply("moveko"))
+				}	 
+				state("stopBackHome") { //this:State
+					action { //it:State
+						forward("turnon", "turnon(_)" ,"led" ) 
+						forward("updateled", "updateled(ON)" ,"systemstatemanager" ) 
+						forward("updatetrolley", "updatetrolley(ONTHEROAD,STOPPED)" ,"systemstatemanager" ) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t029",targetState="resumeBackHome",cond=whenDispatch("trolleyresume"))
+				}	 
+				state("resumeBackHome") { //this:State
+					action { //it:State
+						forward("blink", "blink(_)" ,"led" ) 
+						forward("updateled", "updateled(BLINKING)" ,"systemstatemanager" ) 
+						forward("updatetrolley", "updatetrolley(ONTHEROAD,MOVING)" ,"systemstatemanager" ) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t030",targetState="backHomeRes",cond=whenReply("moveok"))
+					transition(edgeName="t031",targetState="stopBackHome",cond=whenDispatch("trolleystop"))
+					transition(edgeName="t032",targetState="moveErr",cond=whenReply("moveko"))
 				}	 
 				state("backHomeRes") { //this:State
 					action { //it:State

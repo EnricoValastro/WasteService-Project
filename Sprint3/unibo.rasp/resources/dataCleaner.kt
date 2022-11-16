@@ -6,7 +6,7 @@ import it.unibo.kactor.IApplMessage
 
 class dataCleaner (name : String ) : ActorBasic( name ) {
 val LimitLow  = 2	
-val LimitHigh = 100
+val LimitHigh = 500
 
 
     override suspend fun actorBody(msg: IApplMessage) {
@@ -24,7 +24,8 @@ val LimitHigh = 100
  		val data  = (Term.createTerm( msg.msgContent() ) as Struct).getArg(0).toString()
 		val Distance = Integer.parseInt( data )
 
- 		if( Distance > LimitLow && Distance < LimitHigh ){
+
+		if (Distance > LimitLow && Distance < LimitHigh){
 			emitLocalStreamEvent( msg ) //propagate
      	}
  	}

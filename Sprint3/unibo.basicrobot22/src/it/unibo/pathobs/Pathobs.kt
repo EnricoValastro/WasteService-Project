@@ -24,7 +24,7 @@ class Pathobs ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t014",targetState="handleUpdate",cond=whenDispatch("coapUpdate"))
+					 transition(edgeName="t016",targetState="handleUpdate",cond=whenDispatch("coapUpdate"))
 				}	 
 				state("handleUpdate") { //this:State
 					action { //it:State
@@ -37,7 +37,7 @@ class Pathobs ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t015",targetState="handleUpdate",cond=whenDispatch("coapUpdate"))
+					 transition(edgeName="t017",targetState="handleUpdate",cond=whenDispatch("coapUpdate"))
 				}	 
 			}
 		}

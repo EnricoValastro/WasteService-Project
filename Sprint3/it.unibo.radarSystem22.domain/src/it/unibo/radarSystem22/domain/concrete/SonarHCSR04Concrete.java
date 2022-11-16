@@ -40,11 +40,10 @@ public class SonarHCSR04Concrete extends SonarModel implements ISonar{
 	protected void sonarProduce( ) {
         try {
 			String data = reader.readLine();
-			System.out.println(data);
 			if( data == null ) return;
 			int v = Integer.parseInt(data);
 			int lastSonarVal = curVal.getVal();
-			if( lastSonarVal != v && v < DomainSystemConfig.sonarDistanceMax) {
+			if( lastSonarVal != v) {
   	 			updateDistance( v );
 			}
        }catch( Exception e) {

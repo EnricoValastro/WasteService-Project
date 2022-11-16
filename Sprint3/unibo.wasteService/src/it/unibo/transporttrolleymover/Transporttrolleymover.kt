@@ -46,8 +46,8 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t028",targetState="destinationEval",cond=whenRequest("moveto"))
-					transition(edgeName="t029",targetState="end",cond=whenDispatch("exit"))
+					 transition(edgeName="t033",targetState="destinationEval",cond=whenRequest("moveto"))
+					transition(edgeName="t034",targetState="end",cond=whenDispatch("exit"))
 				}	 
 				state("destinationEval") { //this:State
 					action { //it:State
@@ -91,9 +91,9 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t030",targetState="lookForFix",cond=whenReply("dopathdone"))
-					transition(edgeName="t031",targetState="moveKo",cond=whenReply("dopathfail"))
-					transition(edgeName="t032",targetState="stop",cond=whenReply("dopathstopped"))
+					 transition(edgeName="t035",targetState="lookForFix",cond=whenReply("dopathdone"))
+					transition(edgeName="t036",targetState="moveKo",cond=whenReply("dopathfail"))
+					transition(edgeName="t037",targetState="stop",cond=whenReply("dopathstopped"))
 				}	 
 				state("stop") { //this:State
 					action { //it:State
@@ -102,7 +102,7 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 								 
 												PATHSTILLTODO = payloadArg(0)
 												
-												unibo.comm22.utils.ColorsOut.outappl("$name	|	stopped, still to do: $PATHSTILLTODO", unibo.comm22.utils.ColorsOut.BLUE)	
+												unibo.comm22.utils.ColorsOut.outappl("$name	|	stopped, path still to do: $PATHSTILLTODO", unibo.comm22.utils.ColorsOut.BLUE)	
 								forward("trolleystop", "trolleystop(_)" ,"transporttrolleycore" ) 
 						}
 						//genTimer( actor, state )
@@ -110,11 +110,12 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t033",targetState="resume",cond=whenEvent("local_resume"))
+					 transition(edgeName="t038",targetState="resume",cond=whenEvent("local_resume"))
 				}	 
 				state("resume") { //this:State
 					action { //it:State
-						unibo.comm22.utils.ColorsOut.outappl("$name	|	stopped, still to do: $PATHSTILLTODO", unibo.comm22.utils.ColorsOut.BLUE) 
+						 
+									unibo.comm22.utils.ColorsOut.outappl("$name	|	resumed, : $PATHSTILLTODO", unibo.comm22.utils.ColorsOut.BLUE)
 						request("dopath", "dopath($PATHSTILLTODO)" ,"pathexec" )  
 						forward("trolleyresume", "trolleyresume(_)" ,"transporttrolleycore" ) 
 						//genTimer( actor, state )
@@ -122,9 +123,9 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t034",targetState="lookForFix",cond=whenReply("dopathdone"))
-					transition(edgeName="t035",targetState="moveKo",cond=whenReply("dopathfail"))
-					transition(edgeName="t036",targetState="stop",cond=whenReply("dopathstopped"))
+					 transition(edgeName="t039",targetState="lookForFix",cond=whenReply("dopathdone"))
+					transition(edgeName="t040",targetState="moveKo",cond=whenReply("dopathfail"))
+					transition(edgeName="t041",targetState="stop",cond=whenReply("dopathstopped"))
 				}	 
 				state("lookForFix") { //this:State
 					action { //it:State
@@ -190,8 +191,8 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t037",targetState="lookForFix",cond=whenReply("dopathdone"))
-					transition(edgeName="t038",targetState="moveKo",cond=whenReply("dopathfail"))
+					 transition(edgeName="t042",targetState="lookForFix",cond=whenReply("dopathdone"))
+					transition(edgeName="t043",targetState="moveKo",cond=whenReply("dopathfail"))
 				}	 
 				state("end") { //this:State
 					action { //it:State
