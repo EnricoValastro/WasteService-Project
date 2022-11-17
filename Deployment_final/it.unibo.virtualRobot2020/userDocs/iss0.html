@@ -1,0 +1,494 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <!--
+<link rel="stylesheet" type="text/css" href="../css/issStyle1.css">
+<script type="text/javascript" src="../css/issStyle.js"></script>
+-->
+<style type="text/css">
+body
+{
+    margin-left:  30px;
+    margin-right: 30px;
+};
+
+P
+{
+    font-family: Tahoma;
+    font-size: 10pt;
+};
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+	font-size: 93%;
+}
+
+a:hover {
+    background-color: #cccccc;
+}
+
+
+hr {
+    clear: both;
+    height: 1px;
+    color: #242424;
+    background-color: transparent;
+}
+
+h1, h2, h3 {
+    color: #242424;
+    clear: left;
+    font: 100% Tahoma, Helvetica, Arial, sans-serif;
+    margin-bottom: 0.5em;
+    padding-top: 0.5em;
+	border-radius: 10px;
+	padding: 5px;
+}
+
+top {
+	width: 100%;
+}
+
+
+#i {
+    color: #ff1010;
+}
+tt{
+	font-family: "Arial";
+    font-size: 90%;
+	color: #006600;
+}
+em{
+	font-family: "Arial";
+    font-size: 80%;
+	font-weight: bold;
+	border-style:solid;
+	border-color: #abe876;
+    color: #1632cc;
+}
+bc{
+	font-family: "Arial";
+	font-size: 90%;
+	font-weight: bold;
+    color: #990000;
+	background-color: #fcf8c7;
+}
+ks{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	font-size: 90%;
+}
+kc{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #008000	;
+	font-size: 90%;
+}
+pre{
+	font-family: "Consolas";
+	font-size: 85%;
+	background-color: #f5f5f5;
+	border: 1.5px solid silver;
+	padding: 5px;
+}
+m{
+	font-family: "Helvetica";
+	line-height: 100%;
+ 	font-size: 75%;
+}
+div.body{
+	 
+    font-size: 18px;
+}
+k{
+    color: #990000;
+	font-weight: bold;
+	font-size: 90%;
+}
+h1 {
+    font-size: 150%;
+    background-color: #b2c0ff;
+	padding: 10px;
+}
+
+h2 {
+    background-color: #9ed8ff;
+    font-size: 130%;
+}
+
+h3 {
+	background-color: #e6ccff;
+    font-size: 100%;
+}
+h4 {
+    background-color: #ccffcc;
+    font-size: 100%;
+	width: 95%;
+	border-radius: 5px;
+	padding: 2px;
+}
+h5 {
+    background-color: #d5ffb0;
+    font-size: 100%;
+
+}
+div.req{
+	background-color: #d9ffb3;
+    font-size: 18px;
+	width: 700px;
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}
+div.remark{
+	background-color: #E3F2FD;
+    border: 1.5px solid #d5f2ed;
+    padding: 15px;
+    margin: 10px;
+	border-radius: 25px;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+ol, ul, li {
+  margin: 0;
+  margin-left: 10px;
+  padding: 0;
+  padding-bottom: 5px;
+}
+
+table, th, td {
+	border: 1px solid black;
+}
+
+img {
+	border: 1.5px solid #d5f2ed
+
+}
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+}
+
+div.wrapdesc{
+	width: 90%;
+	margin: auto;
+}
+
+div.imagedesc{
+	width: 85%;
+	margin: auto;
+}
+</style>
+    
+<head>
+   
+<title>ISS0_2021</title></head>
+    
+<body>
+<div id="top">
+<h1>Lab ISS 2021 | iss0 <font size="5"></font> </h1>
+</div>  
+
+<div class="body"> 
+<h2>Introduction </h2>
+ 
+Tenendo conto che:
+<k>there is no code without a project, no project without problem analysis and no problem without requirements</k>
+si riporta qui una possibile impostazioni dei primi passi di sviluppo per il progetto denominato <ks>iss0</ks>.
+<br/><br/>
+In questo lavoro riporteremo anche alcune considerazioni utili a comprendere alcuni aspetti fondamentali del lavoro
+dell'ingegnere del software.
+ 
+<h2>Requirements</h2>
+
+ 
+<div class="remark">
+Design and build a software system that leads a robot to walk along the boundary of a empty, rectangular room.
+</div>
+
+ 
+
+<h2>Requirement analysis</h2>
+ 
+La <b>interazione con il committente</b> ha chiarito che egli associa ai sostantivi il seguente significato:
+<ul>
+<li><ks>room</ks>: una stanza convenzionale, come si trova in tutti gli edifici</li>
+<li><ks>boundary</ks>: perimetro della stanza, fisicamente delimitata da pareti solide (<ks>walls</ks>)</li>
+<li><ks>robot</ks>: un dispositivo capace di muoversi ricevendo comandi via rete, secondo quanto riportato in
+<a href="VirtualRobot2021.html#commands" target="web">VirtualRobot2021.html</a>.
+ </li>
+</ul>
+
+Per quanto riguarda le azioni (verbi):
+<ul>
+<li><ks>walk</ks>: il robot deve muoversi in avanti, rasente le pareti della room.</li>
+</ul>
+
+<h3>Una prima <a href="https://en.wikipedia.org/wiki/User_story" target="web">user story</a></h3>
+
+ <table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:60%" >
+ 
+Come utente, posiziono il robot nella cella HOME (rivolto a sud) e poi attivo un sistema 
+che invia al robot (via rete wifi) comandi di movimento. 
+<br/>
+Come utente non posso interrompere la esecuzione: il sistema deve terminare in modo autonomo, una volta eseguito il compito.
+<br/><br/>
+Al termine della esecuzione del sistema, 
+mi aspetto che, il robot abbia effettuato (una volta sola) il percorso riportato nell figura a fianco.
+ 
+</td>
+<td><center><img src="./img/TestPlan0.png" alt="TestPlan0" width="60%" ></center>
+</td>
+</tr>
+ </tbody>
+</table>
+
+
+
+
+
+<h4>Verifica dei risultati attesi (Test plans)</h4> 
+
+ <table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" >
+Occorre verificare che il percorso effettuato dal robot sia quello atteso.  
+</td>
+<td><div class="remark">
+La verifica della conguenza del percorso deve essere effettuata via software, senza bisogno dell'intervento
+di un utente umano.
+</div>
+</td>
+</tr>
+ </tbody>
+</table>
+
+<h2>Problem analysis</h2>
+
+<h3>Aspetti rilevanti</h3>
+
+<ol>
+<li>
+Si tratta di realizzare un <k>sistema distribuito</k> formato da due macro-componenti:
+	<ul>
+	<li>il robot (virtuale) fornito dal committente</li>
+	<li>la nostra applicazione (<ks>boundaryWalk</ks>) che invia comandi al robot in modo da soddisfare i requisiti</li>
+	</ul>
+</li>
+<li>Il robot può essere comandato via rete in due modi diversi, come descritto in 
+<a href="VirtualRobot2021.html #commands" target="web">VirtualRobot2021.html: commands</a>:
+	<ul>
+	<li>inviando messaggi alla porta <tt>8090</tt> con protocollo HTTP POST </li>
+	<li>inviando messaggi alla porta <tt>8091</tt> usando una websocket</li>
+	</ul>
+</li>
+<li>
+Poichè esistono numerose librerie in molti linguaggi di programmazione che permettono l'invio di tali comandi,
+non si individua <ks>alcun abstraction-gap</ks> significativo sul piano operativo. 
+<div class="remark">
+Tuttavia esiste un <k>abstraction gap sul piano concettuale</k>: vi sono due possibili tecnologie per comunicare
+con il robot e ciascuna richiede opportuni supporti. Tuttavia concettualmente si tratta sempre di impostare uno
+ <ks>schema di interazione request-response </ks>.
+</div>
+</li>
+
+<li>
+Stimiamo che un primo prototipo della applicazione dovrebbe poter essere realizzato in una giornata lavorativa (al più).
+</li>
+</ol>
+
+
+<h3>Architettura logica</h3>
+
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:40%" >
+ <center><img src="./img/iss0_logicArch0.png" alt="iss0_logicArch0" width="70%" ></center>
+ 
+
+</td>
+<td>L'esatta natura del componente <ks>boundaryWalk</ks> sarà definita nella fase di progetto.
+<br/><br/>
+Per quanto riguarda l'interazione possiamo dire che:
+<ul>
+<li>l'uso del protocollo HTTP sembra del tutto adeguato, almeno in una prima fase; </li>
+<li>l'uso della websocket potrrebbe rivelarsi <i>più flessibile</i> (in quanto permette di ricevere anche
+<k>informazioni emesse da WEnv in modo 'spontaneo'</k>) e <i>più efficiente</i> (in quanto riduce la gerarchia di protocolli).</li></li>
+</ul>
+</td>
+</tr>
+
+<tr>
+<td> <div class="remark">
+ La figura qui sopra NON è il sistema. <br/>
+ E' la rappresentazione grafica (informale) di un modello del sistema.
+ </div>
+ Una lettura interessante: <br/>
+ <a href="https://bitbucket.org/blog/software-development-with-uml-and-modern-java" target="web">
+ Software development with UML and modern Java</a>
+ 
+ </td>
+<td><center><img src="./img/magritte.jpg" alt="magritte" width="30%" ></center>
+Si veda: 
+ <a href="https://www.repubblica.it/dossier/stazione-futuro-riccardo-luna/2020/11/24/news/l_intelligenza_artificiale_e_la_pipa_di_magritte-275531361/" target="web">
+ L'intelligenza artificiale e la pipa di Magritte</a>
+</td>
+</tr>
+
+<tr>
+<td><h4>Un altro modello (UML)</h4>
+
+ <center><img src="./img/WEnvUsage.png" alt="WEnvUsage" width="70%" ></center>
+</td>
+<td>Questo modello 'astrae' dai dettagli tecnologici della interazione.
+<ul>
+<li>Ma le entità sono oggetti?</li>
+<li>Quali sono le <k>informazioni essenziali</k> da catturare e discutere?</li>
+</ul>
+</td>
+</tr>
+
+
+<tr>
+<td><center><img src="./img/sic.png" alt="sic" width="70%" ></center>
+</td>
+
+<td><center><img src="./img/sic2.png" alt="sic2" width="70%" ></center></td>
+
+</tr>
+
+ </tbody>
+</table>
+
+
+ 
+ 
+<h3>Problematiche individuate</h3>
+
+<ol>
+<li><h4>Astrazione di interazione</h4>
+Il sistema software dovrebbe essere reso il più possibile indipendente dal protcollo di comunicazione usato per la interazione con WEnv.
+<br/>
+Il progettista potrebbe utilizzare qualche <a href="https://it.wikipedia.org/wiki/Design_pattern" target="web"><ks>design pattern</ks></a> 
+per rendere il livello applicativo il più possibile <k>invariante</k> rispetto
+al protocollo di comunicazione, che potrebbe essere selezionato in una <k>fase di configurazione</k> del sistema.
+</li>
+
+<li><h4>Testing, ma non solo </h4>
+
+L'obiettivo di definire un <tt>TestPlan automatizzabile</tt> introduce di fatto un <k>nuovo requisito</k>: 
+rendere l'applicazione osservabile, o meglio renderne verificabili gli effetti, da parte di una macchina. 
+<br/>
+In particolare, non basta indurre il robot a muoversi; 
+in assenza di telecamere e/o di appositi sensori ambientali, un modo per procedere è quello di <ks><i>inferire conoscenza</i></ks> 
+dai comandi  inviati e dalle risposte ottenute da WENV e <ks>rappresentare in modo esplicito</ks> tale conoscenza.
+<br/><br/>
+Potremmo dire che occorre creare all'interno della applicazione, una sorta di <k><i>'mappa mentale'</i></k> capace di fornire un modello delle azioni del robot,
+sul quale un programma di testing possa 'ragionare' per effettuare le verifiche. 
+<br/>
+Ovviamente un approccio di questo tipo non assicura che la mappa corrisponda
+alla situazione reale, ma ciò corrisponde di fatto a quanto accade anche a tutti gli esseri senzienti nel mondo biologico, che 
+operano sulla base di informazioni ottenute per via sensoriale; in questo caso i 'sensori' sarebbero le risposte di WEnv alle mosse.
+
+<br/><br/>Più in particolare, date le informazioni su come usare il robot, possiamo prefigurare che la soluzione del problema consista nel seguente algoritmo:
+<pre>
+il robot parte dalla posizione HOME, rivolto verso sud (DOWN) 
+per 4 volte: 
+	invio al robot comandi <kc>moveForward</kc> fino a che il robot colpisce il muro di fronte 
+	e poi invio un comando di rotazione <kc>turnLeft</kc>
+</pre>
+</li>
+
+
+</ol>
+
+
+
+<h4>Possibili strategie per il TestPlan: 'inferire conoscenza' dai comandi</h4>
+
+Sulla base di questa analisi, possiamo delineare alcune diverse strategie di testing. 
+Per rendere la trattazione più semplice, introduciamo le seguenti abbreviazioni
+reltive ai comandi  <a href="VirtualRobot2021.html #cril" target="web">cril</a>:
+<pre>
+<ks>w</ks> : esprime la mosssa <kc>{"robotmove":"moveForward", "time": 600}</kc>
+<ks>s</ks> : esprime la mosssa <kc>{"robotmove":"moveForward", "time ":600}</kc>
+<ks>h</ks> : esprime la mosssa <kc>{"robotmove":"moveForward", "time ":100}</kc>
+<ks>l</ks> : esprime la mosssa <kc>{"robotmove":"turnLeft ",   "time ":300}</kc>
+<ks>r</ks> : esprime la mosssa <kc>{"robotmove":"turnRight",   "time ":300}</kc>
+</pre>
+
+Le diverse strategie di testing possono essere riassunte come segue:
+<ol>
+ 
+<li><ks>IPOTESI-TESTPLAN 1</ks>: per ogni mossa eseguita con successo, aggiungiamo l'identificatore della mossa ad una stringa <kc>moves</kc> (inizialmente vuota).
+<br/>
+Fissiamo il valore di <kc>time</kc> per le mosse <ks>w, s</ks> in modo da muovere il robot per 'piccoli passi', così da raggiungere un <ks>wall</ks> con <k>N>1</k> mosse.
+<br/>
+In tal caso, al termine della applicazione, la stringa deve assumere le forma che segue:
+<pre><kc>moves</kc>: <ks>"w*lw*lw*lw*l"</ks>     <kc><ks>*</ks> : ripetizione 0 o più volte</pre>
+</li>
+<li><ks>IPOTESI-TESTPLAN 2</ks>: Fissiamo il valore di <kc>time</kc> per le mosse <ks>w, s</ks> in modo che il robot percorra una distanza pari alla sua lunghezza. 
+<br/>
+In questo modo si potrebbe misurare la lunghezza di ogni lato in <k>'unità-robot'</k> e verificare al termine dalla applicazione che 
+la lunghezza del perimetro espresso in 'unità-robot' sia uguale alla distanza percorsa eseguendo l'algoritmo indicato.
+</li>
+<li><ks>IPOTESI-TESTPLAN 3</ks>: impostando il <kc>time</kc> per le mosse <ks>w, s</ks> in modo da ottenere spostamenti di <k>unità-robot</k>, costruiamo in modo 
+incrementale una <k>mappa del territorio</k> dopo ogni mossa. In questo modo si potrebbe sapere dove si trova il robot  dopo ogni comando e quindi si potrebbe
+verificare al termine della applicazione il percorso effettuato; ad esempio (<kc>1</kc> rappresenta le 'celle' percorse dal robot):
+<pre>
+|r, 1, 1, 1, 1, 
+|1, 0, 0, 0, 1, 
+|1, 0, 0, 0, 1, 
+|1, 0, 0, 0, 1, 
+|1, 1, 1, 1, 1, X, 
+|X, 
+</pre>
+
+</li>
+
+ 
+</ol>
+ 
+
+ 
+ 
+</div>
+
+ <!--
+
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" >
+ 
+
+</td>
+<td>
+</td>
+</tr>
+ </tbody>
+</table>
+-->
+	      	
+<br/><br/> 	
+</div>  
+
+<div >
+<hr/>
+By Antonio Natali 
+<img src="./img/teacher.gif" alt="teacher" width="5%" height="5%"> antonio.natali@unibo.it  
+</div> 
+</body>
+</html>

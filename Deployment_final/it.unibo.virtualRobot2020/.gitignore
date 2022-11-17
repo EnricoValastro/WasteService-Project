@@ -1,0 +1,13 @@
+# Ignore Gradle project-specific cache directory
+.gradle
+.idea
+# Ignore Gradle build output directory
+build
+
+docker_password.txt
+
+#node
+**/node_modules/
+**/package-lock.json/
+
+docker_password.txt

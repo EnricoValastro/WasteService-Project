@@ -1,0 +1,24 @@
+version: '3'
+services:
+  wenv:
+    image: docker.io/natbodocker/virtualrobotdisi:4.0
+    #image: virtualrobotdisi:4.0
+    ports:
+      - 8090:8090 
+      - 8091:8091/tcp
+      - 8091:8091/udp
+  robot:
+    image: docker.io/natbodocker/basicrobot22:2.0
+    #image: basicrobot22:1.0 -> serve per prendere un'immagine locale (da generare prima con il Dockerfile)
+    ports:
+      - 8020:8020/tcp
+      - 8020:8020/udp
+    depends_on:
+      - wenv
+
+## -------------------------------------------------------------
+## TODO See https://docs.docker.com/compose/startup-order/
+## -------------------------------------------------------------
+## docker-compose -f basicrobot22.yaml  up
+## docker-compose run --service-ports wenv
+## docker-compose run --service-ports vrobotclient  ATTIVA ANCHE wenv
