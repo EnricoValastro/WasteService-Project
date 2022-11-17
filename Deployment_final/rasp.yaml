@@ -1,9 +1,0 @@
-version: '3.3'
-services:
-  rasp:
-    image: docker.io/alerei94/unibo.rasp:1.0
-    ports:
-      - 8065:8065/tcp
-      - 8065:8065/udp
-  
-   
