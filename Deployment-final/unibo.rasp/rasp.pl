@@ -1,7 +1,7 @@
 %====================================================================================
 % rasp description   
 %====================================================================================
-context(ctxwasteservice, "192.168.183.33",  "TCP", "8055").
+context(ctxwasteservice, "192.168.60.199",  "TCP", "8055").
 context(ctxpi, "localhost",  "TCP", "8065").
  qactor( sonardatasource, ctxpi, "sonarSupport2022").
   qactor( datacleaner, ctxpi, "dataCleaner").
