@@ -230,7 +230,8 @@ QActor pathexec context ctxbasicrobot{
 		updateResource [# "pathexecdoturn($CurMoveTodo)" #]
 		forward basicrobot -m cmd : cmd($CurMoveTodo) //asynch !!!		
 	}
-	Transition t0 whenTime 300 ->  nextMove  //wait for move done ...
+	Transition t0 whenTime 300 ->  nextMove //wait for move done ...
+					whenEvent alarm -> stop  
   
  	State doMoveW{
 		//printCurrentMessage
@@ -254,8 +255,8 @@ QActor pathexec context ctxbasicrobot{
 		[# println("Pathexec stopped	|	$PathStillTodo") #]
 		
 		replyTo dopath with dopathstopped : dopathstopped( $PathStillTodo )
-	}Transition t0 whenTime 2000 -> s0
-					whenReply  stepdone -> s0
+	}Transition t0 whenTime 1000 -> s0			//wait for move done ...
+					whenReply  stepdone -> s0 	//wait for move done ...
  
 	State endWorkKo{
 		printCurrentMessage

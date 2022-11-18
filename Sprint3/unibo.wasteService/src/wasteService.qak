@@ -22,7 +22,7 @@ Dispatch getdata		  : getdata(_)
 Request getledstate 	  	: getledstate(_)
 Request gettrolleyposition 	: gettrolleyposition(_)
 Request gettrolleystate 	: gettrolleystate(_)
-Request getcontainterstate 	: getcontainerstate(_)
+Request getcontainerstate 	: getcontainerstate(_)
 Reply   givedata 			: givedata(DATA)
 
 /* Deposit Request Messages */
@@ -53,13 +53,11 @@ Dispatch turnoff 	 : turnoff(_)
 
 /* Sonar data */
 Event    sonardata 		 : distance( V )
-Dispatch sonaractivate   : info(ARG)
+
 
 /* Stop-Resume message */
 Event alarm  : alarm (X)
 Event local_resume : local_resume (X)
-Dispatch trolleystop   : trolleystop(_)
-Dispatch trolleyresume : trolleyresume(_)
 
 
 Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
@@ -193,22 +191,22 @@ QActor transporttrolleycore context ctxwasteservice{
 		forward led -m blink : blink(_)
 		forward systemstatemanager -m updateled : updateled(BLINKING)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
-	}Transition t0 whenReply moveok -> pickupExec
-					whenMsg trolleystop -> stopPickup
+	}Transition t0 whenReply moveok  -> pickupExec
+					whenEvent alarm  -> stopPickup
 					whenReply moveko -> moveErr
 
 	State stopPickup{
 		forward led -m turnon : turnon(_)
 		forward systemstatemanager -m updateled : updateled(ON)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, STOPPED)
-	}Transition t0 whenMsg trolleyresume -> resumePickup
+	}Transition t0 whenEvent local_resume -> resumePickup
 	
 	State resumePickup{
 		forward led -m blink : blink(_)
 		forward systemstatemanager -m updateled : updateled(BLINKING)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
-	}Transition t0 whenReply moveok -> pickupExec
-					whenMsg trolleystop -> stopPickup
+	}Transition t0 whenReply moveok  -> pickupExec
+					whenEvent alarm  -> stopPickup
 					whenReply moveko -> moveErr
 
 	State pickupExec{
@@ -244,22 +242,22 @@ QActor transporttrolleycore context ctxwasteservice{
 		forward systemstatemanager -m updateled : updateled(BLINKING)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
 		
-	}Transition t0 whenReply moveok -> dropoutExec
-					whenMsg trolleystop -> stopDropout
+	}Transition t0 whenReply moveok  -> dropoutExec
+					whenEvent alarm  -> stopDropout
 					whenReply moveko -> moveErr
 
 	State stopDropout{
 		forward led -m turnon : turnon(_)
 		forward systemstatemanager -m updateled : updateled(ON)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, STOPPED)
-	}Transition t0 whenMsg trolleyresume -> resumeDropout
+	}Transition t0 whenEvent local_resume -> resumeDropout
 	
 	State resumeDropout{
 		forward led -m blink : blink(_)
 		forward systemstatemanager -m updateled : updateled(BLINKING)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
-	}Transition t0 whenReply moveok -> dropoutExec
-					whenMsg trolleystop -> stopDropout
+	}Transition t0 whenReply moveok  -> dropoutExec
+					whenEvent alarm  -> stopDropout
 					whenReply moveko -> moveErr
 
 	State dropoutExec{
@@ -282,22 +280,22 @@ QActor transporttrolleycore context ctxwasteservice{
 		forward led -m blink : blink(_)
 		forward systemstatemanager -m updateled : updateled(BLINKING)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
-	}Transition t0 whenReply moveok -> backHomeRes
-					whenMsg trolleystop -> stopBackHome
+	}Transition t0 whenReply moveok  -> backHomeRes
+					whenEvent alarm  -> stopBackHome
 					whenReply moveko -> moveErr
 
 	State stopBackHome{
 		forward led -m turnon : turnon(_)
 		forward systemstatemanager -m updateled : updateled(ON)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, STOPPED)
-	}Transition t0 whenMsg trolleyresume -> resumeBackHome
+	}Transition t0 whenEvent local_resume -> resumeBackHome
 	
 	State resumeBackHome{
 		forward led -m blink : blink(_)
 		forward systemstatemanager -m updateled : updateled(BLINKING)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
-	}Transition t0 whenReply moveok -> backHomeRes
-					whenMsg trolleystop -> stopBackHome
+	}Transition t0 whenReply moveok  -> backHomeRes
+					whenEvent alarm  -> stopBackHome
 					whenReply moveko -> moveErr
 
 	State backHomeRes{
@@ -399,7 +397,6 @@ QActor transporttrolleymover context ctxwasteservice{
 				
 				unibo.comm22.utils.ColorsOut.outappl("$name	|	stopped, path still to do: $PATHSTILLTODO", unibo.comm22.utils.ColorsOut.BLUE)	
 			#]
-			forward transporttrolleycore -m trolleystop : trolleystop(_)
 			
 		}
 	}Transition t0 whenEvent local_resume -> resume
@@ -410,7 +407,6 @@ QActor transporttrolleymover context ctxwasteservice{
 		#]
 		request pathexec -m dopath : dopath($PATHSTILLTODO)
 		
-		forward transporttrolleycore -m trolleyresume : trolleyresume(_)
 	}Transition t0 whenReply dopathdone -> lookForFix
 					whenReply dopathfail -> moveKo
 					whenReply dopathstopped -> stop
@@ -548,7 +544,7 @@ QActor systemstatemanager context ctxwasteservice{
 					whenMsg	  	updateled		   -> updateLedState
 					whenMsg	  	getdata			   -> sendData
 					whenRequest getledstate 	   -> replyData
-					whenRequest getcontainterstate -> replyData
+					whenRequest getcontainerstate -> replyData
 					whenRequest gettrolleystate    -> replyData
 					whenRequest gettrolleyposition -> replyData
 					whenMsg   	exit               -> end
@@ -615,7 +611,7 @@ QActor systemstatemanager context ctxwasteservice{
 			[# var DATA = system.getCurrLedState().toString() #]
 			replyTo getledstate with givedata : givedata($DATA)
 		}
-		onMsg (getcontainterstate : getcontainerstate(_)){
+		onMsg (getcontainerstate : getcontainerstate(_)){
 			[# var DATA = system.getAllCurrentBoxWeight().toString() #]
 			replyTo getledstate with givedata : givedata($DATA)
 		}

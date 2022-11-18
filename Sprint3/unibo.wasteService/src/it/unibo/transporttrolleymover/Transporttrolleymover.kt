@@ -103,7 +103,6 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 												PATHSTILLTODO = payloadArg(0)
 												
 												unibo.comm22.utils.ColorsOut.outappl("$name	|	stopped, path still to do: $PATHSTILLTODO", unibo.comm22.utils.ColorsOut.BLUE)	
-								forward("trolleystop", "trolleystop(_)" ,"transporttrolleycore" ) 
 						}
 						//genTimer( actor, state )
 					}
@@ -117,7 +116,6 @@ class Transporttrolleymover ( name: String, scope: CoroutineScope  ) : ActorBasi
 						 
 									unibo.comm22.utils.ColorsOut.outappl("$name	|	resumed, : $PATHSTILLTODO", unibo.comm22.utils.ColorsOut.BLUE)
 						request("dopath", "dopath($PATHSTILLTODO)" ,"pathexec" )  
-						forward("trolleyresume", "trolleyresume(_)" ,"transporttrolleycore" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

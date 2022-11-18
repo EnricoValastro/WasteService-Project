@@ -92,6 +92,7 @@ class Pathexec ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 				 	 		//}
 					}	 	 
 					 transition(edgeName="t010",targetState="nextMove",cond=whenTimeout("local_tout_pathexec_doMoveTurn"))   
+					transition(edgeName="t011",targetState="stop",cond=whenEvent("alarm"))
 				}	 
 				state("doMoveW") { //this:State
 					action { //it:State
@@ -103,9 +104,9 @@ class Pathexec ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t011",targetState="stop",cond=whenEvent("alarm"))
-					transition(edgeName="t012",targetState="nextMove",cond=whenReply("stepdone"))
-					transition(edgeName="t013",targetState="endWorkKo",cond=whenReply("stepfail"))
+					 transition(edgeName="t012",targetState="stop",cond=whenEvent("alarm"))
+					transition(edgeName="t013",targetState="nextMove",cond=whenReply("stepdone"))
+					transition(edgeName="t014",targetState="endWorkKo",cond=whenReply("stepfail"))
 				}	 
 				state("endWorkOk") { //this:State
 					action { //it:State
@@ -131,11 +132,11 @@ class Pathexec ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 					sysaction { //it:State
 				 	 		//sysaction { //it:State
 				 	 		  stateTimer = TimerActor("timer_stop", 
-				 	 			scope, context!!, "local_tout_pathexec_stop", 2000.toLong() )
+				 	 			scope, context!!, "local_tout_pathexec_stop", 1000.toLong() )
 				 	 		//}
 					}	 	 
-					 transition(edgeName="t014",targetState="s0",cond=whenTimeout("local_tout_pathexec_stop"))   
-					transition(edgeName="t015",targetState="s0",cond=whenReply("stepdone"))
+					 transition(edgeName="t015",targetState="s0",cond=whenTimeout("local_tout_pathexec_stop"))   
+					transition(edgeName="t016",targetState="s0",cond=whenReply("stepdone"))
 				}	 
 				state("endWorkKo") { //this:State
 					action { //it:State

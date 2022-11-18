@@ -48,7 +48,7 @@ class Systemstatemanager ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					transition(edgeName="t048",targetState="updateLedState",cond=whenDispatch("updateled"))
 					transition(edgeName="t049",targetState="sendData",cond=whenDispatch("getdata"))
 					transition(edgeName="t050",targetState="replyData",cond=whenRequest("getledstate"))
-					transition(edgeName="t051",targetState="replyData",cond=whenRequest("getcontainterstate"))
+					transition(edgeName="t051",targetState="replyData",cond=whenRequest("getcontainerstate"))
 					transition(edgeName="t052",targetState="replyData",cond=whenRequest("gettrolleystate"))
 					transition(edgeName="t053",targetState="replyData",cond=whenRequest("gettrolleyposition"))
 					transition(edgeName="t054",targetState="end",cond=whenDispatch("exit"))

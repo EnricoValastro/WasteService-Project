@@ -300,7 +300,7 @@
             <ul>
                 <li>Come fa il <i>Led</i> ad accendersi, spegnersi o lampeggiare. </li>
                 <li>Come fa il <i>Led</i> a sapere quando è il momento di eseguire una delle tre azioni.</li>
-                <li>Come è possibile rappresentare e mantenere lo stato del <i>Led</i>.</li>
+                <li>Come è possibile rappresentare, mantenere e gestire lo stato del <i>Led</i>.</li>
             </ul>
             
             <h4>Azioni del Led</h4>
@@ -376,35 +376,39 @@
 
 
             <h4>Interazione tra i componenti</h4>
-            Come detto in analisi dei requisiti il <i>Led</i> deve accendersi , spegnersi o brillare in base alle posizioni del <kc>TransportTrolley</kc>. 
-            Quindi è logico che il <i>Led</i>, essendo un attuatore del sistema, debba essere controllato da qualcuno (<i>TransportTrolley</i>). <br>
-            Sarà il <i>TransportTrolley</i>, in base alla sua posizione in quel momento, a dire al <i>Led</i> di cambiare stato.
+            Come detto in analisi dei requisiti il <i>Led</i> deve accendersi , spegnersi o lampeggiare in base alle posizioni del <kc>TransportTrolley</kc>. 
+            Poiché il <i>Led</i> è progettato per essere un attuatore risulta evidente che esso debba essere controllato da qualche componente del sistema. <br>
+            Dal momento che lo stato del <i>Led</i> è funzione dello stato del <i>TransportTrolley</i>, risulta logico pensare che sia proprio il <i>TransportTrolley</i> a controllare il <i>Led</i>. 
+            In alternativa, si potrebbe pensare di dare la responsabilità di comandare il <i>Led</i> al <kc>SystemStateManager</kc>, dal momonte che questo componente 
+            è a conoscenza dello stato del led. Tuttavia, tale soluzione denaturalizzerebbe il componente <i>SystemStateManager</i>, poichè esso è stato 
+            pensato con il solo ed unico scopo di mantenere lo stato del sistema. <br>
+            Per tale motivo, si consiglia agli sviluppatori di seguire la strada in cui il <i>TransportTrolley</i> controlla il <i>Led</i>, per fare ciò 
+            definiamo i messaggi che il <i>TransportTrolley</i> invierà al <i>Led</i>: <br>
             <pre>
-<key2>Dispatch</key2> blink 	         : blink(_)
-<key2>Dispatch</key2> turnon 	 : turnon(_)
-<key2>Dispatch</key2> turnoff 	 : turnoff(_)
-            </pre>
+<key2>Dispatch</key2> blink   : blink(_)
+<key2>Dispatch</key2> turnon  : turnon(_)
+<key2>Dispatch</key2> turnoff : turnoff(_)</pre>
             
             <h4>Stato del Led</h4>
             Dall'analisi dei requisiti è emerso che il committente vuole che sia mostrato lo stato del Led nella <kc>GUI</kc>. Per fare ciò è necessario gestire e mantanere lo stato del Led. 
-            Inoltre, dall'analisi dei requisiti è emerso che lo stato del Led può essere rappresentato dal seguente enumerativo:
+            Basandosi, sempre, sull'analisi dei requisiti è possibili affermare che lo stato del Led può essere rappresentato dal seguente enumerativo:
             <pre>
 <key>enum class</key> CurrStateLed{ <i>ON</i>, <i>OFF</i>, <i>BLINKING</i>}</pre>
-            Lo stato può essere mantenuto in due modi differenti:
+            Bisogna quindi comprendere come si possa mantenere lo stato, le soluzioni attuabili sono diverse:
             <ul>
                 <li>Cablare lo stato del Led all'interno del componente Led.</li>
                 <li>Mantenere lo stato del Led usando una <ks>data class Kotlin</ks>.</li>
             </ul>
             <h5>Stato cablato</h5>
-            Questa soluzione prevede di mantenere lo stato all'interno del file QAk del Led. <br>
+            Questa soluzione prevede di mantenere lo stato all'interno del file QAk del Led. <br> 
             <pre>
 <key2>QActor</key2> led <key2>context</key2> ctxpi{
     [#
         var ledState : CurrStateLed
     #]
 }</pre>
-            Sebbene questa soluzione sia semplice, da al componente Led la responsabilità di mantenere lo stato del Led e di aggiornare la <i>GUI</i>. 
-            Inoltre affinchè la <i>GUI</i> possa mostrare lo stato del Led, è necessario che la GUI apra una connnesione Coap con il Led. <br>
+            Sebbene questa soluzione sia semplice, da al componente la responsabilità di mantenere lo stato del Led e di comunicare a tutti 
+            i componenti interessati allo stato del <i>Led</i> il cambiamenti di stato. <br>
             <h5>Data class</h5>
             Questa soluzione prevede di mantenere lo stato del Led in una <ks>data class Kotlin</ks>, togliendo in questo modo la responsabilità al Led.
             <pre>
@@ -417,22 +421,47 @@
 }</pre>
             Sebbene questa soluzione sia più complessa da implementare, è quella che consigliamo agli sviluppatori in quanto permette di disaccoppiare la gestione dello stato dalle funzionalità del Led.
             <h4>Gestione dello stato del Led</h4>
-            Il sistema deve essere consapevole dello stato del <i>Led</i>, per fare questo si potrebbe procedere in diversi modi: <br> <br>
+            La gestione dello stato del Led è la problematica più delicata da affrontare. <br>
 
+            <h5>Led State Manager</h5>
+            Innanzi tutto, è necessario comprendere quale sia il componente incaricato della gestione dello stato del <i>Led</i>. 
+            Anche in questo caso le soluzioni possibili sono molteplici, ma le più sensate sono le seguenti:
             <ul>
-                <li>Un Primo modo potrebbe essere che il <i>Led</i> quando cambia stato(ON,OFF,BLINK) invia un messaggio di notifica al <kc>SystemStateManager</kc>. <br>
-                Questa soluzione sebbena sia semplice e non causi particolari problemi rende il <i>Led</i> consapevole del sistema che ha attorno e quindi sarebbe poco riusabile.</li>
-                <li>Si potrebbe utilizzare il protocollo <kc>MQTT</kc>, il quale prevede che il <i>Led</i> sia il publisher di un canale <i>MQTT</i>. Ciò implica che dall'altro lato
-                    qualcuno debba leggere questo stato (<i>SystemStateManager</i>). <br>
-                    Una problematica che potrebbe insorgere usando questa opzione è che il <i>SystemStateManager</i> (che prima era solo un "contenitore" di stati) adesso dovrebbe registrarsi su un 
-                    canale <i>MQTT</i> da cui riceverà lo stato del <i>Led</i>. <br>
+                <li>Il componente <i>SystemStateManager</i> è incaricato della gestione dello stato del <i>Led</i>.</li>
+                <li>Il componente <i>Led</i> è incaricato della gestione dello stato del <i>Led</i>.</li>
+            </ul>
+
+            Per rimanere in linea con quanto fatto per lo stato del <i>TransportTrolley</i> e della <i>Service Area</i> consigliamo agli sviluppatori 
+            di fare in modo che sia il <i>SystemStateManager</i> a mantenere lo stato del <i>Led</i>. <br>
+            
+            <h5>Comunicazione</h5>
+            Bisogna capire come fare in modo che il <i>SystemStateManager</i> sia a conoscenza dello stato del <i>Led</i>. Si può agire in diversi modi: <br>
+            <ul>
+                <li>
+                    <b>Primo approccio</b>: Questa soluzione prevede che sia il <i>Led</i> a comunicare, tramite un messaggio, ogni cambiamento di stato al <i>SystemStateManager</i>.
+                    Questa soluzione, sebbene sia semplice e non causi particolari problemi, rende il <i>Led</i> consapevole del sistema che ha attorno e quindi poco riutilizzabile.
                 </li>
-                <li>Infine un ultimo modo potrebbere essere che: essendo il <i>Led</i> un attuatore verrà comandato da qualcuno(<i>TransportTrolley</i>) per accendersi, spegnersi o brillare. Quindi il <kc>TransportTrolleCore</kc>
-                    è a conoscenza implicitamente dello stato del <i>Led</i>, poichè se comunica al <i>Led</i> il messaggio turnOn, sa che lui si troverà nello stato ON.
-                    Potrebbe quindi essere il <i>TransportTrolleyCore</i> ad aggiornare lo stato del <i>Led</i>. Quindi quando, ad esempio, il <i>TransportTrolleyCore</i> dice 
-                    al <i>Led</i> turnOff , subito dopo manda un messaggio al <i>SystemStateManager</i> dicendogli update led (OFF) e così via. <br>
-                    Questa soluzione è la più semplice da implementare e non causa particolari problemi. Consigliamo agli sviluppatori di usare quest'ultima <br>
+                <li>
+                    <b>Secondo approccio</b>: Si potrebbe utilizzare il protocollo <kc>MQTT</kc>, che permette di implementare uno scambio di messaggi con architettura 
+                    <kc>publish-subscribe</kc>. La soluzione, prevede che il <i>Led</i> sia il publisher di un canale <i>MQTT</i>. e il <i>SystemStateManager</i> un subscriber che riceve 
+                    i messaggi di cambiamento di stato.<br>
                 </li>
+                <li>
+                    <b>Terzo approccio</b>: Questa soluzione prevede di sfruttare la <kc>CoAP osservabilità</kc> degli attori QAk. In particolare, si 
+                    potrebbe pensare di rendere il <i>SystemStateManager</i> un osservatore del <i>Led</i>. Tuttavia, questa soluzione implica la necessità 
+                    di instaurare un'ulteriore connessione <i>CoAP</i> nel sistema. <br>
+                </li>
+                <li>
+                    <b>Quarto approccio</b>: Dal momento che il <i>TransportTrolley</i> comanda il <i>Led</i> affinche questo si accenda/spenga e lampeggi, è possibile 
+                    affermare che il <i>TransportTrolley</i> sia implicitamente conscio dello stato del <i>Led</i>. Questa soluzione prevede, semplicemente, 
+                    che sia il <i>TransportTrolley</i> a comunicare lo stato del <i>Led</i> al <i>SystemStateManager</i>. Per fare ciò potrebbe avvalersi del seguente messaggio:
+                    <pre>
+<key2>Dispatch</key2> updateled : updateled(STAT)</pre>
+                </li>
+            </ul>
+            In conclusione, consigliamo agli sviluppatori di utilizzare il <b>quarto approccio</b> per la comunicazione dello stato del <i>Led</i> al <i>SystemStateManager</i>.
+            In quanto questo permettere di mantenere il <i>Led</i> estraneo al sistema e quindi facilmente riutilizzabile, nonché di evitare ulteriori connessioni <i>CoAP</i> nel sistema e 
+            la creazione di un canale <i>MQTT</i>.
         </div>
 
         <div class="remark">
@@ -457,7 +486,7 @@
         <key>public</key> String toString(){ <key>return</key> ""+v; }
 }</pre>
 
-            Una volta compreso che tipo di dato viene generato dal <i>Sonar</i>, è necessario comprendere come faccia il <i>Sonar</i> a generare 
+            Una volta compreso che tipo di dato viene generato dal <i>Sonar</i>, è necessario comprendere come faccia il <i>Sonar</i> di livello applicativo a generare 
             tali dati, come questi dati possano essere fruibili ai componenti del sistema e come essi saranno utilizzati per soddisfare i requisiti del committente. <br>
 
             <h4>Materiale fornito dal committente</h4>
@@ -511,11 +540,12 @@
 }</pre>
 
             Le classi <kc>SonarMock</kc> e <kc>SonarConcrete</kc> implementano i metodi <ks>sonarSetUp</ks> e <ks>sonarProduce</ks> di <kc>SonarModel.java</kc>. <br>
-            In particolare, il <i>SonarMock</i> genera valori di distanza da "90" a "0" e se la variabile di configurazione <kc>testing</kc> è attiva genera un solo valore che legge dal file di configurazione:
-             <a href="https://github.com/anatali/issLab2022/blob/main/it.unibo.radarSystem22.domain/src/it/unibo/radarSystem22/domain/mock/SonarMock.java">SonarMock.java</a>
+            In particolare, il <a href="https://github.com/anatali/issLab2022/blob/main/it.unibo.radarSystem22.domain/src/it/unibo/radarSystem22/domain/mock/SonarMock.java">SonarMock.java</a> 
+            genera valori di distanza da "90" a "0" e se la variabile di configurazione <kc>testing</kc> è attiva genera un solo valore che legge dal file di configurazione. 
+            <br>
             <br>
             La classe <i>SonarConcrete</i> realizza la logica di gestione del sonar fisico, avvalendosi del software <i>SonarAlone.c</i> fornito dal committente: <a href="https://github.com/anatali/issLab2022/blob/main/it.unibo.radarSystem22.domain/src/it/unibo/radarSystem22/domain/concrete/SonarConcrete.java">SonarConcrete.java</a>
-            <br>
+            <br><br>
             Dal momento che il <i>Sonar</i> deve essere in grado di comunicare i dati generati al resto del sistema, esso dovrebbe essere 
             capace di lavora a scambio di messaggi. Per questo motivo il <i>Sonar</i> dovrebbe essere modellato e implementato come un attore QAk. <br>
             Sarà quindi necessario incapsulare all'interno di un attore QAk il componente <i>ISonar</i>. Inoltre, l'attore QAk del <i>Sonar</i>, così costruito 
@@ -530,9 +560,118 @@
             In <i>unibo.sonarqak22</i> è possibile trovare anche il codice dei <ks>CodedQActor</ks> <kc>sonarsimulator</kc> e <kc>sonardatasource</kc> che sono rispettivamente implementati nelle classi 
             <a href="https://github.com/anatali/issLab2022/blob/main/unibo.sonarqak22/resources/sonarHCSR04Support2021.kt">sonarHCSR04Support2021.kt</a> e <a href="https://github.com/anatali/issLab2022/blob/main/unibo.sonarqak22/resources/sonarSimulator.kt">sonarSimulator.kt</a>
             <br><br>
-            Per implementare il <i>Sonar</i> consigliamo agli sviluppatori di utilizzare il software <i>unibo.sonarqak22</i> in modo da abbattere i tempi di sviluppo. <br>
+            
+            Sebbene il software fornito dal committente in <i>unibo.sonarqak22</i> sia perfettamente funzionante, il <kc>CodedQActor</kc> 
+            <i>sonarHCSR04Support2021</i> utilizza il software <i>sonarAlone.c</i> per elaborare i dati generati dal sonar fisico. Questo 
+            rende il <i>sonarqak22</i> dipendente dal specifico <i>sonar</i> fisico (HCSR04) e quindi non riutilizzabile con altri tipi di sonar.
+            A tal proposito, riteniamo che sia opportuno fare in modo che il software di più alto livello, il <i>sonarqak22</i>, sia il piu possibile 
+            indipendente dal livello fisico, in modo da poter essere riutilizzato anche con tipologie differenti di sonar. <br>
+            Per questo motivo, pensiamo che sia meglio lasciare la dipendenza dal <i>sonarAlone.c</i> e quindi dallo specifico sonar fisico, ad un <kc>layer</kc> 
+            di livello piu basso. <br>
+            Per tanto, consigliamo agli sviluppatori di progettare e sviluppare ex-novo un sonar QAk, servendosi, magari, della 
+            libreria <i>radarSystem22.domain</i> e lasciando a quest'ultima la dipendenza dal livello fisico.
 
-        </div>
+            <h4>Lettura dei dati prodotti dal sonar</h4>
+            Una volta compreso come faccia il sonar di livello applicativo a produrre dati, bisogna comprendere come si possa fare per 
+            rendere tali dati fruibili al resto del sistema. <br>
+            Questo aspetto dipende da come si sceglie di implementare il sonar a livello applicativo, in particolare:
+            
+            <h5>Sonarqak22 fornito dal committente</h5>
+            In questo caso i dati generati dal <i>SonarAlone.c</i> sono letti direttamente dal <kc>CodedQActor</kc> <i>sonarHCSR04Support2021</i> e 
+            immessi nel sistema tramite <kc>Eventi</kc>. In particolare il <i>sonarHCSR04Support2021</i> emette un evento "d'ambiente"(<kc>emitLocalStreamEvent</kc>) 
+            che viene raccolto dal secondo attore nella pipe il <i>dataCleaner</i> che a sua volta propaga l'evento e così via fino a quando il dato 
+            non arriva al sonar di livello più alto il <i>sonarqak22</i> che immette i dati nel sistema tramite un evento.
+
+            <h5>Sonarqak22varesi</h5>
+            Questo sonar è progettato per essere il più astratto possibile, di conseguenza non raccoglie in maniera diretta i dati prodotti dal <i>SonarAlone.c</i>. 
+            Questo sonar si serve della libreria <i>radarSystem22.domain</i>, incapsulando le funzionalità di un oggetto di tipo 
+            <kc>ISonar</kc>. La classe <kc>SonarConcrete.java</kc>, che implementa <i>ISonar</i>, utilizza il <i>SonarAlone.c</i> per produrre i dati. 
+            Tali dati vengo memorizzati nella variabile d'istanza <kc>IDistance curVal</kc>, tale variabile è accessibile tramite il metodo 
+            <kc>getDistance</kc> di <kc>SonarModel</kc> e quindi il valore memorizzato al suo interno è accessibile tramite il metodo 
+            <kc>getVal</kc> offerto dalla classe <kc>Distance</kc>. Una volta ottenuto il valore esso può essere immesso nel sistema tramite un evento.
+            <br><br>
+            In entrambi i casi, dunque, i dati prodotti dal sonar sono immessi nel sistema tramite un evento, che può essere così definito:
+            <pre>
+<key2>Event</key2> sonardata : distance( V )</pre>
+            
+            
+            <h4>Filtraggio delle distanze rilevate dal sonar</h4>
+            Dopo aver capito come i dati prodotti dal sonar vengono immessi nel sistema, è necessario come tali dati possano essere sfruttati 
+            per soddisfare i requisiti. <br> In particolare, i dati prodotti dal sonar devono essere confrontati con un valore fisso (<kc>DLIMIT</kc>) 
+            e se il valore rilevato dal sonar è inferiore a tale soglia il robot deve essere stoppato. Quando il valore torna ad essere maggiore della soglia 
+            il robot deve riprendere il movimento su cui era stato stoppato. <br>
+            Risulta quindi evidente come tali dati debbano essere utilizzati, tuttavia nasce a questo punto il problema di definire quale componentene debba 
+            essere incaricato di effettuare tale confronto. <br>
+            <ul>
+                <li>
+                    <b>Primo approccio</b>: il sonarqak è incaricato di effettuare il confronto tra volore rilevato e soglia.
+                </li>
+                <li>
+                    <b>Secondo approccio</b>: il sonarqak è incaricato di produrre i dati, ma il confronto tra valore rilevato e soglia è effettuato da un altro componente.
+                </li>
+            </ul>
+            Il primo approccio è sicuramente da evitare, il sonarqak risultante sarebbe intriso di logica di business specifica per questo particolare dominio applicativo, risultando quindi poco riutilizzabile.
+            <br>
+            Il secondo approccio, invece, è quello consigliato. In particolare, si potrebbe progettare un nuovo componente, il <kc>sonarfilter</kc> 
+            che raccoglie l'evento emesso dal <i>sonarqak</i> ed esegue il confronto con la soglia. Dal momento che il <i>sonarfilter</i> è un componente 
+            che deve essere in grado di ricevere informazioni tramite <i>Eventi</i> e comunicare con il resto del sistema a scambio di messaggi, è opportuno 
+            che esso sia progettato e implementato come un <i>attore QAk</i>. <br>  <br>
+            Questo nuovo componente potrebbe essere collato su uno qualsiasi dei nodi del sistema, tuttavia poiche contiene logica di business, consigliamo 
+            agli sviluppatori di porlo sullo stesso nodo computazionale del <kc>wasteService</kc>.
+
+            <h4>Gestione di Stop & Resume</h4>
+            Dopo aver stabilito che il confronto tra valore rilevato e soglia deve essere effettuato da un componente diverso dal sonar, è necessario 
+            capire come il <i>sonarfilter</i> possa <i>stoppare</i> e far <i>ripartire</i> il <kc>transportTrolley</kc>. 
+            
+            <h5>Analisi sulle azioni "stoppabili"</h5>
+            Dall'analisi dei requisiti e dalle analisi del problema condotte negli sprinti precedenti, risulta chiaro che il 
+            <i>TransportTrolley</i> compie sostanzialmente 4 tipi di azioni:
+            <ul>
+                <li>
+                    <b>Movimento in avanti</b>: Sono le azioni necessarie a muovere il robot nella stanza. Con "movimento in avanti" facciamo 
+                    riferimento all'insieme di azioni base (<kc>step</kc>) che muovono il robot in avanti lungo una direzione.
+                </li>
+                <li>
+                    <b>Rotazione</b>: Sono le azioni necessarie a far ruotare il robot su se stesso.
+                </li>
+                <li>
+                    <b>Pickup</b>: L'azione eseguita dal robot per caricare il rifiuti trasportati dal truck.
+                </li>
+                <li>
+                    <b>Dropout</b>: L'azione che il robot esegue per depositare il carico di rifiuti nel container.
+                </li>
+            </ul>
+            Le azioni di <i>rotazione</i> e i passi base (<i>step</i>) vengo eseguite dal <kc>DDR robot</kc> in maniera atomica e per tanto esse non sono stoppabili. 
+            Tuttavia, il robot potrebbe essere stoppato al termine di una di queste operazioni, prima dell'esecuzione della prossima mossa. <br>
+            Per quanto riguarda le operazione <i>pickup</i> e <i>dropout</i> anche esse vengono eseguite in maniera atomica per tanto non sono stoppabili. <br> <br>
+            
+            <h5>Chi riceve lo stop & resume</h5>
+            Dal momento che le uniche azioni stoppabili sono quelle di "movimento", sarà necessario interrompere l'esecuzione del <kc>pathexec</kc>, ovvero il componente che 
+            gestisce e somministra al <kc>basicrobot</kc> tutte le mosse base, sarà quindi lui il componente che riceverà il messaggio di <i>stop</i>, 
+            tuttavia, sarà necessario aggiornare lo stato del <kc>TransportTrolley</kc> ogni volta che viene stoppato. <br> <br>
+
+            Per quanto riguardo il messaggio di <i>resume</i> esso potrebbe essere raccolto dal <i>pathexec</i> o da qualche altro 
+            compoenente, come ad esempio il <kc>TransportTrolleyMover</kc>, che sarà quindi responsabile di far ripartire il robot. 
+
+            <h5>Interazione tra i componenti</h5>
+            Dal momento che il nostro obbiettivo è quello di stoppare il robot solo durante determinate azioni, sarebbe opportuno che il componente 
+            <i>pathexec</i> non si ritrovasse in coda un messaggio di <i>stop</i> al momento sbagliato, inoltre il <i>pathexec</i> è già 
+            predisposto per raccogliere un evento (<kc>alarm</kc>). Consigliamo, quindi, agli sviluppatori di trattare il messaggio di <i>stop</i> 
+            come un evento:
+            <pre>
+<key2>Event</key2> alarm : alarm(X)</pre>
+            
+            Inoltre, in questo modo l'evento potrebbe essere raccolto anche da altri componenti del sistema e utilizzato per aggiornare lo stato del <i>TransportTrolley</i>.
+            <br><br>
+            Per quanto riguarda il messaggio di <i>resume</i> esso potrebbe non essere inviato al <i>pathexec</i> ma al <kc>TransportTrolleyMover</kc>, 
+            che una volta processato il messaggio farebbe ripartire il <i>pathexec</i>. Dal momento che il messaggio di <i>resume</i> deve essere 
+            processato solo se è avvenuto uno stop del robot e in caso contrario scartato, consigliamo di trattare questo messaggio come un evento, 
+            inoltre poichè il messaggio è destinato a componenti interni al contesto in cui viene sollevato si potrebbe optare per l'utilizzo di un 
+            evento locale in modo da evita sovraccarico di rete:
+            <pre>
+<key2>Event</key2> local_resume : local_resume(X)</pre>
+            Inoltre, in questo modo l'evento potrebbe essere raccolto anche da altri componenti del sistema e utilizzato per aggiornare lo stato del <i>TransportTrolley</i>.
+            </div>
         
 
         <div class="remark">
