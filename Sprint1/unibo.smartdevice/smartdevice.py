@@ -10,8 +10,8 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 
 
-#hostAddress = "172.20.10.3"
-hostAddress = "localhost"
+hostAddress = "192.168.60.199"
+#hostAddress = "localhost"
 
 port = 8055
 
