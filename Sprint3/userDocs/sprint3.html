@@ -872,10 +872,13 @@ services:
     image: docker.io/alerei94/wasteservice:1.0
     ports:
       - 8055:8055/tcp
-      - 8055:8055/udp
-   
+      - 8055:8055/udp</pre>
 
-</pre>
+Il codice dei file .yaml è fornito di seguito:
+<ul>
+    <li><a href="./resources/yaml/basicrobot22.yaml">basicrobot22.yaml</a></li>
+    <li><a href="./resources/yaml/wasteservice.yaml">wasteservice.yaml</a></li>
+</ul>
     
 Per il deployment del contesto <i>ctxrasp</i> che verrà eseguito su RaspberryPI è stato necessario eseguire il comando <i>./gradlew distZip</i> per creare il file di distribuzione a partire dal file <i>build.gralde</i> <br>
 Il file <a href="./resources/build/build.gradle"><i>build.gradle</i></a> in particolare contiene le seguenti istruzioni:
