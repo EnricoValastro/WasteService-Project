@@ -667,7 +667,7 @@
             che una volta processato il messaggio farebbe ripartire il <i>pathexec</i>. Dal momento che il messaggio di <i>resume</i> deve essere 
             processato solo se è avvenuto uno stop del robot e in caso contrario scartato, consigliamo di trattare questo messaggio come un evento, 
             inoltre poichè il messaggio è destinato a componenti interni al contesto in cui viene sollevato si potrebbe optare per l'utilizzo di un 
-            evento locale in modo da evita sovraccarico di rete:
+            evento locale in modo da evitare il sovraccarico della rete:
             <pre>
 <key2>Event</key2> local_resume : local_resume(X)</pre>
             Inoltre, in questo modo l'evento potrebbe essere raccolto anche da altri componenti del sistema e utilizzato per aggiornare lo stato del <i>TransportTrolley</i>.
@@ -676,9 +676,13 @@
 
         <div class="remark">
             <h3>Architettura Logica</h3>
-            Sulla base di quanto emerso in fase di analisi del problema è possibile ridefinire l'architettura logica del sistema.<br> 
+            Sulla base di quanto emerso in fase di analisi del problema è possibile ridefinire l'architettura logica del sistema come segue: 
             <br><br>
-            <img src="" alt="" style="width:60% ; height:60% ;">
+            <img src="./resources/img/ArchLogicSprint3_initial.png" alt="" style="width:60% ; height:60% ;">
+            <br><br>
+            <a href="./resources/qak/wasteService.qak">wasteService.qak</a><br>
+            <a href="./resources/qak/rasp.qak">rasp.qak</a><br>
+            <a href="./resources/qak/basicrobot.qak">basicrobot.qak</a>
         </div>
         <h2>Project</h2>
         <div class="remark">
