@@ -687,100 +687,44 @@
         <h2>Project</h2>
         <div class="remark">
             <h3>Led</h3>
-            Come consigliato dagli analisti useremo il software fornito dal committente per la gestione del <i>Led</i>. <br>
-            Dal momento però che il componente <i>Led</i> deve essere in grado di interagire con gli altri componenti del sistema, 
-            gli analisti ci hanno consigliato di modellare il <i>Led</i> come un attore QAk che incapsula le funzionalità del software fornito dal committente. In questo modo si può dotare il <i>Led</i> dell'abilità di comunicare a scambio di messaggi. <br>
+            Come consigliato dagli analisti useremo il software fornito dal committente (it.unibo.radarSystem22.domain) per la 
+            creazione del <i>Led</i>.  <br>
+            Dal momento che il <i>Led</i> deve essere in grado di interagire, a scambio di messaggi, con gli altri componenti del sistema, 
+            implementeremo il <i>Led</i> come un attore QAk che incapsula le funzionalità del software fornito dal committente. In questo modo doteremo il <i>Led</i> dell'abilità di comunicare a scambio di messaggi. <br>
         <h4>Led Component</h4>
-        Come detto in fase di analisi del problema sarà il <i>TransportTrolley</i> a dire al <i>Led</i> quando fare il cambiamento di stato. Questo avviene attraverso l'invio di messaggi al <i>Led</i>. <br>
-            <pre>
-<key2>State</key2> pickupMove{
-        ...
-     <key2>forward</key2> led <key2>-m</key2> blink : blink(_)
-        ...
-}<key2>Transition</key2> t0 whenReply ...
-
-<key2>State</key2> pickupExec{
-    ...
- <key2>forward</key2> led <key2>-m</key2> turnon : turnon(_)
-    ...
-}<key2>Transition</key2> t0 whenReply ...
-
-<key2>State</key2> dropoutMove{
-    ...
- <key2>forward</key2> led <key2>-m</key2> blink : blink(_)
-    ...
-}<key2>Transition</key2> t0 whenReply ...
-
-<key2>State</key2> dropoutExec{
-    ...
- <key2>forward</key2> led <key2>-m</key2> turnon : turnon(_)
-    ...
-}<key2>Transition</key2> t0 whenReply ...
-
-<key2>State</key2> backHome{
-    ...
- <key2>forward</key2> led <key2>-m</key2> blink : blink(_)
-    ...
-}<key2>Transition</key2> t0 whenReply ...
-
-<key2>State</key2> backHomeRes{
-    <key2>forward</key2> led <key2>-m</key2> turnoff : turnoff(_)
-    ...
-
-}<key2>Goto</key2> idle
-            </pre>
-        
-        Per quanto riguarda lo stato del <i>Led</i>, come consigliato dagli analisti, abbiamo deciso di mantenere lo stato del <i>Led</i> 
-        in una <ks>data class Kotlin</ks>, permettendo così di disaccoppiare la gestione dello stato dalle funzionalità del <i>Led</i>. <br>
-
-        Per quanto riguarda la gestione dello stato del Led, come consigliato dagli analisti, abbiamo sviluppato il progetto in modo tale che , quando
-        il TransportTrolleCore dice al Led di (spegnersi, accendersi, brillare) , subito dopo manda un messaggio al SystemStateManager dicendogli update led (STATE). <br>
-        In questo modo il sistema tiene traccia dello stato del Led, infatti successivamente, come detto nello Sprint2, sarà il SystemStateManager a comunicare con la <i>GUI</i>,
-        dove vedremo lo stato del Led. <br>
+        Come proposto dagli analisti, scegliamo di progettare il <i>Led</i> come un attuatore che riceve ed esegue i comandi ricevuti dall'esterno (<kc>TransportTrolleCore</kc>), in 
+        questo modo il componente sarà ignaro del sistema che lo sta utilizzando e quindi facilmente riutilizzabile. <br>
+        I comandi che il <i>Led</i> deve essere in grado di eseguire sono tre: accensione, spegnimento e lampeggio. Questi comandi verranno impartiti 
+        al <i>Led</i> tramite i seguenti messaggi:
         <pre>
-<key2>State</key2> pickupMove{
-        ...
-     <key2>forward</key2> systemstatemanager <key2>-m</key2> updateled : updateled(BLINKING)
-        ...
-}<key2>Transition</key2> t0 whenReply ...
+<key2>Dispatch</key2> turnon : turnon(_)
+<key2>Dispatch</key2> turnoff : turnoff(_)
+<key2>Dispatch</key2> blink : blink(_)</pre>
 
-<key2>State</key2> pickupExec{
-    ...
- <key2>forward</key2> systemstatemanager <key2>-m</key2> updateled : updateled(ON)
-    ...
-}<key2>Transition</key2> t0 whenReply ...
+        Per l'implementazione del componente ci serviremo dell'infrastruttura QAk, in particolare il componente sarà progettato ed 
+        implementato come un attore QAk che incapsula un oggetto di tipo <kc>ILed</kc>. Inoltre, ci serviremo della classe <a href="./resources/kotlin/LedFactory.kt">LedFactory.kt</a> per creare il 
+        <kc>LedConcrete</kc> o il <kc>LedMock</kc> a secondo che il sistema sia in fase di simulazione o meno. <br>
+        Di seguito vengono riportate il progetto della macchina a stati finiti del componente e il codice QAk che lo implementa:
+        <br><br>
+        <img src="./resources/img/FSMled.png" alt="" style="width: 45%; height: 45%;">
+        <br><br>
+        <a href="./resources/qak/rasp.qak">rasp.qak</a>
+        <br><br>
+        Per quanto riguarda lo stato del <i>Led</i>, come consigliato dagli analisti, è stato deciso di mantenerlo  
+        in una <ks>data class Kotlin</ks> (<a href="./resources/kotlin/SystemState.kt">SystemState.kt</a>), disaccoppiando in tal modo la gestione dello stato dalle funzionalità del <i>Led</i>. <br>
 
-<key2>State</key2> dropoutMove{
-    ...
- <key2>forward</key2> systemstatemanager <key2>-m</key2> updateled : updateled(BLINKING)
-    ...
-}<key2>Transition</key2> t0 whenReply ...
+        Abbiamo apportato delle modifiche al componente <kc>TransportTrolleyCore</kc>, in modo che esso ivii al <i>Led</i>
+        i comandi di accensione, spegnimento e lampeggio. Al contempo abbiamo fatto in modo che il <i>TransportTrolleCore</i> aggiorni lo stato del <i>Led</i> mantenuto dal <kc>SystemStateManager</kc> inviando il messaggio:
+        <pre>
+<key3>//STAT = ON | OFF | BLINKING</key3>
+<key2>Dispatch</key2> updateled: updateled(STAT)</pre>
+        </pre>
+        
+        </div>
 
-<key2>State</key2> dropoutExec{
-    ...
- <key2>forward</key2> systemstatemanager <key2>-m</key2> updateled : updateled(ON)
-    ...
-}<key2>Transition</key2> t0 whenReply ...
-
-<key2>State</key2> backHome{
-    ...
- <key2>forward</key2> systemstatemanager <key2>-m</key2> updateled : updateled(BLINKING)
-    ...
-}<key2>Transition</key2> t0 whenReply ...
-
-<key2>State</key2> backHomeRes{
-    <key2>forward</key2> systemstatemanager <key2>-m</key2> updateled : updateled(OFF)
-    ...
-
-}<key2>Goto</key2> idle
-            </pre>
-
-            Il codice completo è consultabile nel file <a href="./resources/qak/wasteService.qak">wasteService.qak</a>. <br>
-       
-            </div>
-            <div class="remark">
-                <h3>Sonar</h3>
-                </div>
+        <div class="remark">
+            <h3>Sonar</h3>
+        </div>
  
         <h2>Test Plan</h2>
         <div class="remarkTest"></div>
