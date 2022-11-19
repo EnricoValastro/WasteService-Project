@@ -881,15 +881,10 @@ docker-compose -f basicrobot22.yaml up</pre>
                 </li>
                 <li>
                     <b>Avviare il <kc>rasp</kc></b> <br>
-                    Da terminale tramite ssh collegarsi all'indirizzo del raspberry e navigare fino al path <i>unibo.rasp-1.0/bin</i> e lanciare i seguenti comandi:
-                    <ul>
-                        <li><i>g++ SonarAlone.c -l wiringPi -o SonarAlone</i></li>
-                        <li><i>./unibo.rasp</i></li>
-                    </ul>
-            <pre>
+                    Da terminale tramite ssh collegarsi all'indirizzo del raspberry e navigare fino al path <i>unibo.rasp-1.0/bin</i> e lanciare il comando <i>./unibo.rasp</i>
+                    <pre>
 ssh pi@raspberrypi.local
 cd unibo.rasp-1.0/bin
-g++ SonarAlone.c -l wiringPi -o SonarAlone
 ./unibo.rasp</pre>
                 </li>
             </ul>
