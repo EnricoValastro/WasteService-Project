@@ -22,7 +22,7 @@ Dispatch getdata		  : getdata(_)
 Request getledstate 	  	: getledstate(_)
 Request gettrolleyposition 	: gettrolleyposition(_)
 Request gettrolleystate 	: gettrolleystate(_)
-Request getcontainterstate 	: getcontainerstate(_)
+Request getcontainerstate 	: getcontainerstate(_)
 Reply   givedata 			: givedata(DATA)
 
 /* Deposit Request Messages */
@@ -44,17 +44,28 @@ Reply    execko      : execko(_)
 Request  dopath      : dopath(PATH)
 Reply    dopathdone  : dopathdone(ARG)
 Reply    dopathfail  : dopathfail(ARG)
+Reply 	 dopathstopped : dopathstopped(ARG)
 
 /* Led Message */
 Dispatch blink 		 : blink(_)
 Dispatch turnon 	 : turnon(_)
 Dispatch turnoff 	 : turnoff(_)
 
+/* Sonar data */
+Event    sonardata 		 : distance( V )
+
+
+/* Stop-Resume message */
+Event alarm  : alarm (X)
+Event local_resume : local_resume (X)
+
+
 Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
-Context ctxpi ip[host="127.0.0.1" port=8065]
+Context ctxpi ip[host="raspberrypi.local" port=8065]
 Context ctxwasteservice ip [host="localhost" port=8055]
 
 ExternalQActor led context ctxpi
+ExternalQActor sonarqak22varesi context ctxpi
 ExternalQActor pathexec context ctxbasicrobot
 
 /* *********************************************************************************************
@@ -163,7 +174,7 @@ QActor transporttrolleycore context ctxwasteservice{
 	
 	State init initial{
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.BLUE)#]
-			
+		
 	}Goto idle
 
 	State idle{
@@ -180,7 +191,22 @@ QActor transporttrolleycore context ctxwasteservice{
 		forward led -m blink : blink(_)
 		forward systemstatemanager -m updateled : updateled(BLINKING)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
-	}Transition t0 whenReply moveok -> pickupExec
+	}Transition t0 whenReply moveok  -> pickupExec
+					whenEvent alarm  -> stopPickup
+					whenReply moveko -> moveErr
+
+	State stopPickup{
+		forward led -m turnon : turnon(_)
+		forward systemstatemanager -m updateled : updateled(ON)
+		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, STOPPED)
+	}Transition t0 whenEvent local_resume -> resumePickup
+	
+	State resumePickup{
+		forward led -m blink : blink(_)
+		forward systemstatemanager -m updateled : updateled(BLINKING)
+		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
+	}Transition t0 whenReply moveok  -> pickupExec
+					whenEvent alarm  -> stopPickup
 					whenReply moveko -> moveErr
 
 	State pickupExec{
@@ -216,7 +242,22 @@ QActor transporttrolleycore context ctxwasteservice{
 		forward systemstatemanager -m updateled : updateled(BLINKING)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
 		
-	}Transition t0 whenReply moveok -> dropoutExec
+	}Transition t0 whenReply moveok  -> dropoutExec
+					whenEvent alarm  -> stopDropout
+					whenReply moveko -> moveErr
+
+	State stopDropout{
+		forward led -m turnon : turnon(_)
+		forward systemstatemanager -m updateled : updateled(ON)
+		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, STOPPED)
+	}Transition t0 whenEvent local_resume -> resumeDropout
+	
+	State resumeDropout{
+		forward led -m blink : blink(_)
+		forward systemstatemanager -m updateled : updateled(BLINKING)
+		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
+	}Transition t0 whenReply moveok  -> dropoutExec
+					whenEvent alarm  -> stopDropout
 					whenReply moveko -> moveErr
 
 	State dropoutExec{
@@ -239,7 +280,22 @@ QActor transporttrolleycore context ctxwasteservice{
 		forward led -m blink : blink(_)
 		forward systemstatemanager -m updateled : updateled(BLINKING)
 		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
-	}Transition t0 whenReply moveok -> backHomeRes
+	}Transition t0 whenReply moveok  -> backHomeRes
+					whenEvent alarm  -> stopBackHome
+					whenReply moveko -> moveErr
+
+	State stopBackHome{
+		forward led -m turnon : turnon(_)
+		forward systemstatemanager -m updateled : updateled(ON)
+		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, STOPPED)
+	}Transition t0 whenEvent local_resume -> resumeBackHome
+	
+	State resumeBackHome{
+		forward led -m blink : blink(_)
+		forward systemstatemanager -m updateled : updateled(BLINKING)
+		forward systemstatemanager -m updatetrolley : updatetrolley(ONTHEROAD, MOVING)
+	}Transition t0 whenReply moveok  -> backHomeRes
+					whenEvent alarm  -> stopBackHome
 					whenReply moveko -> moveErr
 
 	State backHomeRes{
@@ -332,7 +388,29 @@ QActor transporttrolleymover context ctxwasteservice{
 		
 	}Transition t0 whenReply dopathdone -> lookForFix
 					whenReply dopathfail -> moveKo
+					whenReply dopathstopped -> stop
 				
+	State stop{
+		onMsg(dopathstopped : dopathstopped(ARG)){
+			[# 
+				PATHSTILLTODO = payloadArg(0)
+				
+				unibo.comm22.utils.ColorsOut.outappl("$name	|	stopped, path still to do: $PATHSTILLTODO", unibo.comm22.utils.ColorsOut.BLUE)	
+			#]
+			
+		}
+	}Transition t0 whenEvent local_resume -> resume
+	
+	State resume{
+		[# 
+			unibo.comm22.utils.ColorsOut.outappl("$name	|	resumed, : $PATHSTILLTODO", unibo.comm22.utils.ColorsOut.BLUE)
+		#]
+		request pathexec -m dopath : dopath($PATHSTILLTODO)
+		
+	}Transition t0 whenReply dopathdone -> lookForFix
+					whenReply dopathfail -> moveKo
+					whenReply dopathstopped -> stop
+	
 	State lookForFix{
 		[# unibo.kotlin.planner22Util.updateAfterPath(PATH) #]
 		[# someToFix = false #]
@@ -466,7 +544,7 @@ QActor systemstatemanager context ctxwasteservice{
 					whenMsg	  	updateled		   -> updateLedState
 					whenMsg	  	getdata			   -> sendData
 					whenRequest getledstate 	   -> replyData
-					whenRequest getcontainterstate -> replyData
+					whenRequest getcontainerstate -> replyData
 					whenRequest gettrolleystate    -> replyData
 					whenRequest gettrolleyposition -> replyData
 					whenMsg   	exit               -> end
@@ -533,7 +611,7 @@ QActor systemstatemanager context ctxwasteservice{
 			[# var DATA = system.getCurrLedState().toString() #]
 			replyTo getledstate with givedata : givedata($DATA)
 		}
-		onMsg (getcontainterstate : getcontainerstate(_)){
+		onMsg (getcontainerstate : getcontainerstate(_)){
 			[# var DATA = system.getAllCurrentBoxWeight().toString() #]
 			replyTo getledstate with givedata : givedata($DATA)
 		}
@@ -553,3 +631,68 @@ QActor systemstatemanager context ctxwasteservice{
 	}
 }
 
+/* *********************************************************************************************
+ * ---------------------------------------------------------------------------------------------
+ * Component addicted to filter sonar data
+ * ---------------------------------------------------------------------------------------------
+ **********************************************************************************************/
+ 
+QActor sonarfilter context ctxwasteservice{
+	
+	[#
+		val DLIMIT = utility.SonarFilterConfig.configSonarFromFile()
+		var stopFlag = false
+		var distance : Int = 0
+	#]
+	
+	
+	State init initial{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+	}Goto idle
+	
+	State idle{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+	}Transition t0 whenEvent sonardata -> handleSonarData
+	
+	State handleSonarData{
+		onMsg(sonardata : distance( V )){
+			
+			[#
+				try{
+					distance = payloadArg(0).toInt()
+					unibo.comm22.utils.ColorsOut.outappl("$name	|	handle data: $distance", unibo.comm22.utils.ColorsOut.YELLOW)
+				}catch(e : Exception){ 
+					unibo.comm22.utils.ColorsOut.outappl("$name	|	some err...", unibo.comm22.utils.ColorsOut.YELLOW)
+				}	
+			#]	
+		}
+		if[# distance <= DLIMIT #]{
+			if[# !stopFlag #]{
+				[# unibo.comm22.utils.ColorsOut.outappl("$name	|	emitting alarm...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+				 emit alarm : alarm(stop)
+				[# stopFlag = true #]
+			}
+		}
+		else{
+			if[# stopFlag #]{
+				[# unibo.comm22.utils.ColorsOut.outappl("$name	|	emitting resume...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+				emit local_resume : local_resume (resume)
+				[# stopFlag = false #]
+			}
+		}
+	}Transition t0 whenEvent sonardata -> handleSonarData
+					whenMsg exit -> end
+					
+	State end {
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	bye", unibo.comm22.utils.ColorsOut.YELLOW) #]
+		terminate 0 
+	}
+	
+}
+ 
+ 
+ 
+ 
+ 
+ 
+ 
