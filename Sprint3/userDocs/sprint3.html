@@ -785,11 +785,163 @@
         <div class="remark"></div>
 
         <div class="remark">
+            <h4>Distribuzione del sistema</h4>
+            Il nostro sistema si sviluppa in più nodi che comunicano tra loro e che sono cosi distribuiti: <br>
+            <ul>
+                <li>Docker container contenente il contesto ctxwasteservice</li>
+                <li>Docker container contenente il contesto ctxbasicrobot</li>
+                <li>RaspberryPI contenente il contesto ctxrasp</li>
+                <li>Dispositivo contenente il contesto ctxserver in cui si trova la GUI</li>
+                <li>Smartdevice</li>
+            </ul>
             <h3>Deployment</h3>
-        </div>
+            Nella cartella Deployment contenuta nel nostro repository GitHub troviamo le directory <i>unibo.basicrobot22</i>, <i>unibo.wasteService</i> e <i>it.unibo.virtualrobot2020</i>. <br>
+            Per le prime due è stato necessario aprire l'intero progetto in IntelliJ e fare il build del progetto, in modo da avere a nostra disposizione il file con estensione <i>.tar</i> utile a creare l'immagine del nostro sistema. <br>
+            Le immagini del sistema sono state create con il software <a href="https://www.docker.com/">Docker</a>. <br>
+            E' stato necessario aggiungere nella cartella <i>unibo.basicrobot22</i> il file <a href="./resources/dockerfile/Dockerfile_robot">Dockerfile</a> contenente le seguenti istruzioni.<br>
+            <pre>
+FROM openjdk:11.0.14
+EXPOSE 8020
+
+ADD ./build/distributions/unibo.basicrobot22-2.0.tar /
+WORKDIR /unibo.basicrobot22-2.0/bin
+COPY ./*.pl ./
+COPY ./*.json ./
+
+CMD ["bash", "unibo.basicrobot22"]</pre> 
+
+Una volta creato il file è stato eseguito il comando "<kc>docker build -t name:tag .</kc>" per creare l'immagine del sistema a partire dal <i>Dockerfile</i> appena creato. <br><br>
+Nello specifico è stato eseguito il seguente comando: <kc>docker build -t basicrobot22:2.0 .</kc>
+            Per creare l'immagine del sistema <i>unibo.wasteService</i> si è proceduto nello stesso modo. E' stato creato il file <a href="./resources/dockerfile/Dockerfile_wasteservice">Dockerfile</a> contenente le seguenti istruzioni.<br>
+           <pre>
+FROM openjdk:11.0.14
+EXPOSE 8055
+
+ADD ./build/distributions/unibo.wasteservice-1.0.tar /
+WORKDIR /unibo.wasteservice-1.0/bin
+COPY ./*.pl ./
+COPY ./*.json ./
+
+CMD ["bash", "unibo.wasteservice"]</pre> 
+           Quindi è stato eseguito il comando <kc>docker build -t wasteservice:1.0 .</kc> per la creazione dell'immagine del sistema. <br><br>
+
+           Ogni istruzione contenuta nel <i>Dockerfile</i> crea un layer:
+<ul>
+    <li><ks>FROM</ks> crea un layer a partire dall'immagine docker <i>openjdk:11.0.14</i>.</li>
+    <li><ks>EXPOSE</ks> informa Docker che il contenitore è in ascolto sulle porte di rete specificate in fase di esecuzione.</li>
+    <li><ks>ADD</ks> aggiunge al Docker container una cartella locale</li>
+    <li><ks>WORKDIR</ks> definisce la directory di lavoro per le istruzioni successive nel Dockerfile</li>
+    <li><ks>COPY</ks> aggiunge tutti i file cone estensione pl e json alla directory di lavoro </li>
+    <li><ks>CMD</ks> specifica il comando da eseguire all'interno del container.</li>
+</ul>
+
+Lo stesso è stato fatto per la cartella <i>it.unibo.virtualrobot2020</i>. <br>
+Tale software ci è stato fornito dal committente e dunque all'interno della cartella troviamo già il file<a href="./resources/dockerfile/Dockerfile_wenv">Dockerfile</a>.
+Quindi in questo caso abbiamo dovuto solo creare l'immagine tramite il comando visto precedentemente. <br>
+<pre>
+docker build -t wenv:1.0 .
+</pre>
+
+Infine sono stati creati due file con estensione .yaml per l'esecuzione di applicazioni multi-container. <br>
+Il file <i>basicrobot22.yaml</i> contiene le seguenti istruzioni: <br>
+<pre>
+version: '3.3'
+services:
+  wenv:
+    image: docker.io/alerei94/wenv:1.0
+    ports:
+      - 8090:8090 
+      - 8091:8091/tcp
+      - 8091:8091/udp
+  robot:
+    image: docker.io/alerei94/basicrobot22:2.0
+    ports:
+      - 8020:8020/tcp
+      - 8020:8020/udp
+    depends_on:
+      - wenv</pre>
+Mentre il file <i>wasteservice.yaml</i> è cosi strutturato:
+<pre>
+version: '3.3'
+services:
+  wasteservice:
+    image: docker.io/alerei94/wasteservice:1.0
+    ports:
+      - 8055:8055/tcp
+      - 8055:8055/udp
+   
+
+</pre>
+    
+Per il deployment del contesto <i>ctxrasp</i> che verrà eseguito su RaspberryPI è stato necessario eseguire il comando <i>./gradlew distZip</i> per creare il file di distribuzione a partire dal file <i>build.gralde</i> <br>
+Il file <a href="./resources/build/build.gradle"><i>build.gradle</i></a> in particolare contiene le seguenti istruzioni:
+<pre>
+distributions {      
+    main{
+        contents{
+            from "./DomainSystemConfig.json"
+            from "./rasp.pl"                
+            from "./sysRules.pl"
+            from "./led25GpioTurnOn.sh"
+            from "./led25GpioTurnOff.sh"
+            from "./sonarAlone.c "
+        }
+    }
+}</pre>
+in modo da rendere disponibili tutti i file necessari per l'esecuzione del sistema. <br>
+
+Quindi tramite <kc>FileZilla</kc> abbiamo copiato il file <i>unibo.rasp-1.0.zip</i> contenuto all'interno della cartella del progetto <i>/build/distributions/</i> sul RaspberryPI e da terminale abbiamo eseguito il comando <kc>unzip unibo.rasp-1.0.zip</kc> per estrarre il file. <br>
+Dopo di che tramite <i>FileZilla</i> abbiamo spostato i file contenuti nella cartella <i>/unibo.rasp-1.0</i> nella cartella <i>/unibo.rasp-1.0/bin </i>sul RaspberryPI. <br>
+</div>
         
         <div class="remark">
             <h3>How to start the system</h3>
+            <ul>
+                <li>
+                    <b>Avviare lo <kc>smartdevice</kc></b><br>
+                    Da terminale navigare fino al path <i>WasteService-Project/Sprint1/unibo.smartdevice</i> e lanciare il comando <i>python3 smartdevice.py</i>
+                    <pre>
+cd WasteService-Project/Sprint1/unibo.smartdevice
+python3 smartdevice.py</pre>
+                </li>
+
+                <li>
+                    <b>Avviare la <kc>WasteServiceStatusGUI</kc></b><br>
+                    Da terminale navigare fino al path <i>WasteService-Project/Sprint2/webgui</i> e lanciare il comando <i>./gradlew run</i>
+                    <pre>
+cd WasteService-Project/Sprint2/webgui
+./gradlew run</pre>
+                    Aprire il browser e digitare l'indirizzo <i>http://localhost:8085</i>
+                </li>
+                <li>
+                    <b>Avviare il <kc>wasteService</kc></b> <br>
+                    Da terminale navigare fino al path <i>WasteService-Project/Deployment/</i> e lanciare il comando <i>docker-compose -f wasteservice.yaml up </i>
+                    <pre>
+cd WasteService-Project/Deployment/
+docker-compose -f wasteservice.yaml up</pre>
+                </li>
+                <li>
+                    <b>Avviare il <kc>basicrobot22</kc> e il <kc>virtualRobot2020</kc></b> <br>
+                    Da terminale navigare fino al path <i>WasteService-Project/Deployment/</i> e lanciare il comando <i>docker-compose -f basicrobot22.yaml up </i>
+                    <pre>
+cd WasteService-Project/Deployment/
+docker-compose -f basicrobot22.yaml up</pre>
+                Aprire il browser e digitare l'indirizzo <i>http://localhost:8090</i>
+                </li>
+                <li>
+                    <b>Avviare il <kc>rasp</kc></b> <br>
+                    Da terminale tramite ssh collegarsi all'indirizzo del raspberry e navigare fino al path <i>unibo.rasp-1.0/bin</i> e lanciare i seguenti comandi:
+                    <ul>
+                        <li><i>g++ SonarAlone.c -l wiringPi -o SonarAlone</i></li>
+                        <li><i>./unibo.rasp</i></li>
+                    </ul>
+            <pre>
+ssh pi@raspberrypi.local
+cd unibo.rasp-1.0/bin
+g++ SonarAlone.c -l wiringPi -o SonarAlone
+./unibo.rasp</pre>
+                </li>
+            </ul>
         </div>
 
        
