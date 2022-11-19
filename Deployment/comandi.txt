@@ -1,7 +1,5 @@
 docker stop $(docker ps -a -q)
 
-docker rm $(docker ps -a -q)
-
 docker compose -f basicrobot22.yaml up
 
 docker compose -f wasteservice.yaml up
