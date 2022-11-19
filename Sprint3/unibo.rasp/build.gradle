@@ -106,10 +106,10 @@ eclipse {
 
 application {
     // Define the main class for the application.
-    mainClass = 'it.unibo.ctxpi.MainCtxpiKt'
+        mainClass = 'it.unibo.ctxpi.MainCtxpiKt'
 }
 
- jar {
+jar {
     println("building jar")
     from sourceSets.main.allSource
     manifest {
