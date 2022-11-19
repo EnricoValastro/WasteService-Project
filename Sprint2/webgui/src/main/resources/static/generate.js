@@ -2,7 +2,7 @@ let dataFromJson = {}
 
 $.ajax({
     dataType: "json",
-    url: "./WasteServiceSystemConfig.json",
+    url: "./wasteServiceSystemConfig.json",
     data: null,
     async: false,
     success: function(data) {
