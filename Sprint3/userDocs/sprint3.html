@@ -775,7 +775,179 @@
         
         <div class="remark">
             <h3>Distance Filter</h3>
+            Come suggerito dagli analisti, abbiamo deciso di realizzare un componente che raccolglie i dati emessi dal <i>Sonarqak22varesi</i> e che li 
+            confranto con il volore <kc>DLIMIT</kc>. Se il valore ricevuto è inferirore alla soglia <i>DLIMIT</i> allora viene bloccato il sistema tramite 
+            l'emissione del seguente evento:
+            <pre>
+<key2>Event</key2> alarm : alarm(X)</pre>
+            Se invece il dato è maggiore di <i>DLIMIT</i> allora viene emesso un evento locale che permette di riprendere l'esecuzione del sistema:
+            <pre>
+<key2>Event</key2> local_resume : local_resume(X)</pre>
+            
+            Per evitare l'emissione continua di eventi, abbiamo predisposto un <i>Flag</i> che viene alzato e abbassato ogni volta che il 
+            sistema viene stoppato e ripreso. <br>
+            <pre>
+<key2>if</key2>[# distance <= DLIMIT #]{
+    <key2>if</key2>[# !stopFlag #]{
+        <key2>emit</key2> alarm : alarm(stop)
+        [# stopFlag = true #]
+    }
+}
+<key2>else</key2>{
+    <key2>if</key2>[# stopFlag #]{
+        <key2>emit</key2> local_resume : local_resume (resume)
+        [# stopFlag = false #]
+    }
+}</pre>     
+            L'evento <i>alarm</i> emesso dal <i>distanceFilter</i> viene raccolta dal <kc>pathexec</kc> e dal <kc>TransportTrolleCore</kc> 
+            per realizzare il requisito di <b>stop</b> e aggiornare lo stato del <i>transportTrolley</i> e del <i>Led</i>. <br>
+            L'evento <i>local_resume</i>, invece, viene raccolta dal <kc>TransportTrolleCore</kc> e dal <kc>TransportTrolleyMover</kc> per aggiornare 
+            lo stato del <i>transportTrolley</i> e far ripartire il <i>pathexec</i>. <br><br>
+            Il codice del <i>distanceFilter</i> è consultabile in <a href="./resources/qak/wasteService.qak">wasteService.qak</a>
         </div>
+        <div class="remark">
+            <h3>Modifiche apportate ad altri componenti</h3>
+            Per soddisfare i requisiti del committente è stato necessario modificare i componenti precedentemente sviluppati, affinchè 
+            essi possano essere "stoppati" e "riattivati". 
+            <h4>TransportTrolleCore</h4>
+            E' stato necessario modificare il componente affinchè si mettesse in ascolto degli eventi emessi dal <i>distanceFilter</i>, di seguito vengono riportate 
+            le modifiche salienti:
+            <pre>
+<key2>State</key2> pickupMove{
+    <key2>request</key2> transporttrolleymover <key2>-m</key2> moveto : moveto(INDOOR)
+    ...
+}<key2>Transition</key2> t0 <key2>whenReply</key2> moveok  -> pickupExec
+                <key2>whenEvent</key2> alarm  -> stopPickup
+                <key2>whenReply</key2> moveko -> moveErr
+
+<key2>State</key2> stopPickup{
+    <key2>forward</key2> led <key2>-m</key2> turnon : turnon(_)
+    <key2>forward</key2> systemstatemanager <key2>-m</key2> updateled : updateled(ON)
+    <key2>forward</key2> systemstatemanager <key2>-m</key2> updatetrolley : updatetrolley(ONTHEROAD, STOPPED)
+}<key2>Transition</key2> t0 <key2>whenEvent</key2> local_resume -> resumePickup
+
+<key2>State</key2> resumePickup{
+    <key2>forward</key2> led <key2>-m</key2> blink : blink(_)
+    <key2>forward</key2> systemstatemanager <key2>-m</key2> updateled : updateled(BLINKING)
+    <key2>forward</key2> systemstatemanager <key2>-m</key2> updatetrolley : updatetrolley(ONTHEROAD, MOVING)
+}<key2>Transition</key2> t0 <key2>whenReply</key2> moveok  -> pickupExec
+                <key2>whenEvent</key2> alarm  -> stopPickup
+                <key2>whenReply</key2> moveko -> moveErr
+
+<key2>State</key2> dropoutMove{
+    ...
+    <key2>request</key2> transporttrolleymover <key2>-m</key2> moveto : moveto($POS)
+    ...
+}<key2>Transition</key2> t0 <key2>whenReply</key2> moveok  -> dropoutExec
+                <key2>whenEvent</key2> alarm  -> stopDropout
+                <key2>whenReply</key2> moveko -> moveErr
+
+<key2>State</key2> stopDropout{
+    <key2>forward</key2> led <key2>-m</key2> turnon : turnon(_)
+    <key2>forward</key2> systemstatemanager <key2>-m</key2> updateled : updateled(ON)
+    <key2>forward</key2> systemstatemanager <key2>-m</key2> updatetrolley : updatetrolley(ONTHEROAD, STOPPED)
+}<key2>Transition</key2> t0 <key2>whenEvent</key2> local_resume -> resumeDropout
+
+<key2>State</key2> resumeDropout{
+    <key2>forward</key2> led <key2>-m</key2> blink : blink(_)
+    <key2>forward</key2> systemstatemanager <key2>-m</key2> updateled : updateled(BLINKING)
+    <key2>forward</key2> systemstatemanager <key2>-m</key2> updatetrolley : updatetrolley(ONTHEROAD, MOVING)
+}<key2>Transition</key2> t0 <key2>whenReply</key2> moveok  -> dropoutExec
+                <key2>whenEvent</key2> alarm  -> stopDropout
+                <key2>whenReply</key2> moveko -> moveErr</pre>
+
+            Il codice completo del <i>TransportTrolleCore</i> è consultabile in <a href="./resources/qak/wasteService.qak">wasteService.qak</a>
+        
+            <h4>TransportTrolleyMover</h4>
+            E' stato necessario modificare questo componente affinche sia in grado di processare un nuovo tipo di messaggio:
+            <pre>
+<key2>Reply</key2> dopathstopped : dopathstopped(PATHSTILLTODO)</pre>
+            che verrà mandato dal <i>pathexec</i> quando il <i>distanceFilter</i> emette l'evento <i>alarm</i>. <br>
+            Inoltre è stato necessario fare in modo che il componente si mettesse in ascolto deglie eventi <kc>local_resume</kc>. 
+            <br>
+            Di seguito sono riportate le principali modifiche apportate al componente:
+            <pre>
+<key2>State</key2> execMove{
+
+    <key2>request</key2> pathexec <key2>-m</key2> dopath : dopath($PATH)
+    
+}<key2>Transition</key2> t0 <key2>whenReply</key2> dopathdone -> lookForFix
+                <key2>whenReply</key2> dopathfail -> moveKo
+                <key2>whenReply</key2> dopathstopped -> stop
+
+<key2>State</key2> stop{
+    <key2>onMsg</key2>(dopathstopped : dopathstopped(ARG)){
+        [# PATHSTILLTODO = payloadArg(0) #] 
+    }
+}<key2>Transition</key2> t0 <key2>whenEvent</key2> local_resume -> resume
+
+<key2>State</key2> resume{
+
+    <key2>request</key2> pathexec <key2>-m</key2> dopath : dopath($PATHSTILLTODO)
+    
+}<key2>Transition</key2> t0 <key2>whenReply</key2> dopathdone -> lookForFix
+                <key2>whenReply</key2> dopathfail -> moveKo
+                <key2>whenReply</key2> dopathstopped -> stop</pre>
+
+        
+            Il codice completo del <i>TransportTrolleyMover</i> è consultabile in <a href="./resources/qak/wasteService.qak">wasteService.qak</a>
+        
+        </div>
+
+        <div class="remark">
+            <h3>Modifiche apportate al software fornito dal committente</h3>
+            Per la realizzazione del software <b>WasteService</b> è stato necessario apportare alcune piccole modifiche al materiale 
+            fornito dal committente, in particolare:
+
+            <h4>Pathexec</h4>
+            Il <i>pathexec</i> del committente era predisposto per ricevere eventi <i>alarm</i>, tuttavia, questi e i messaggi <kc>stepfail</kc>
+            del <kc>basicrobot</kc> venivano gestiti allo stesso modo: rispondendo al messaggio <kc>dopath</kc> con il messaggio 
+            <kc>dopathfail</kc>. Abbiamo ritenuto opportuno fare in modo che questi due messaggi venissero gestiti in maniera differente, 
+            per fare ciò è stato necessario introdurre un nuovo messaggio:
+            <pre>
+<key2>Reply</key2> dopathstopped : dopathstopped(PATHSTILLTODO)</pre>
+
+            questo messaggio verrà invato in risposta al <kc>dopath</kc> quando sopraggiunge un evento <i>alarm</i>. <br>
+            Il codice del <i>pathexec</i> è consultabile in <a href="./resources/qak/basicrobot.qak">basicrobot.qak</a>
+
+            <h4>it.unibo.radarSystem22.domain</h4>
+            Al fine di rendere il software del <i>sonarqak22varesi</i> il più possibile riutilizzabile, anche con tipi di diversi 
+            di sonar fisici, abbiamo apportato delle piccole modifiche al software del committente. <br>
+            In particolare abbiamo deciso di introdurre un nuovo campo nel file di configurazione <a href="./resources/java/DomainSystemConfig.java">DomainSystemConfig.java</a>
+            <pre>
+<key>public static</key> String sonarType = <key3>"HCSR04"</key3>;</pre>
+
+            Questo nuovo valore di configurazione ci permettere di distinguere tra tipi diversi di sonar fisico. <br>
+            La classe astratta <a href="./resources/java/SonarModel.java">SonarModel.java</a> è stata modificata affinchè la 
+            <ks>factory</ks> che essa implementa distingua tra tipi diversi di sonar fisico leggendo il parametro di configurazione 
+            <kc>sonarType</kc>. A seconda del valore letto crerà il <kc>SonarConcrete</kc> corrispondente. <br> Attualmente la libreria 
+            prevede solo il supporto per il sonar <i>HCSR04</i>, tuttavia, è possibile estenderla per supportare altri tipi di sonar in maniera abbastanza semplice. <br>
+            <pre>
+<key>public static</key> ISonar create() {
+    <key>if</key>( DomainSystemConfig.simulation )
+        <key>return</key> createSonarMock();
+    <key>else</key>
+        <key>return</key> createSonarConcrete();
+}
+<key>public static</key> ISonar createSonarMock() {
+    ColorsOut.out("createSonarMock", ColorsOut.BLUE);
+    <key>return new</key> SonarMock();
+}	
+<key>public static</key> ISonar createSonarConcrete() {
+    ColorsOut.out("createSonarConcrete", ColorsOut.BLUE);
+    <key>if</key>(DomainSystemConfig.sonarType.equals("HCSR04")){
+        <key>return new</key> SonarHCSR04Concrete();
+    }
+    else{
+        <key>return null</key>;
+    }
+}</pre>
+
+            Il codice completo è consultabile in <a href="../it.unibo.radarSystem22.domain/">it.unibo.radarSystem22.domain</a>
+
+
+        </div>
+
  
         <h2>Test Plan</h2>
         <div class="remarkTest"></div>
