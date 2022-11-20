@@ -724,6 +724,57 @@
 
         <div class="remark">
             <h3>Sonar</h3>
+            Per la realizzazione del <i>Sonar</i> abbiamo deciso di seguire la strada proposta dagli analisti, ovvero quella di utilizzare il software fornito dal committente (it.unibo.radarSystem22.domain) 
+            incapsulando le sue funzionalità in un attore QAk. <br> Abbiamo, inoltre, deciso di prendere spunto dal <i>sonarqak22</i> fornito dal 
+            committente, utilizzando una <ks>pipe</ks> in cui il primo componente (un <ks>CodedQActor</ks>) incapsula un <i>ISonar</i> e genera i dati che vengono 
+            ripuliti dal un <ks>cleaner</ks> per poi arrivare al componente <kc>sonarqak22varesi</kc>. <br>
+            Di seguito viene riportato lo schema della <i>pipe</i> che abbiamo implementato:
+            <br><br>
+            <img src="./resources/img/SonarPipe.png" alt="" style="width: 45%; height: 45%;">
+            <br><br>
+            <h4>SonarSupport2022</h4>
+            Il <kc>SonarSupport2022</kc> è stato implementato utilizzando un <ks>CodedQActor</ks>, cioè un attore scritto direttamente in Kotlin. <br>
+            Il <i>SonarSupport2022</i> incapsula un oggetto di tipo <i>ISonar</i> che viene creato utilizzando la <kc>DeviceFactory</kc> offerta dalla libreria <i>it.unibo.radarSystem22.domain</i>.
+            La <i>DeviceFactory</i> crea un <kc>SonarMock</kc> o un <kc>SonarConcrete</kc> a seconda che il sistema sia in fase di simulazione o meno. 
+            Quando il <i>SonarSupport2022</i> riceve il messaggio <kc>sonaractivate</kc> viene lanciata una <ks>coroutine</ks> che fa 
+            <ks>polling</ks> sulla variabile di istanza <kc>curVal</kc> in cui è memorizzato il valore generato dal <i>Sonar</i>. <br>
+            Dal momomento che il <i>Sonar</i> genera un enorme quantità di dati, e che spesso il dato letto risulta uguale a quello precedente o successivo, abbiamo deciso, 
+            per non appesantire la CPU, di fare <i>polling</i> ad intervalli regolari di mezzo secondo.
+
+            <br>
+            Per limitare il numero di dati immessi nel sistema ogni nuova lettura viene confrontata con il valore letto in precedenza. Se i due dati risultano uguali, il nuovo dato viene scartato, 
+            in caso contrario viene emesso un <ks>localStreamEvent</ks> che arriva al prossimo componente della <i>pipe</i>, il <kc>datacleaner</kc>. <br>
+            Il codice del <i>SonarSupport2022</i> è consultabile in <a href="./resources/kotlin/sonarSupport2022.kt">SonarSupport2022.kt</a>
+
+            <h4>DataCleaner</h4>
+            Come il <i>SonarSupport2022</i> il <i>dataCleaner</i> è implementanto come un <ks>CodedQActor</ks>, il suo scopo è quello di ridurre 
+            la quantità di dati che arrivano al <kc>sonarqak22varesi</kc>, eliminando tutti i valori che non rientrano nel range consentito. <br>
+            I dati che si trovano all'interno del range vengono propagati al <kc>sonarqak22varesi</kc> tramite un <ks>localStreamEvent</ks>. <br>
+            Il codice del <i>dataCleaner</i> è consultabile in <a href="./resources/kotlin/dataCleaner.kt">dataCleaner.kt</a>
+
+            <h4>Sonarqak22varesi</h4>
+            Il <i>Sonarqak22varesi</i> è stato progettato in modo da poter essere essere il più possibile indipendente dal resto del sistema. <br>
+            All'avvio esso invia il seguente messaggio al <i>SonarSupport2022</i> in modo da avviare la lettura dei dati:
+            <pre>
+<key2>Dispatch</key2> sonaractivate: info(ARG)</pre>
+            
+            Successivamente ogni qual volta riceve un dato dal <i>dataCleaner</i> emette il seguente evento:
+            <pre>
+<key2>Event</key2> sonardata : distance(V)</pre>
+
+            Di seguito vengono riportati il progetto della macchina a stati finiti e il codice del <i>Sonarqak22varesi</i>:
+            <br><br>
+            <img src="./resources/img/FSMsonarqak22varesi.png" alt="" style="width: 45%; height: 45%;">
+            <br><br>
+            <a href="./resources/qak/rasp.qak">rasp.qak</a>
+            
+
+
+
+        </div>
+        
+        <div class="remark">
+            <h3>Distance Filter</h3>
         </div>
  
         <h2>Test Plan</h2>
