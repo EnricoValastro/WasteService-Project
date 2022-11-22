@@ -193,6 +193,14 @@
         margin: 10px;
         border-radius: 25px;
     }
+    div.remark2{
+        background-color: #2b6289;
+        border: 1.5px solid #2b6289;
+        padding: 15px;
+        margin-left: 15px;
+        border-radius: 10px;
+        color: rgb(196, 196, 196);
+    }
     div.remarkTest{
         background-color: #d4fbd7;
         border: 1.5px solid #d4fbd7;
@@ -953,13 +961,52 @@
         <div class="remarkTest"></div>
 
         <h2>Architettura finale del Sistema</h2>
-        <div class="remark"></div>
+        <div class="remark">
+            In seguito alle fasi di analisi e progettazione, condotte nei tre sprint, il sistema ha assunto un architettura distribuita. 
+            In particolare, il nostro sistema si sviluppa su quattro nodi distinti:
+            <ul>
+                <li>
+                    <b>Nodo centrale</b>: è il nodo che ospiterà la <kc>Business Core</kc> del sistema (<kc>ctxwasteservice</kc>). <br>
+                    Il modello eseguibile del software distribuito su questo nodo è consultabile in <a href="./resources/qak/wasteService.qak">wasteService.qak</a>
+                </li>
+                <li>
+                    <b>Nodo robot</b>: è il nodo che ospiterà tutto il software in grado di muovere il robot fisico o virtuale (<kc>ctxbasicrobot</kc>). <br>
+                    Il modello eseguibile del software distribuito su questo nodo è consultabile in <a href="./resources/qak/basicrobot.qak">basicrobot.qak</a>
+                </li>
+                <li>
+                    <b>Nodo raspberry</b>: tale nodo è costituito da un <kc>RaspberryPI</kc>, che ospiterà il software necessario 
+                    alla gestione di <i>Sonar</i> e <i>Led</i> fisici (<kc>ctxpi</kc>). <br>
+                    Il modello eseguibile del software distribuito su questo nodo è consultabile in <a href="./resources/qak/rasp.qak">rasp.qak</a>
+                </li>
+                <li>
+                    <b>Nodo GUI</b>: è il nodo che ospiterà la <kc>WasteServiceStatusGUI</kc> (<kc>ctxserver</kc>). <br>
+                    Il software della <i>Web Application</i> è consultabile in <a href="../../Sprint2/webgui/">webgui</a>
+                </li>
+            </ul>
+            <ks>N.B.</ks> Per questioni puramente pratiche, il <kc>nodo robot</kc> e il <kc>nodo centrale</kc> sono stati distribuiti 
+            come due <i>processi</i> distinti all'interno dello stesso nodo fisico. <br><br>
+            Di seguito viene mostrata l'architettura finale del sistema: <br><br>
+            <img src="./resources/img/ArchLogicSprint3_initial.png" alt="" style="width: 70%; height: 70%;">
+        </div>
 
         <h2>Demo del sistema</h2>
-        <div class="remark">
-            <video width="50%" height="50%" muted controls>
-                <source src="./resources/demo/WasteServiceDemo.mp4" type="video/mp4">
-            </video>
+        <div class="remark" style="display: flex; flex-direction: row">
+            <div style="width:50% ; height: 50%;">
+                <video width="100%" height="100%" muted controls>
+                    <source src="./resources/demo/WasteServiceDemo.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="remark2" style="width:50% ;" >
+                
+                <div>La demo del sistema è stata eseguita su tre diversi dispositivi, un <i>RaspberryPi</i>, un dispositivo con <i>MacOs</i> e uno con 
+                    sistema operativo <i>Windows</i>. Inoltre, un'altro dispositivo <i>MacOs</i> è stato utilizzato per mostrare la <i>CLI</i> del <i>Raspberry</i> e per eseguire lo <i>smartdevice</i>. <br>
+                    In particolare: il dispositivo <i>Mac</i> ospitava il <i>nodo centrale</i> e il 
+                    <i>nodo robot</i>, il dispositivo <i>Windows</i> ospitava la <i>WasteServiceStatusGUI</i>. <br>
+                    Il sistema gira correttamente in qualsiasi configurazione e con tutti i più comuni sistemi operativi (MacOs, Windows, Linux). <br>
+                </div>
+            </div>
+            
+            
         </div>
 
         <div class="remark">
