@@ -1,6 +1,6 @@
 {
-  "SIMULATION"        : false,
-  "TESTING"           : false,
+  "SIMULATION"        : true,
+  "TESTING"           : true,
   "SONARTYPE"         : "HCSR04",
   "SONARDELAY"        : 1000,
   "SONARDISTANCEMAX"  : 500,

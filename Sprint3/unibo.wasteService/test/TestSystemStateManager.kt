@@ -34,7 +34,7 @@ class TestSystemStateManager {
     @Before
     fun setUp(){
         if(!setup) {
-            ColorsOut.outappl("Sprint2TestSystemStataManager	|	setup...", ColorsOut.GREEN)
+            ColorsOut.outappl("TestSystem	|	setup...", ColorsOut.GREEN)
 
             object : Thread() {
                 override fun run() {
@@ -44,14 +44,14 @@ class TestSystemStateManager {
 
             var ws = QakContext.getActor("wasteservice")
             while (ws == null) {
-                ColorsOut.outappl("Sprint2TestSystemStataManager	|	waiting for application starts...", ColorsOut.GREEN)
+                ColorsOut.outappl("TestSystem	|	waiting for application starts...", ColorsOut.GREEN)
                 CommUtils.delay(200)
                 ws = QakContext.getActor("wasteservice")
             }
             try {
                 conn = TcpClientSupport.connect("localhost", 8055, 5)
             } catch (e: Exception) {
-                ColorsOut.outappl("Sprint2TestSystemStataManager	|	TCP connection failed...", ColorsOut.GREEN)
+                ColorsOut.outappl("TestSystem	|	TCP connection failed...", ColorsOut.GREEN)
             }
             startObs("localhost:8055")
             obs.getNext()
@@ -86,7 +86,7 @@ class TestSystemStateManager {
 
     @Test
     fun testLoadAcceptUpdate(){
-        ColorsOut.outappl("Sprint2TestSystemStataManager	|	testLoadAcceptUpdate", ColorsOut.GREEN)
+        ColorsOut.outappl("TestSystem	|	testSomething", ColorsOut.GREEN)
 
         var asw = ""
         val prevState = obs.currentTypedState!!

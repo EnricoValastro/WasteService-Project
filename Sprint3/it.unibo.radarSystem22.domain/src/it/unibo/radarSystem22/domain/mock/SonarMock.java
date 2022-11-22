@@ -28,13 +28,21 @@ private int delta = 5;
 			//stopped = true;  //one shot
 		}
 		else {
-			if(curVal.getVal() >= 1){
-				v = curVal.getVal() - delta;
-			}
-			else{
-				v = curVal.getVal() + delta;
-			}
-			updateDistance( v );
+
+				while(curVal.getVal() >= 1){
+					v = curVal.getVal() - delta;
+					updateDistance(v);
+				}
+
+
+
+				while(curVal.getVal() < 90 ){
+					v = curVal.getVal() + delta;
+					updateDistance( v );
+				}
+
+
+
 		}
  	}
 }
