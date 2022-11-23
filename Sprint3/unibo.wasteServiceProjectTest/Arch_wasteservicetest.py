@@ -16,11 +16,14 @@ eventedgeattr = {
     'color': 'red',
     'style': 'dotted'
 }
-with Diagram('wasteservicefortestArch', show=False, outformat='png', graph_attr=graphattr) as diag:
+with Diagram('wasteservicetestArch', show=False, outformat='png', graph_attr=graphattr) as diag:
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
      with Cluster('ctxbasicrobot', graph_attr=nodeattr):
           pathexec=Custom('pathexec(ext)','./qakicons/externalQActor.png')
+     with Cluster('ctxpi', graph_attr=nodeattr):
+          led=Custom('led(ext)','./qakicons/externalQActor.png')
+          sonarqak22varesi=Custom('sonarqak22varesi(ext)','./qakicons/externalQActor.png')
      with Cluster('ctxwasteservice', graph_attr=nodeattr):
           wasteservice=Custom('wasteservice','./qakicons/symActorSmall.png')
           transporttrolleycore=Custom('transporttrolleycore','./qakicons/symActorSmall.png')
@@ -28,8 +31,6 @@ with Diagram('wasteservicefortestArch', show=False, outformat='png', graph_attr=
           transporttrolleyexecutor=Custom('transporttrolleyexecutor','./qakicons/symActorSmall.png')
           systemstatemanager=Custom('systemstatemanager','./qakicons/symActorSmall.png')
           sonarfilter=Custom('sonarfilter','./qakicons/symActorSmall.png')
-          led=Custom('led','./qakicons/symActorSmall.png')
-          sonarqak22varesi=Custom('sonarqak22varesi','./qakicons/symActorSmall.png')
      sys >> Edge(color='red', style='dashed', xlabel='local_dropoutdone', fontcolor='red') >> wasteservice
      wasteservice >> Edge(color='blue', style='solid', xlabel='updatecontainer', fontcolor='blue') >> systemstatemanager
      wasteservice >> Edge(color='magenta', style='solid', xlabel='pickup', fontcolor='magenta') >> transporttrolleycore

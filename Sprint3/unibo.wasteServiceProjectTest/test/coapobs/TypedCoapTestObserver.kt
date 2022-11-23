@@ -13,6 +13,7 @@ class TypedCoapTestObserver<T>(
     private val stateHistory = ArrayBlockingQueue<T>(10)
 
     override fun onLoad(response : CoapResponse){
+        println("Ho ricevuto: ${response.responseText}")
         super.onLoad(response)
         if(currState == null){
             currentTypedState = null

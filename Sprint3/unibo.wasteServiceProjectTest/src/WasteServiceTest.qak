@@ -1,4 +1,4 @@
-System wasteservicefortest
+System wasteservicetest
 
 /* Shout Down Message */ 
 Dispatch exit 		 : exit(_)
@@ -61,11 +61,11 @@ Event local_resume : local_resume (X)
 
 
 Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
-//Context ctxpi ip[host="raspberrypi.local" port=8065]
+Context ctxpi ip[host="raspberrypi.local" port=8065]
 Context ctxwasteservice ip [host="localhost" port=8055]
 
-//ExternalQActor led context ctxpi
-//ExternalQActor sonarqak22varesi context ctxpi
+ExternalQActor led context ctxpi
+ExternalQActor sonarqak22varesi context ctxpi
 ExternalQActor pathexec context ctxbasicrobot
 
 /* *********************************************************************************************
@@ -688,18 +688,6 @@ QActor sonarfilter context ctxwasteservice{
 		terminate 0 
 	}
 	
-}
-
-QActor led context ctxwasteservice{
-	State s0 initial{
-		
-	}
-}
-
-QActor sonarqak22varesi context ctxwasteservice{
-	State s0 initial{
-		
-	}
 }
  
  
