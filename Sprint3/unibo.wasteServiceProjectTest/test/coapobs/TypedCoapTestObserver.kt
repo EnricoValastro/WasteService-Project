@@ -10,7 +10,7 @@ class TypedCoapTestObserver<T>(
     var currentTypedState : T? = null
         private set
 
-    private val stateHistory = ArrayBlockingQueue<T>(10)
+    private val stateHistory = ArrayBlockingQueue<T>(1000)
 
     override fun onLoad(response : CoapResponse){
         println("Ho ricevuto: ${response.responseText}")

@@ -19,11 +19,6 @@ eventedgeattr = {
 with Diagram('wasteservicetestArch', show=False, outformat='png', graph_attr=graphattr) as diag:
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
-     with Cluster('ctxbasicrobot', graph_attr=nodeattr):
-          pathexec=Custom('pathexec(ext)','./qakicons/externalQActor.png')
-     with Cluster('ctxpi', graph_attr=nodeattr):
-          led=Custom('led(ext)','./qakicons/externalQActor.png')
-          sonarqak22varesi=Custom('sonarqak22varesi(ext)','./qakicons/externalQActor.png')
      with Cluster('ctxwasteservice', graph_attr=nodeattr):
           wasteservice=Custom('wasteservice','./qakicons/symActorSmall.png')
           transporttrolleycore=Custom('transporttrolleycore','./qakicons/symActorSmall.png')
@@ -31,6 +26,11 @@ with Diagram('wasteservicetestArch', show=False, outformat='png', graph_attr=gra
           transporttrolleyexecutor=Custom('transporttrolleyexecutor','./qakicons/symActorSmall.png')
           systemstatemanager=Custom('systemstatemanager','./qakicons/symActorSmall.png')
           sonarfilter=Custom('sonarfilter','./qakicons/symActorSmall.png')
+          led=Custom('led','./qakicons/symActorSmall.png')
+          sonarqak22varesi=Custom('sonarqak22varesi','./qakicons/symActorSmall.png')
+          pathexec=Custom('pathexec','./qakicons/symActorSmall.png')
+          sonardatasource=Custom('sonardatasource(coded)','./qakicons/codedQActor.png')
+          datacleaner=Custom('datacleaner(coded)','./qakicons/codedQActor.png')
      sys >> Edge(color='red', style='dashed', xlabel='local_dropoutdone', fontcolor='red') >> wasteservice
      wasteservice >> Edge(color='blue', style='solid', xlabel='updatecontainer', fontcolor='blue') >> systemstatemanager
      wasteservice >> Edge(color='magenta', style='solid', xlabel='pickup', fontcolor='magenta') >> transporttrolleycore
@@ -56,4 +56,10 @@ with Diagram('wasteservicetestArch', show=False, outformat='png', graph_attr=gra
      sys >> Edge(color='red', style='dashed', xlabel='sonardata', fontcolor='red') >> sonarfilter
      sonarfilter >> Edge( xlabel='alarm', **eventedgeattr, fontcolor='red') >> sys
      sonarfilter >> Edge( xlabel='local_resume', **eventedgeattr, fontcolor='red') >> sys
+     sonarqak22varesi >> Edge(color='blue', style='solid', xlabel='sonaractivate', fontcolor='blue') >> sonarqak22varesi
+     sonarqak22varesi >> Edge( xlabel='sonardata', **eventedgeattr, fontcolor='red') >> sys
+     sonarqak22varesi >> Edge(color='blue', style='solid', xlabel='sonaractivate', fontcolor='blue') >> sonardatasource
+     sys >> Edge(color='red', style='dashed', xlabel='sonar', fontcolor='red') >> sonarqak22varesi
+     sonarqak22varesi >> Edge(color='blue', style='solid', xlabel='sonardeactivate', fontcolor='blue') >> sonardatasource
+     sys >> Edge(color='red', style='dashed', xlabel='alarm', fontcolor='red') >> pathexec
 diag

@@ -21,7 +21,8 @@ public class TestSonarMock {
 	@Test 
 	public void testSonarMock() {
 		DomainSystemConfig.simulation = true;
-		DomainSystemConfig.testing    = false;
+		DomainSystemConfig.testing    = true;
+		DomainSystemConfig.testingDistance = 30;
 		DomainSystemConfig.sonarDelay = 10;		//quite fast generation ...
 		int delta = 1;
 		

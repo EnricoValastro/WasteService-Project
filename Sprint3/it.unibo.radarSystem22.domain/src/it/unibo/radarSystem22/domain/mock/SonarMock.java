@@ -7,6 +7,7 @@ import it.unibo.radarSystem22.domain.models.SonarModel;
 import it.unibo.radarSystem22.domain.utils.BasicUtils;
 import it.unibo.radarSystem22.domain.utils.ColorsOut;
 import it.unibo.radarSystem22.domain.utils.DomainSystemConfig;
+import jdk.javadoc.internal.doclets.toolkit.CommentUtils;
 
 public class SonarMock extends SonarModel implements ISonar{
 private int delta = 5;
@@ -28,19 +29,20 @@ private int delta = 5;
 			//stopped = true;  //one shot
 		}
 		else {
-
-				while(curVal.getVal() >= 1){
-					v = curVal.getVal() - delta;
-					updateDistance(v);
+				if(curVal.getVal() >= 1){
+					while(curVal.getVal() >= 1){
+						v = curVal.getVal() - delta;
+						updateDistance(v);
+						BasicUtils.delay(500);
+					}
 				}
-
-
-
-				while(curVal.getVal() < 90 ){
-					v = curVal.getVal() + delta;
-					updateDistance( v );
+				else{
+					while(curVal.getVal() < 90){
+						v = curVal.getVal() + delta;
+						updateDistance(v);
+						BasicUtils.delay(500);
+					}
 				}
-
 
 
 		}

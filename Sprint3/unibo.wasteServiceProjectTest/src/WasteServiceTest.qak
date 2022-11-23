@@ -53,26 +53,23 @@ Dispatch turnoff 	 : turnoff(_)
 
 /* Sonar data */
 Event    sonardata 		 : distance( V )
-
+Dispatch sonaractivate   : info(ARG)
+Dispatch sonardeactivate : info(ARG)
+Event    sonar           : distance( V )   			//emitted by sonardatasource	
 
 /* Stop-Resume message */
 Event alarm  : alarm (X)
 Event local_resume : local_resume (X)
 
+/* Messages for test */
+Request produce : produce(VAL)
+Reply produceok : produceok(ARG)
 
-Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
-Context ctxpi ip[host="raspberrypi.local" port=8065]
+
 Context ctxwasteservice ip [host="localhost" port=8055]
 
-ExternalQActor led context ctxpi
-ExternalQActor sonarqak22varesi context ctxpi
-ExternalQActor pathexec context ctxbasicrobot
-
-/* *********************************************************************************************
- * ---------------------------------------------------------------------------------------------
- * Core component addicted to manage all the request exec by interacting with TT component 
- * ---------------------------------------------------------------------------------------------
- **********************************************************************************************/
+CodedQActor sonardatasource context ctxwasteservice className "sonarSupport2022" 
+CodedQActor datacleaner    	context ctxwasteservice className "dataCleaner"
 
 QActor wasteservice context ctxwasteservice{
 	
@@ -84,11 +81,7 @@ QActor wasteservice context ctxwasteservice{
 	#]
 	
 	State init initial{
-		[#
-			utility.Banner.printBannerWasteService()
-		#]
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.CYAN)#]
-		
 	}Goto idle
 
 	State idle{
@@ -158,12 +151,6 @@ QActor wasteservice context ctxwasteservice{
 		terminate 0
 	}
 }
-
-/* *********************************************************************************************
- * ---------------------------------------------------------------------------------------------
- * Component addicted to manage request and actions
- * ---------------------------------------------------------------------------------------------
- **********************************************************************************************/
 
 QActor transporttrolleycore context ctxwasteservice{
 	
@@ -322,12 +309,6 @@ QActor transporttrolleycore context ctxwasteservice{
 	}
 }
 
-/* *********************************************************************************************
- * ---------------------------------------------------------------------------------------------
- * Component addicted to move the DDR robot
- * ---------------------------------------------------------------------------------------------
- **********************************************************************************************/
-
 QActor transporttrolleymover context ctxwasteservice{
 	
 	[#
@@ -464,12 +445,6 @@ QActor transporttrolleymover context ctxwasteservice{
 	}
 }
 
-/* *********************************************************************************************
- * ---------------------------------------------------------------------------------------------
- *Component for performing actions
- * ---------------------------------------------------------------------------------------------
- **********************************************************************************************/
-
 QActor transporttrolleyexecutor context ctxwasteservice{
 	
 	[#
@@ -512,12 +487,6 @@ QActor transporttrolleyexecutor context ctxwasteservice{
 		terminate 0
 	}
 }
-
-/* *********************************************************************************************
- * ---------------------------------------------------------------------------------------------
- * Component addicted to manage container state
- * ---------------------------------------------------------------------------------------------
- **********************************************************************************************/
 
 QActor systemstatemanager context ctxwasteservice{
 	
@@ -631,12 +600,6 @@ QActor systemstatemanager context ctxwasteservice{
 	}
 }
 
-/* *********************************************************************************************
- * ---------------------------------------------------------------------------------------------
- * Component addicted to filter sonar data
- * ---------------------------------------------------------------------------------------------
- **********************************************************************************************/
- 
 QActor sonarfilter context ctxwasteservice{
 	
 	[#
@@ -690,6 +653,148 @@ QActor sonarfilter context ctxwasteservice{
 	
 }
  
+QActor led context ctxwasteservice {
+	[# 
+		var led : `it.unibo`.radarSystem22.domain.interfaces.ILed? = null
+		var flagBlink = false
+	#]
+	State s0 initial{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+		[#
+			led = utility.LedFactory.createLed()
+			led!!.turnOff()
+		#]
+		
+	}Goto idle
+	
+	State idle {
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+	}Transition t0 whenMsg blink -> blinkon
+					whenMsg turnon -> on
+					whenMsg turnoff -> off
+	State on {
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	TurnOn Led", unibo.comm22.utils.ColorsOut.YELLOW)#]
+		[#led!!.turnOn()#]
+		[# flagBlink = false #]
+	}Goto idle
+	
+	State off {
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	TurnOff Led", unibo.comm22.utils.ColorsOut.YELLOW)#]
+		[#led!!.turnOff()#]
+		[# flagBlink = false #]
+	}Goto idle
+	
+	State blinkon {
+		if[# flagBlink == false#]{
+			[# unibo.comm22.utils.ColorsOut.outappl("$name	|	Blink Led", unibo.comm22.utils.ColorsOut.YELLOW)#]
+			[# flagBlink = true #]
+		}
+		[#led!!.turnOn()#]
+	}Transition t0 whenTime 300 -> blinkoff
+					whenMsg turnon -> on
+					whenMsg turnoff -> off
+	
+	State blinkoff {
+		[#led!!.turnOff()#]
+	}Transition t0 whenTime 300 -> blinkon
+					whenMsg turnon -> on
+					whenMsg turnoff -> off
+}
+
+QActor sonarqak22varesi context ctxwasteservice{
+	[# 
+	   	val sonarActorName = "sonarqak22varesi"
+	   	var advancedTestingMode = false
+	   	var VALUE = 0
+	#]
+	State s0 initial {
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+		run  utility.configureTheSonar(sonarActorName) 
+		[# advancedTestingMode = utility.AdvancedTestingModeSetUp.checkForTestingMode() #]	
+	}
+	Goto advancedTestingMode if[# advancedTestingMode #]
+				else sonarActivate
+				
+	State sonarActivate{
+		forward sonarqak22varesi -m sonaractivate : info(ok)
+	}			
+	Transition t0 whenMsg sonaractivate   -> activateTheSonar
+			      whenMsg sonardeactivate -> deactivateTheSonar
+	
+	State advancedTestingMode{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	ADVANCED TESTING MODE: ON", unibo.comm22.utils.ColorsOut.YELLOW)#]
+	}Goto waitForRequest
+	
+	State waitForRequest{
+		
+	}Transition t0 whenRequest produce -> produceData
+	
+	State produceData{
+		onMsg(produce : produce(VAL)){
+			[# VALUE = payloadArg(0).toInt() #]
+		}
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	ADVANCED TESTING MODE: producing $VALUE", unibo.comm22.utils.ColorsOut.YELLOW)#]
+		emit sonardata : distance($VALUE)
+		replyTo produce with produceok : produceok(_)
+	}Goto waitForRequest 
+	
+	State activateTheSonar{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+		forward sonardatasource -m sonaractivate : info(ok)  
+	}
+	Transition t0  whenEvent sonar         		-> handleSonarData  
+	               whenMsg 	 sonardeactivate 	-> deactivateTheSonar
+	
+	State deactivateTheSonar{
+		forward sonardatasource -m sonardeactivate : info(ko)
+	}
+	Goto end
+ 
+  	State handleSonarData{
+  		 onMsg( sonar : distance(D) ){
+   		 	[# val D = payloadArg(0) #] 
+   		 	[# unibo.comm22.utils.ColorsOut.outappl("$name	|	emitting: ${D}", unibo.comm22.utils.ColorsOut.YELLOW)#] 
+  		 	emit sonardata : distance($D) //for the application
+  		 }
+  	}
+   	Transition t0 whenEvent sonar -> handleSonarData
+   				  whenMsg sonardeactivate -> deactivateTheSonar
+   		
+	State end{ 
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	BYE", unibo.comm22.utils.ColorsOut.YELLOW)#]
+		[# System.exit(0) #]
+	}
+}
+
+QActor pathexec context ctxwasteservice{
+	State s0 initial{
+		println("MockPathExec	|	starting...")
+	}Goto idle
+	
+	State idle{
+		println("MockPathExec	|	waiting...")
+	}Transition t0 whenRequest dopath -> work
+					
+	State work{
+		println("MockPathExec	|	doing path in 2 second")
+		
+	}Transition t0 whenTime 3000 -> pathok
+					whenEvent alarm -> pathstop
+	
+	State pathok{
+		println("MockPathExec	|	path done")
+		replyTo dopath with dopathdone : dopathdone(ok)
+	}Goto idle
+	
+	State pathstop{
+		println("MockPathExec	|	path stopped")
+		replyTo dopath with dopathstopped : dopathstopped(stopped)
+	}Goto idle
+	
+	
+}
+
+
  
  
  

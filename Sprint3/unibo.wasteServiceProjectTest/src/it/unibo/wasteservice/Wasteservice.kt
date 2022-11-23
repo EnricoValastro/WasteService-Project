@@ -23,8 +23,6 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
-						
-									utility.Banner.printBannerWasteService()
 						 unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.CYAN) 
 						//genTimer( actor, state )
 					}
