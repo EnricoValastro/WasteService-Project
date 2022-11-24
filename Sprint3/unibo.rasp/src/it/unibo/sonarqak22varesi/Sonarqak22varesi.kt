@@ -3,11 +3,8 @@ package it.unibo.sonarqak22varesi
 
 import it.unibo.kactor.*
 import alice.tuprolog.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-	
+import kotlinx.coroutines.*
+
 class Sonarqak22varesi ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope ){
 
 	override fun getInitialState() : String{
@@ -68,10 +65,11 @@ class Sonarqak22varesi ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("produce(VAL)"), Term.createTerm("produce(VAL)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								 var VALUE = payloadArg(0)  
+							var VALUE = payloadArg(0)
 						}
-						 unibo.comm22.utils.ColorsOut.outappl("$name	|	ADVANCED TESTING MODE: producing $value", unibo.comm22.utils.ColorsOut.YELLOW) 
-						emit("sonardata", "distance($VALUE)" ) 
+
+						unibo.comm22.utils.ColorsOut.outappl("$name	|	ADVANCED TESTING MODE: producing $VALUE", unibo.comm22.utils.ColorsOut.YELLOW)
+						emit("sonardata", "distance($VALUE)" )
 						answer("produce", "produceok", "produceok(_)"   )  
 						//genTimer( actor, state )
 					}

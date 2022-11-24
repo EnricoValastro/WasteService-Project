@@ -103,7 +103,7 @@ QActor sonarqak22varesi context ctxpi{
 		onMsg(produce : produce(VAL)){
 			[# var VALUE = payloadArg(0) #]
 		}
-		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	ADVANCED TESTING MODE: producing $value", unibo.comm22.utils.ColorsOut.YELLOW)#]
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	ADVANCED TESTING MODE: producing $VALUE", unibo.comm22.utils.ColorsOut.YELLOW)#]
 		emit sonardata : distance($VALUE)
 		replyTo produce with produceok : produceok(_)
 	}

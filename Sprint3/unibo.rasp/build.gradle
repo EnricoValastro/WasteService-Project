@@ -125,7 +125,7 @@ distributions {
             from "./sysRules.pl"
             from "./led25GpioTurnOn.sh"
             from "./led25GpioTurnOff.sh"
-            from "./sonarAlone.c "
+            from "./SonarAlone.c "
         }
     }
 }
