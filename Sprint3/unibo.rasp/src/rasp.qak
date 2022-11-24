@@ -78,6 +78,7 @@ QActor sonarqak22varesi context ctxpi{
 	[# 
 	   	val sonarActorName = "sonarqak22varesi"
 	   	var advancedTestingMode = false
+	   	var VALUE = 0
 	#]
 	State s0 initial {
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.YELLOW)#]
@@ -101,7 +102,7 @@ QActor sonarqak22varesi context ctxpi{
 	}Transition t0 whenRequest produce -> produceData
 	State produceData{
 		onMsg(produce : produce(VAL)){
-			[# var VALUE = payloadArg(0) #]
+			[# VALUE = payloadArg(0).toInt() #]
 		}
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	ADVANCED TESTING MODE: producing $VALUE", unibo.comm22.utils.ColorsOut.YELLOW)#]
 		emit sonardata : distance($VALUE)
