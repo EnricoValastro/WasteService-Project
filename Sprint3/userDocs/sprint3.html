@@ -692,6 +692,17 @@
             <a href="./resources/qak/rasp.qak">rasp.qak</a><br>
             <a href="./resources/qak/basicrobot.qak">basicrobot.qak</a>
         </div>
+
+        <h2>Test Plan</h2>
+        <div class="remarkTest">
+            Per testare il corretto funzionamento dell'intero sistema è sufficente far partire l'applicazione, somministrare una 
+            richiesta <kc>storewaste</kc> al sistema, successivamente facendo le veci del sonar inviare l'evento <kc>sonardata</kc>, con valore minore di <i>DLIMIT</i> 
+            e verificare tramite un osservatore CoAP del <i>SystemStateManager</i> che il sistema compia le giuste transizioni di stato fino a stopparsi. 
+            <br>
+            Successivamente inviare l'evento <kc>sonardata</kc> con valore maggiore di <i>DLIMIT</i> e verificare che il sistema riparta.
+        </div>
+
+
         <h2>Project</h2>
         <div class="remark">
             <h3>Led</h3>
@@ -750,7 +761,7 @@
             per non appesantire la CPU, di fare <i>polling</i> ad intervalli regolari di mezzo secondo.
 
             <br>
-            Per limitare il numero di dati immessi nel sistema ogni nuova lettura viene confrontata con il valore letto in precedenza. Se i due dati risultano uguali, il nuovo dato viene scartato, 
+            Inoltre, per limitare il numero di dati immessi nel sistema ogni nuova lettura viene confrontata con il valore letto in precedenza. Se i due dati risultano uguali, il nuovo dato viene scartato, 
             in caso contrario viene emesso un <ks>localStreamEvent</ks> che arriva al prossimo componente della <i>pipe</i>, il <kc>datacleaner</kc>. <br>
             Il codice del <i>SonarSupport2022</i> è consultabile in <a href="./resources/kotlin/sonarSupport2022.kt">SonarSupport2022.kt</a>
 
@@ -762,13 +773,28 @@
 
             <h4>Sonarqak22varesi</h4>
             Il <i>Sonarqak22varesi</i> è stato progettato in modo da poter essere essere il più possibile indipendente dal resto del sistema. <br>
-            All'avvio esso invia il seguente messaggio al <i>SonarSupport2022</i> in modo da avviare la lettura dei dati:
+            Il componente è stato progettato per avere due diverse modalità di funzionamento, una modalità di "<i>Advanced Testing</i>" che può essere utilizzata per far 
+            produrre, sotto richiesta, valori specifici al <i>Sonarqak22varesi</i> e una modalità di funzionamento "<i>Standard</i>". <br>
+
+            Nello stato iniziale il <i>sonarqak22varesi</i>, utilizza l'utility <a href="./resources/kotlin/configureSonarSubsystem.kt">configureSonarSubsystem.kt</a> per leggere dal 
+            file json <a href="./resources/json/DomainSystemConfig.json">DomainSystemConfig.json</a> la configurazione del sistema, creare la <i>pipe</i> e l'apposito supporto <kc>ISonar</kc>. <br>
+            Successivamente dallo stesso file di configurazione leggere il valore del campo <kc>ADVANCEDTESTINGMODE</kc>, se tale valore è settato a "false" il componente attiva il <i>SonarSupport22</i> tramite il 
+            seguente messaggio: 
             <pre>
 <key2>Dispatch</key2> sonaractivate: info(ARG)</pre>
-            
             Successivamente ogni qual volta riceve un dato dal <i>dataCleaner</i> emette il seguente evento:
             <pre>
 <key2>Event</key2> sonardata : distance(V)</pre>
+
+            Se invece  il valore del campo <kc>ADVANCEDTESTINGMODE</kc> è posto a "true" il <i>sonarqak22varesi</i> transita nello stato 
+            <kc>advancedTestingMode</kc> attende l'arrivo di messaggi del seguente tipo:
+            <pre>
+<key2>Request</key2> produce : produce(VAL)</pre>
+            Ogni volta che riceve una richiesta di questo tipo estrapola il valore contenuto nel messaggio ed emette un evento con quel valore:
+            <pre>
+<key2>Event</key2> sonardata : distance(V)</pre>        
+            
+            
 
             Di seguito vengono riportati il progetto della macchina a stati finiti e il codice del <i>Sonarqak22varesi</i>:
             <br><br>
@@ -782,7 +808,7 @@
         </div>
         
         <div class="remark">
-            <h3>Distance Filter</h3>
+            <h3>Sonar Filter</h3>
             Come suggerito dagli analisti, abbiamo deciso di realizzare un componente che raccolglie i dati emessi dal <i>Sonarqak22varesi</i> e che li 
             confranto con il volore <kc>DLIMIT</kc>. Se il valore ricevuto è inferirore alla soglia <i>DLIMIT</i> allora viene bloccato il sistema tramite 
             l'emissione del seguente evento:
@@ -811,7 +837,7 @@
             per realizzare il requisito di <b>stop</b> e aggiornare lo stato del <i>transportTrolley</i> e del <i>Led</i>. <br>
             L'evento <i>local_resume</i>, invece, viene raccolta dal <kc>TransportTrolleCore</kc> e dal <kc>TransportTrolleyMover</kc> per aggiornare 
             lo stato del <i>transportTrolley</i> e far ripartire il <i>pathexec</i>. <br><br>
-            Il codice del <i>distanceFilter</i> è consultabile in <a href="./resources/qak/wasteService.qak">wasteService.qak</a>
+            Il codice del <i>sonarfilter</i> è consultabile in <a href="./resources/qak/wasteService.qak">wasteService.qak</a>
         </div>
         <div class="remark">
             <h3>Modifiche apportate ad altri componenti</h3>
@@ -957,8 +983,32 @@
         </div>
 
  
-        <h2>Test Plan</h2>
-        <div class="remarkTest"></div>
+        <h2>Testing</h2>
+        <div class="remarkTest">
+            Per testare il corretto funzionamento di tutta l'applicazione è stato creato un nuovo progetto <a href="../unibo.wasteServiceProjectTest/">unibo.wasteServiceProjectTest</a> 
+            che raccoglie tutti i componenti del sistema. Il codice del modello utilizzato per il test è consultabile in 
+            <a href="./resources/qak/WasteServiceTest.qak">WasteServiceTest.qak</a>. <br><br>
+
+            Per testare il sistema è stata utilizzata la <kc>Advanced Testing Mode</kc> del <i>sonarqak22varesi</i>. Questo ci permetterà di 
+            far si che il <i>sonar</i> generi dei valori sotto nostra richiesta. <br>
+            Il test comprende tre differenti test case:
+            <ul>
+                <li>
+                    <b>Test case 1</b>: Consiste nell'avviare l'intero sistema, somministrare una richiesta <kc>storewaste</kc> e verificare 
+                    tramite un osservatore CoAP che il <i>SystemStateManager</i> aggiorni correttamente lo stato dall'inizio fino alla fine dell'azione di deposito.
+                </li>
+                <li>
+                    <b>Test case 2</b>: Consiste nell'avviare l'intero sistema, somministrare una richiesta <kc>storewaste</kc>, successivamente richiedere 
+                    al <i>sonarqak22varesi</i> di generare un valore inferiore di <i>DLIMIT</i> e poi un altro maggiore di <i>DLIMIT</i>. <br>
+                    Verificare quindi, tramite osservatore CoAP, che lo stato del sistema si aggiorni correttamente.
+                </li>
+                <li>
+                    <b>Test case 3</b>: iste nell'avviare l'intero sistema, somministrare una richiesta <kc>storewaste</kc>, successivamente richiedere 
+                    al <i>sonarqak22varesi</i> di generare un valore inferiore di <i>DLIMIT</i> e verificare che il sistema permanga nello stato <kc>STOPPED</kc>. 
+                </li>
+            </ul>
+            Il codice del test è consultabile in <a href="./resources/kotlin/TestAll.kt">TestAll.kt</a>
+        </div>
 
         <h2>Architettura finale del Sistema</h2>
         <div class="remark">

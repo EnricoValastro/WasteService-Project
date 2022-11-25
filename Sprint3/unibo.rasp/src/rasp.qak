@@ -97,6 +97,7 @@ QActor sonarqak22varesi context ctxpi{
 	State advancedTestingMode{
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	ADVANCED TESTING MODE: ON", unibo.comm22.utils.ColorsOut.YELLOW)#]
 	}Goto waitForRequest
+	
 	State waitForRequest{
 		
 	}Transition t0 whenRequest produce -> produceData
@@ -107,7 +108,7 @@ QActor sonarqak22varesi context ctxpi{
 		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	ADVANCED TESTING MODE: producing $VALUE", unibo.comm22.utils.ColorsOut.YELLOW)#]
 		emit sonardata : distance($VALUE)
 		replyTo produce with produceok : produceok(_)
-	}
+	}Goto waitForRequest
 	
 	
 	State activateTheSonar{

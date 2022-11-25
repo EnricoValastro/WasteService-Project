@@ -424,6 +424,14 @@
             </div>
             
         </div>
+
+        <h2>Test Plan</h2>
+        <div class="remarkTest">
+            Per testare il corretto funzionamento del sistema è sufficente verificare che la <i>WasteServiceStatusGUI</i> riceva i dati corretti sulla connessione CoAP. <br>
+            Per questo motivo sarà sufficiente istanziare la seguente classe di test : <br><br>
+            <b>Test SystemStateManager</b>: creare un osservatore CoAP del <i>SystemStateManager</i> e verificare che somministrando un 
+            messaggio <kc>storewaste</kc> al sistema, l'osservatore riceva gli aggioramenti di stato corretti.
+        </div>
     
         <h2>Project</h2>
         <div class="remark">
@@ -723,7 +731,7 @@ Ai seguenti link è possibile consultare il codice javascript sviluppato per la 
 Il codice del file <kc>update.html</kc> è disponibile al seguente link: <a href="./resources/html/update.html">update.html</a>.<br>
 </div>
 
-        <h2>Test Plan</h2>
+        <h2>Testing</h2>
         <div class="remarkTest">
             Per verificare il corretto funzionamento del sistema, è stata instanziata la classe di test: <a href="./resources/kotlin/TestSystemStateManager.kt">TestSystemStateManager.kt</a>.
             Dal momento che la <kc>WasteServiceStatusGUI</kc> è progettata come un componente passivo che riceve dati su una connessione <ks>CoAP</ks>, per verificare il corretto funzionamento 

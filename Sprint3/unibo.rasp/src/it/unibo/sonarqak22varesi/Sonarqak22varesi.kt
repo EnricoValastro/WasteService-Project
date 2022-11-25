@@ -79,6 +79,7 @@ class Sonarqak22varesi ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="waitForRequest", cond=doswitch() )
 				}	 
 				state("activateTheSonar") { //this:State
 					action { //it:State

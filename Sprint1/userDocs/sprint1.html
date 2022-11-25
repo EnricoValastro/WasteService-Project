@@ -777,7 +777,26 @@ Il prototipo d'interazione sarebbe il seguente:
     <img src="./resources/img/ArchLogicSprint1.png" alt="" style="width:60% ; height:60% ;">
 </div>
 
+<h2>Test Plan</h2>
+<div class="remarkTest">
+    Al fine di testare il corretto funzionamento dei componenti sviluppati in questo Sprint è possibile istanziare le seguenti classi di test:
+    <ul>
+        <li>
+            <b>Test WasteServiceHandler</b>: invio di una richiesta <kc>storewaste</kc> e verifica della ricezione del messaggio 
+            <kc>loadaccept</kc>, invio di una richiesta <kc>storewaste</kc> oltre limite e verifica della ricezione del messaggio <kc>loadrejected</kc>.
+        </li>
 
+        <li>
+            <b>Test ContainerManager</b>: creare un osservatore CoAP per il <i>ContainerManager</i>, inviare una richiesta <kc>storewaste</kc> e 
+            verificare che l'osservatore riceva il corretto aggiornamento di stato.
+        </li>
+
+        <li>
+            <b>Test TransportTrolleyCore</b>: somministrare al <i>TransportTrolleyCore</i> i messaggi <kc>pickup</kc>, <kc>dropout</kc> e 
+            <kc>gotohome</kc> e verificare tramite un osservatore CoAP che ogni messaggio scatini i corretti cambiamenti dello stato del <i>TransportTrolley</i>.
+        </li>
+    </ul>
+</div>
 
 <h2>Project</h2>
 <div class="remark">
@@ -1237,7 +1256,7 @@ Il componente quindi risponde al <i>TransportTrolleyCore</i> con un messaggio di
 
 </div>
 
-<h2>Test Plan</h2>
+<h2>Testing</h2>
 <div class="remarkTest">
 
     Al fine di verificare il corretto funzionamento del sistema, sono state sviluppate le classi di test: 
