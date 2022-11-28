@@ -1,6 +1,0 @@
-{"type":"virtual", "port":"8090", "ipvirtualrobot":"localhost", "commtrace": "false"}
-{"_comment": "","type":"virtual", "port":"8090", "ipvirtualrobot":"192.168.1.106", "commtrace": "false"}
-{"_comment": "","type":"mockrobot", "port":"", "ipvirtualrobot":"localhost"}
-{"_comment": "","type":"realmbot", "port":"COM6", "ipvirtualrobot":"localhost"}
-{"_comment": "","type":"realmbot", "port":"/dev/ttyUSB0", "ipvirtualrobot":"localhost"}
-{"_comment": "","type":"realnano", "port":"8020", "ipvirtualrobot":"localhost"}
