@@ -65,7 +65,6 @@ Context ctxpi ip[host="raspberrypi.local" port=8065]
 Context ctxwasteservice ip [host="localhost" port=8055]
 
 ExternalQActor led context ctxpi
-ExternalQActor sonarqak22varesi context ctxpi
 ExternalQActor pathexec context ctxbasicrobot
 
 /* *********************************************************************************************

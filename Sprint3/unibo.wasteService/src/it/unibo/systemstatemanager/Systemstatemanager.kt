@@ -18,9 +18,10 @@ class Systemstatemanager ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 		
 				val system  = sys.state.SystemState()
 				lateinit var requestMaterialToStore : sys.state.Material 
-				var requestWeightToStore : Double = 0.0	
-				lateinit var position : sys.state.TTPosition
-				lateinit var state : sys.state.CurrStateTrolley
+				var requestWeightToStore 			: Double = 0.0	
+				lateinit var position 				: sys.state.TTPosition
+				lateinit var state 					: sys.state.CurrStateTrolley
+				lateinit var led 					: sys.state.CurrStateLed
 		return { //this:ActionBasciFsm
 				state("init") { //this:State
 					action { //it:State
@@ -42,9 +43,15 @@ class Systemstatemanager ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t026",targetState="updateContainerState",cond=whenDispatch("updatecontainer"))
-					transition(edgeName="t027",targetState="updateTrolleyState",cond=whenDispatch("updatetrolley"))
-					transition(edgeName="t028",targetState="end",cond=whenDispatch("exit"))
+					 transition(edgeName="t046",targetState="updateContainerState",cond=whenDispatch("updatecontainer"))
+					transition(edgeName="t047",targetState="updateTrolleyState",cond=whenDispatch("updatetrolley"))
+					transition(edgeName="t048",targetState="updateLedState",cond=whenDispatch("updateled"))
+					transition(edgeName="t049",targetState="sendData",cond=whenDispatch("getdata"))
+					transition(edgeName="t050",targetState="replyData",cond=whenRequest("getledstate"))
+					transition(edgeName="t051",targetState="replyData",cond=whenRequest("getcontainerstate"))
+					transition(edgeName="t052",targetState="replyData",cond=whenRequest("gettrolleystate"))
+					transition(edgeName="t053",targetState="replyData",cond=whenRequest("gettrolleyposition"))
+					transition(edgeName="t054",targetState="end",cond=whenDispatch("exit"))
 				}	 
 				state("updateContainerState") { //this:State
 					action { //it:State
@@ -86,6 +93,71 @@ class Systemstatemanager ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 						}
 						updateResourceRep( system.toJsonString()  
 						)
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("updateLedState") { //this:State
+					action { //it:State
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	updating led state", unibo.comm22.utils.ColorsOut.MAGENTA) 
+						if( checkMsgContent( Term.createTerm("updateled(STAT)"), Term.createTerm("updateled(STAT)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+									
+												try{
+													led = sys.state.CurrStateLed.valueOf(payloadArg(0).trim().uppercase())  
+													
+													system.setCurrLedState(led)
+												}catch(e : Exception){
+													//TobeDone
+												}
+						}
+						updateResourceRep( system.toJsonString()  
+						)
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("sendData") { //this:State
+					action { //it:State
+						 unibo.comm22.utils.ColorsOut.outappl("$name	|	sending data to someone", unibo.comm22.utils.ColorsOut.MAGENTA) 
+						delay(1000) 
+						updateResourceRep( system.toJsonString()  
+						)
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("replyData") { //this:State
+					action { //it:State
+						if( checkMsgContent( Term.createTerm("getledstate(_)"), Term.createTerm("getledstate(_)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 var DATA = system.getCurrLedState().toString()  
+								answer("getledstate", "givedata", "givedata($DATA)"   )  
+						}
+						if( checkMsgContent( Term.createTerm("getcontainerstate(_)"), Term.createTerm("getcontainerstate(_)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 var DATA = system.getAllCurrentBoxWeight().toString()  
+								answer("getledstate", "givedata", "givedata($DATA)"   )  
+						}
+						if( checkMsgContent( Term.createTerm("gettrolleyposition(_)"), Term.createTerm("gettrolleyposition(_)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 var DATA = system.getCurrPosition().toString()  
+								answer("getledstate", "givedata", "givedata($DATA)"   )  
+						}
+						if( checkMsgContent( Term.createTerm("gettrolleystate(_)"), Term.createTerm("gettrolleystate(_)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 var DATA = system.getCurrState().toString()  
+								answer("getledstate", "givedata", "givedata($DATA)"   )  
+						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
