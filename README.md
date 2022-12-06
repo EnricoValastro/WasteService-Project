@@ -8,6 +8,10 @@ Partendo dai [requisiti](https://htmlpreview.github.io/?https://github.com/Enric
 * [Sprint2](https://htmlpreview.github.io/?https://github.com/EnricoValastro/WasteService-Project/blob/main/Sprint2/userDocs/sprint2.html)
 * [Sprint3](https://htmlpreview.github.io/?https://github.com/EnricoValastro/WasteService-Project/blob/main/Sprint3/userDocs/sprint3.html)
 
+## Demo
+
+https://user-images.githubusercontent.com/79710717/205872727-915a6720-cf2e-44b9-aab4-7bc880811816.mp4
+
 ## Start the System
 > Start smartdevice
 ```bash
@@ -34,3 +38,13 @@ Open a browser(Firefox) and connect to `http://localhost:8090`
   cd WasteService-Project/Deployment/
   docker-compose -f wasteservice.yaml up
 ```
+>Start RaspberryPi Software
+
+On a raspberryPi connect a led and a HCSR04 sonar, upload on raspberry the [software](https://github.com/EnricoValastro/WasteService-Project/tree/main/Sprint3/unibo.rasp), compile the SonarAlone.c file and start the software.
+```bash
+  ssh pi@raspberrypi.local
+  cd unibo.rasp-1.0/bin
+  g++ SonarAlone.c -l wiringPi -o SonarAlone
+  ./unibo.rasp
+```
+
